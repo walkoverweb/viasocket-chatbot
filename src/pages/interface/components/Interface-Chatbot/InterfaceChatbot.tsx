@@ -10,7 +10,7 @@ import WebSocketClient from 'rtlayer-client'
 import { getPreviousMessage, sendDataToAction } from '../../../../api/InterfaceApis/InterfaceApis.ts'
 import { errorToast } from '../../../../components/customToast.js'
 import { ParamsEnums } from '../../../../enums'
-import addUrlDataHoc from '../../../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../../../hoc/addUrlDataHoc.tsx'
 import { $ReduxCoreType } from '../../../../types/reduxCore.ts'
 import { useCustomSelector } from '../../../../utils/deepCheckSelector.js'
 import InterfaceGrid from '../Grid/Grid.tsx'
@@ -59,13 +59,13 @@ function InterfaceChatbot({ props, inpreview = false, interfaceId, gridId, compo
   const [messages, setMessages] = useState<MessageType[]>(
     !inpreview
       ? [
-          { content: 'hello how are you ', role: 'user' },
-          {
-            responseId: 'Response24131',
-            content: '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
-            role: 'assistant'
-          }
-        ]
+        { content: 'hello how are you ', role: 'user' },
+        {
+          responseId: 'Response24131',
+          content: '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
+          role: 'assistant'
+        }
+      ]
       : []
   )
   const [defaultQuestion, setDefaultQuestions] = useState([])

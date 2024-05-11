@@ -2,7 +2,7 @@ import { Box, Button, Divider, FormControl, MenuItem, Select, SelectChangeEvent,
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { ParamsEnums } from '../../../../enums'
-import addUrlDataHoc from '../../../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../../../hoc/addUrlDataHoc.tsx'
 import { updateInterfaceFrontendActionStart } from '../../../../store/interface/interfaceSlice.ts'
 import { $ReduxCoreType } from '../../../../types/reduxCore.ts'
 import { useCustomSelector } from '../../../../utils/deepCheckSelector'

@@ -4,7 +4,7 @@ import RGL, { WidthProvider } from 'react-grid-layout'
 import { useDispatch } from 'react-redux'
 import { loginUser } from '../../../../api/InterfaceApis/InterfaceApis.ts'
 import { ParamsEnums } from '../../../../enums'
-import addUrlDataHoc from '../../../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../../../hoc/addUrlDataHoc.tsx'
 import { addDefaultContext, getInterfaceDataByIdStart, setThreadId } from '../../../../store/interface/interfaceSlice.ts'
 import { $ReduxCoreType } from '../../../../types/reduxCore.ts'
 import { useCustomSelector } from '../../../../utils/deepCheckSelector'
@@ -68,7 +68,7 @@ function Viewonlygrid({ dragRef, interfaceId, gridId = 'root', loadInterface = t
   }, [])
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       let interfaceToken = intefaceGetLocalStorage('interfaceToken')
       if (!interfaceToken) {
         interfaceToken = await authorizeUser()
@@ -118,34 +118,34 @@ function Viewonlygrid({ dragRef, interfaceId, gridId = 'root', loadInterface = t
         const element = components?.[coord?.i] || <div />
         return element.type === 'ChatBot' || gridId.includes('Response')
       }) && (
-        <GridLayout
-          className='main_layout layout'
-          layout={Object.values(coordinatesState || {}) || []}
-          compactType={null}
-          cols={gridXY.cols}
-          rowHeight={rowHeight}
-          draggableHandle='.dragHandle'
-          draggableCancel='.not_drag'
-          isDroppable={false}
-          isResizable={false}
-          isDraggable={false}
-          resizeHandles={[]}
-        >
-          {Object.values(coordinates || {}).map((coord: any) => {
-            const element = components?.[coord?.i] || <div />
-            if (element.type !== 'ChatBot' && !gridId.includes('Response')) {
-              return (
-                <div key={coord?.i} className='grid-item not_drag' style={styles}>
-                  <ReactGridItemWrapper keyName={coord?.i} onResizeItem={handleSizeChange} className='grid-item not_drag'>
-                    <ComponentRenderer componentData={element} id={coord?.i} dragRef={dragRef} gridId={gridId} inpreview />
-                  </ReactGridItemWrapper>
-                </div>
-              )
-            }
-            return null
-          })}
-        </GridLayout>
-      )}
+          <GridLayout
+            className='main_layout layout'
+            layout={Object.values(coordinatesState || {}) || []}
+            compactType={null}
+            cols={gridXY.cols}
+            rowHeight={rowHeight}
+            draggableHandle='.dragHandle'
+            draggableCancel='.not_drag'
+            isDroppable={false}
+            isResizable={false}
+            isDraggable={false}
+            resizeHandles={[]}
+          >
+            {Object.values(coordinates || {}).map((coord: any) => {
+              const element = components?.[coord?.i] || <div />
+              if (element.type !== 'ChatBot' && !gridId.includes('Response')) {
+                return (
+                  <div key={coord?.i} className='grid-item not_drag' style={styles}>
+                    <ReactGridItemWrapper keyName={coord?.i} onResizeItem={handleSizeChange} className='grid-item not_drag'>
+                      <ComponentRenderer componentData={element} id={coord?.i} dragRef={dragRef} gridId={gridId} inpreview />
+                    </ReactGridItemWrapper>
+                  </div>
+                )
+              }
+              return null
+            })}
+          </GridLayout>
+        )}
     </Box>
   )
 }

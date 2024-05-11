@@ -11,7 +11,7 @@ import ComponentConfigs from './components/componentConfigs/ConfigSlider.tsx'
 import ComponentSlider from './components/Component-Slider/ComponentSlider.tsx'
 import InterfaceForm from './components/Interface-Form/InterfaceForm.tsx'
 import { $ReduxCoreType } from '../../types/reduxCore.ts'
-import addUrlDataHoc from '../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../hoc/addUrlDataHoc.tsx'
 import { ParamsEnums } from '../../enums'
 import { toggleNestedGridSliderOpen } from '../../store/interface/interfaceSlice.ts'
 

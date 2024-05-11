@@ -4,7 +4,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Te
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { ParamsEnums } from '../../../../enums'
-import addUrlDataHoc from '../../../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../../../hoc/addUrlDataHoc.tsx'
 import {
   deleteComponentStart,
   toggleNestedGridSliderOpen,

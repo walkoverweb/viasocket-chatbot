@@ -1,0 +1,33 @@
+.group_suggestion__box {
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+
+  &:hover {
+    background-color: var(--col-primary-5);
+
+    .opacity-0 {
+      opacity: 1 !important;
+    }
+  }
+}
+
+.disabled {
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  cursor: not-allowed;
+}
+
+.suggestionBox-main-container {
+  position: absolute;
+  top: 100px;
+  right: 20%;
+  z-index: 100;
+}
+
+.suggestionbox__group {
+  box-sizing: border-box;
+}

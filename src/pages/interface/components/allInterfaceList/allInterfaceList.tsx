@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { errorToast } from '../../../../components/customToast'
 import FunctionsActionsButton from '../../../../components/functiondashboard/workFlow/workFlowComponent/functionsActionsButton/functionsActionsButton'
 import { ParamsEnums } from '../../../../enums'
-import addUrlDataHoc from '../../../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../../../hoc/addUrlDataHoc.tsx'
 import {
   getAllInterfaceStart,
   updateInterfaceDetailsStart,

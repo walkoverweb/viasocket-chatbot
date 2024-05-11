@@ -18,7 +18,7 @@ import InterfaceTable from './Interface-Table/InterfaceTable.tsx'
 import { useCustomSelector } from '../../../utils/deepCheckSelector'
 import { $ReduxCoreType } from '../../../types/reduxCore.ts'
 import { ParamsEnums } from '../../../enums'
-import addUrlDataHoc from '../../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../../hoc/addUrlDataHoc.tsx'
 import { GridContext } from './Grid/Grid.tsx'
 
 interface ComponentRendererProps {

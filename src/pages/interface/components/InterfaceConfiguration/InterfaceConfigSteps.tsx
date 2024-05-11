@@ -12,7 +12,7 @@ import InterfaceTemplateCode, {
   InterfaceEmbedCodeUsage
 } from '../../../../components/embededPageComponents/setupComponent/templateCode/templateCode'
 import { ParamsEnums } from '../../../../enums'
-import addUrlDataHoc from '../../../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../../../hoc/addUrlDataHoc.tsx'
 import { updateInterfaceDetailsStart } from '../../../../store/interface/interfaceSlice.ts'
 import { getEmbedTokenThunk } from '../../../../store/orgs/orgsThunk'
 import { $ReduxCoreType } from '../../../../types/reduxCore.ts'

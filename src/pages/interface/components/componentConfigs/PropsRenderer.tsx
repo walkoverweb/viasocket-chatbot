@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux'
 import { createScripts } from '../../../../api/index'
 import { infoToast } from '../../../../components/customToast'
 import { ParamsEnums } from '../../../../enums'
-import addUrlDataHoc from '../../../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../../../hoc/addUrlDataHoc.tsx'
 import {
   setConfigModalState,
   updateInterfaceActionStart,
@@ -347,11 +347,11 @@ function ComponentToTakePropValue({
 
         const updatedActionsArr = isPromptPresent
           ? actionData?.actionsArr.map((action: any) => {
-              if (action.type === 'chatbot') {
-                return { ...action, prompt: newValue }
-              }
-              return action
-            })
+            if (action.type === 'chatbot') {
+              return { ...action, prompt: newValue }
+            }
+            return action
+          })
           : [{ type: 'chatbot', eventType: 'onClick', prompt: newValue, apiKey: '' }]
 
         dispatch(
@@ -371,11 +371,11 @@ function ComponentToTakePropValue({
 
         const updatedActionsArr = isApiPresent
           ? actionData?.actionsArr.map((action: any) => {
-              if (action.type === 'chatbot') {
-                return { ...action, apiKey: newValue }
-              }
-              return action
-            })
+            if (action.type === 'chatbot') {
+              return { ...action, apiKey: newValue }
+            }
+            return action
+          })
           : [{ type: 'chatbot', eventType: 'onClick', apiKey: newValue, prompt: '' }]
 
         dispatch(

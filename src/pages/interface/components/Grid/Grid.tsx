@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import React, { createContext, useMemo } from 'react'
 import { ParamsEnums } from '../../../../enums'
-import addUrlDataHoc from '../../../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../../../hoc/addUrlDataHoc.tsx'
 import './Grid.scss'
 
 const Editabledgrid = React.lazy(() => import('./Editabledgrid.tsx'))

@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import RGL, { WidthProvider } from 'react-grid-layout'
 import { shallowEqual, useDispatch } from 'react-redux'
 import { ParamsEnums } from '../../../../enums'
-import addUrlDataHoc from '../../../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../../../hoc/addUrlDataHoc.tsx'
 import {
   getInterfaceDataByIdStart,
   setConfigModalState,
@@ -169,9 +169,8 @@ function Editabledgrid({ dragRef, ingrid = false, interfaceId, gridId = 'root', 
           return (
             <Box
               key={coord?.i}
-              className={`grid-item column box-sizing-border-box p-2 ${ingrid ? 'not_drag' : ''} ${
-                currentSelectedComponentId === coord?.i || nestedGridSliderOpen?.id === coord?.i ? 'selected-element' : ''
-              } `}
+              className={`grid-item column box-sizing-border-box p-2 ${ingrid ? 'not_drag' : ''} ${currentSelectedComponentId === coord?.i || nestedGridSliderOpen?.id === coord?.i ? 'selected-element' : ''
+                } `}
             >
               {!ingrid && (
                 <Box className='pos-abs element-header column'>

@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { ParamsEnums } from '../../../../enums'
-import addUrlDataHoc from '../../../../hoc/addUrlDataHoc.tsx'
+import addUrlDataHoc from '../../../hoc/addUrlDataHoc.tsx'
 import {
   deleteComponentStart,
   resetConfigModalState,
