@@ -1,0 +1,53 @@
+.config-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 400px;
+  background-color: #f9f8f8f6 !important;
+}
+
+.top-fixed {
+}
+
+.content-area {
+  flex-grow: 1; /* Take available space */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.propName {
+  font-weight: bold;
+  width: 30%;
+}
+
+.textField {
+  width: 100%;
+}
+
+.iframe-container {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100vh;
+  width: 1000px;
+  z-index: 1234567;
+  resize: horizontal;
+}
+.custom_styling_box {
+  height: 40px;
+}
+.resizable-box {
+  border-right: 1px solid #000;
+  overflow: hidden;
+}
+
+.resizing {
+  cursor: ew-resize;
+}
+.delete-button {
+  display: flex !important;
+  justify-content: center !important;
+}
+.custom_styling_cont {
+  border: 0.2px solid #ccc;
+  background-color: #faf9f6;
+}

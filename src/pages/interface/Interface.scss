@@ -1,0 +1,40 @@
+.interface {
+  &__page {
+  }
+  &__left-slider {
+    width: 400px;
+  }
+  &__grid {
+    background-color: #dff9fde8;
+    overflow-y: scroll;
+  }
+  &__child-slider {
+    background-color: #f7ebdbfa !important;
+    border-left: 1px solid #ccc;
+    width: 400px;
+  }
+}
+
+.textfield_box {
+  height: fit-content;
+}
+.button_box {
+  height: fit-content;
+}
+
+.component_box {
+  padding: 10px;
+}
+.grid-header {
+  border-bottom: 0.2px solid #ccc;
+  height: 48px !important;
+}
+.grid_slider_header {
+  background-color: #fff3dcdd;
+  border-bottom: 0.5px solid #ccc;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}

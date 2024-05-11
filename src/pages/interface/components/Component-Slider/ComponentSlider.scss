@@ -1,0 +1,39 @@
+.component_slider {
+  width: 300px !important;
+  border-left: 1px solid #ccc;
+  background-color: rgb(60, 63, 57);
+  height: 100vh;
+  padding: 10px 10px !important;
+  // padding-top: 10px !important;
+}
+
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card_box {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2) !important;
+  border-radius: 10px !important;
+  background-color: #e1eaf3 !important;
+  height: 120px;
+}
+
+.child_grid {
+  // padding: 0px !important;
+  // padding-bottom: 20px !important;
+}
+
+.card_bottom_container {
+  border-top: 0.5px solid gray;
+  background-color: #c2d4e7fa;
+}
+
+.image_container {
+  height: 100%;
+}
+
+.card_content {
+  overflow: hidden;
+}
