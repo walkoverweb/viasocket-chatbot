@@ -1,11 +1,7 @@
 import React from "react";
 import { Box } from "@mui/material";
 import "./InterfaceSetup.scss";
-import {
-  InterfaceConfigStepOne,
-  InterfaceConfigStepTwo,
-} from "./InterfaceConfigSteps.tsx";
-import SetDisplayConfig from "./SetDisplayConfig.tsx";
+import { InterfaceConfigStepOne } from "./InterfaceConfigSteps.tsx";
 
 export default function InterfaceSetupPage() {
   return (
