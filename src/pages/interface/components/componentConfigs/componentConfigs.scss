@@ -10,8 +10,10 @@
 }
 
 .content-area {
-  flex-grow: 1; /* Take available space */
-  overflow-y: auto; /* Enable vertical scrolling */
+  flex-grow: 1;
+  /* Take available space */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
 }
 
 .propName {
@@ -32,9 +34,11 @@
   z-index: 1234567;
   resize: horizontal;
 }
+
 .custom_styling_box {
   height: 40px;
 }
+
 .resizable-box {
   border-right: 1px solid #000;
   overflow: hidden;
@@ -43,10 +47,12 @@
 .resizing {
   cursor: ew-resize;
 }
+
 .delete-button {
   display: flex !important;
   justify-content: center !important;
 }
+
 .custom_styling_cont {
   border: 0.2px solid #ccc;
   background-color: #faf9f6;

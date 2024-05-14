@@ -1,0 +1,63 @@
+.color-white {
+  color: var(--col-white) !important;
+}
+.color-primary {
+  color: var(--col-primary) !important;
+}
+.color-black {
+  color: var(--col-dark) !important;
+}
+
+.color-blue {
+  color: var(--col-blue) !important;
+}
+.color-dark-lt {
+  color: var(--col-dark-lite);
+}
+.color-grey-one {
+  color: var(--col-grey-one);
+}
+.bg-white {
+  background-color: var(--col-white) !important;
+}
+
+.bg-black {
+  background-color: var(--col-dark) !important;
+}
+
+.bg-grey-white {
+  background-color: var(--col-grey-white) !important;
+}
+
+// notes background color
+.notes-bg {
+  background-color: var(--notes-bg-color) !important;
+}
+
+// logs Slider color
+.bg-log-slider {
+  background-color: var(--col-log-slider) !important;
+}
+
+// navabr notification flow page colors
+// active
+.nav-bg-active {
+  background-color: var(--navbar-bg-active) !important ;
+}
+.nav-btn-bg-active {
+  background-color: var(--navbar-btn-bg-active) !important;
+}
+// pause
+.nav-bg-pause {
+  background-color: var(--navbar-bg-pause) !important;
+}
+.nav-btn-bg-pause {
+  background-color: var(--navbar-btn-bg-pause) !important;
+}
+// delete
+.nav-bg-delete {
+  background-color: var(--navbar-bg-delete) !important;
+}
+.nav-btn-bg-delete {
+  background-color: var(--navbar-btn-bg-delete) !important;
+}

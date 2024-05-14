@@ -1,0 +1,35 @@
+//icons sizes
+
+.icon {
+  &__projectpage {
+    width: 18px !important;
+  }
+  &__small {
+    width: 18px !important;
+    height: auto;
+  }
+  &__offwhite {
+    color: #c3c3c3 !important;
+  }
+}
+
+//block sizes
+
+.block {
+  &__projectpage {
+    padding: 0px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: calc(var(--u-base) * 2);
+    font-size: var(--c-fs-3);
+    height: var(--slider-block-height);
+  }
+}
+
+// Text size
+.text {
+  &__offwhite {
+    color: #c3c3c3 !important;
+  }
+}

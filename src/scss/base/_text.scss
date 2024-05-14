@@ -1,0 +1,39 @@
+//font weight
+.fw-b {
+  font-weight: 700 !important;
+}
+.fw-sb {
+  font-weight: 600 !important;
+}
+.fw-md {
+  font-weight: 500 !important;
+}
+.fw-r {
+  font-weight: 400 !important;
+}
+.fw-th {
+  font-weight: 300 !important;
+}
+
+//font color
+.fc-prime {
+  color: var(--col-prime) !important;
+}
+.fc-dark {
+  color: var(--col-dark) !important;
+}
+.fc-white {
+  color: var(--col-white) !important;
+}
+.fc-grey {
+  color: var(--col-grey-one) !important;
+}
+
+//font family
+.ff-head {
+  font-family: "Inter", sans-serif;
+}
+.ff-body,
+body {
+  font-family: "Inter", sans-serif;
+}

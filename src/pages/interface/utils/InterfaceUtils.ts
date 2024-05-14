@@ -1,133 +1,130 @@
 export const ComponentJson: any = {
   Form: {
-    type: 'Form',
-    key: ''
+    type: "Form",
+    key: "",
   },
   TextField: {
-    type: 'TextField',
-    key: '',
+    type: "TextField",
+    key: "",
     props: {
-      label: '',
-      variant: 'outlined',
-      size: 'medium',
-      defaultValue: '',
-      placeholder: 'write text here',
-      type: 'text'
-    }
+      label: "",
+      variant: "outlined",
+      size: "medium",
+      defaultValue: "",
+      placeholder: "write text here",
+      type: "text",
+    },
   },
   Button: {
-    type: 'Button',
-    key: '',
+    type: "Button",
+    key: "",
     props: {
-      variant: 'outlined',
-      color: 'error',
-      label: 'button',
-      type: 'submit'
-    }
+      variant: "outlined",
+      color: "error",
+      label: "button",
+      type: "submit",
+    },
   },
   Checkbox: {
-    type: 'Checkbox',
-    key: '',
+    type: "Checkbox",
+    key: "",
     props: {
-      color: 'primary',
+      color: "primary",
       defaultChecked: false,
-      label: 'Checkbox'
-    }
+      label: "Checkbox",
+    },
   },
   Radio: {
-    type: 'Radio',
-    key: '',
+    type: "Radio",
+    key: "",
     props: {
-      color: 'primary',
-      name: 'Radio',
-      defaultValue: 'Hello',
-      options: ['Hello', 'Okk', 'Bye']
-    }
+      color: "primary",
+      name: "Radio",
+      defaultValue: "Hello",
+      options: ["Hello", "Okk", "Bye"],
+    },
   },
   Select: {
-    type: 'Select',
-    key: '',
+    type: "Select",
+    key: "",
     props: {
-      label: 'Select an option',
-      variant: 'outlined',
-      options: ['Option 1', 'Option 2', 'Option 3']
-    }
+      label: "Select an option",
+      variant: "outlined",
+      options: ["Option 1", "Option 2", "Option 3"],
+    },
   },
   DatePicker: {
-    type: 'DatePicker',
-    key: '',
+    type: "DatePicker",
+    key: "",
     props: {
-      label: 'Select a date',
-      variant: 'inline',
-      value: '2023-01-15'
-    }
+      label: "Select a date",
+      variant: "inline",
+      value: "2023-01-15",
+    },
   },
   Typography: {
-    type: 'Typography',
-    key: 'typography1',
+    type: "Typography",
+    key: "typography1",
     props: {
-      variant: 'bold',
+      variant: "bold",
       children: `I'm a text component.`,
-      textAlign: 'left'
-    }
+      textAlign: "left",
+    },
   },
   ChatBot: {
-    type: 'ChatBot',
-    key: 'ChatBot',
+    type: "ChatBot",
+    key: "ChatBot",
     props: {
-      variant: 'outlined',
-      value: '2023-01-15'
-    }
+      variant: "outlined",
+      value: "2023-01-15",
+    },
   },
   Icon: {
-    type: 'Icon',
-    key: 'Icon',
+    type: "Icon",
+    key: "Icon",
     props: {
-      variant: 'square',
-      src: 'https://cdn2.hubspot.net/hubfs/53/image8-2.jpg'
-    }
+      variant: "square",
+      src: "https://cdn2.hubspot.net/hubfs/53/image8-2.jpg",
+    },
   },
   Accordion: {
-    type: 'Accordion',
-    key: '',
+    type: "Accordion",
+    key: "",
     props: {
-      variant: 'outlined'
-    }
+      variant: "outlined",
+    },
   },
   Box: {
-    type: 'Box',
-    key: ''
+    type: "Box",
+    key: "",
   },
   Divider: {
-    type: 'Divider',
-    key: '',
+    type: "Divider",
+    key: "",
     props: {
-      orientation: 'horizontal'
-    }
+      orientation: "horizontal",
+    },
   },
   Table: {
-    type: 'Table',
-    key: '',
+    type: "Table",
+    key: "",
     props: {
+      // Common props
       columns: [],
       data: [
-        { id: 1, name: 'John', age: 30 },
-        { id: 2, name: 'Alice', age: 25 },
-        { id: 3, name: 'Bob', age: 55 },
-        { id: 4, name: 'Bosb', age: 45 }
+        { id: 1, name: "John", age: 30 },
+        { id: 2, name: "Alice", age: 25 },
+        { id: 3, name: "Bob", age: 55 },
+        { id: 4, name: "Bosb", age: 45 },
       ],
-      // source: "async function getTableData(...additional paramters which is used for api call but optional){const {data} = await axios.post('https://flow.sokt.io/func/+name of the function call'); return { data: exact path of the array of json from the data fetched from api, parameters: {...additinal parameters from the data of the api which can be used to pass same this function and get the next data } ",
-      source: '{{JS Code here}}',
-      explanation:
-        'do not give data key in props, JavaScript Code as example -- async function getTableData({parameter1, parameter2, replace with actual parameters}) { const {data} = await axios.post(`https://flow.sokt.io/func/$(function_name)`, offset , limit, parameter3); return { result: "exact path of data from the result", parameters: "path of parameters" } }'
-    }
-  }
-}
+    },
+  },
+};
 
 export function set(obj: any, path: string, value: any) {
-  if (!path) return value
-  if (Object(obj) !== obj) return obj // If the object is not an object, return it.
-  if (!Array.isArray(path)) path = path.toString().match(/[^.[\]]+/g) || [] // Convert path to array if not already.
+  if (!path) return value;
+  if (Object(obj) !== obj) return obj; // If the object is not an object, return it.
+  if (!Array.isArray(path)) path = path.toString().match(/[^.[\]]+/g) || []; // Convert path to array if not already.
 
   path.slice(0, -1).reduce((a, c, i) => {
     // Iterate through the path, except for the last part.
@@ -136,133 +133,146 @@ export function set(obj: any, path: string, value: any) {
       : (a[c] =
           Math.abs(path[i + 1]) >> 0 === +path[i + 1] // Check if the next key is an array index.
             ? [] // If yes, create a new array.
-            : {}) // Otherwise, create a new object.
-  }, obj)[path[path.length - 1]] = value // Set the value at the final part of the path.
+            : {}); // Otherwise, create a new object.
+  }, obj)[path[path.length - 1]] = value; // Set the value at the final part of the path.
 
-  return obj // Return the updated object.
+  return obj; // Return the updated object.
 }
 
 export function get(obj: any, path: string, defaultValue: any = undefined) {
   if (!path) {
-    return defaultValue
+    return defaultValue;
   }
 
-  const keys = path?.split('.')
-  let result = obj
+  const keys = path?.split(".");
+  let result = obj;
 
   /* eslint-disable-next-line no-restricted-syntax */
   for (const key of keys) {
-    if (result && typeof result === 'object' && key in result) {
-      result = result[key]
+    if (result && typeof result === "object" && key in result) {
+      result = result[key];
     } else {
-      return defaultValue
+      return defaultValue;
     }
   }
 
-  return result !== undefined ? result : defaultValue
+  return result !== undefined ? result : defaultValue;
 }
 
 export function unset(obj: any, path: string) {
-  if (typeof obj !== 'object' || obj === null || typeof path !== 'string') {
-    return false
+  if (typeof obj !== "object" || obj === null || typeof path !== "string") {
+    return false;
   }
 
-  let current = obj
-  const pathParts = path?.split('.')
-  const lastIndex = pathParts.length - 1
+  let current = obj;
+  const pathParts = path?.split(".");
+  const lastIndex = pathParts.length - 1;
 
   for (let i = 0; i < lastIndex; ++i) {
     if (current[pathParts[i]] === undefined) {
       // Early return if the path is not found
-      return false
+      return false;
     }
-    current = current[pathParts[i]]
+    current = current[pathParts[i]];
   }
 
   if (lastIndex > 0 && current[pathParts[lastIndex]] !== undefined) {
-    delete current[pathParts[lastIndex]]
-    return true
+    delete current[pathParts[lastIndex]];
+    return true;
   }
   if (lastIndex === 0 && obj[pathParts[0]] !== undefined) {
     // Handle single-level paths
-    delete obj[pathParts[0]]
-    return true
+    delete obj[pathParts[0]];
+    return true;
   }
 
-  return false
+  return false;
 }
 
 export function shallowEqual(obj1: any, obj2: any) {
-  const keys1 = Object.keys(obj1)
-  const keys2 = Object.keys(obj2)
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
 
   // Check if the number of properties is the same
   if (keys1.length !== keys2.length) {
-    return false
+    return false;
   }
 
   // Check if the values of corresponding properties are equal
   /* eslint-disable-next-line no-restricted-syntax */
   for (const key of keys1) {
     if (obj1[key] !== obj2[key]) {
-      return false
+      return false;
     }
   }
 
-  return true
+  return true;
 }
 
 export const gridXY = {
   rowHeight: 4,
-  cols: 12
-}
+  cols: 12,
+};
 
 export const DataforComponents: any = {
   Button: {
     initialDimensions: {
       h: 20 / gridXY.rowHeight,
-      w: gridXY.cols / 10
+      w: gridXY.cols / 10,
     },
-    variants: ['contained', 'outlined', 'text'],
-    props: ['key', 'id', 'label', 'color', 'disabled', 'href', 'variant'],
+    variants: ["contained", "outlined", "text"],
+    props: ["key", "id", "label", "color", "disabled", "href", "variant"],
     actions: [
-      { type: 'flow', title: 'Connect to flow' },
-      { type: 'navigate', title: 'Navigate to page' },
-      { type: 'alert', title: 'Alert' },
-      { type: 'sendDataToFrontend', title: 'Send Data To Frontend' }
-    ]
+      { type: "flow", title: "Connect to flow" },
+      { type: "navigate", title: "Navigate to page" },
+      { type: "alert", title: "Alert" },
+      { type: "sendDataToFrontend", title: "Send Data To Frontend" },
+    ],
   },
   TextField: {
     initialDimensions: {
       h: 24 / gridXY.rowHeight,
-      w: gridXY.cols / 6
+      w: gridXY.cols / 6,
     },
-    variants: ['filled', 'standard', 'outlined'],
+    variants: ["filled", "standard", "outlined"],
     props: [
-      'key',
-      'label',
-      'required',
-      'type',
-      'variant',
-      'disabled',
-      'multiline',
-      'rows',
-      'minRows',
-      'maxRows',
-      'multiple',
-      'value',
-      'defaultValue',
-      'placeholder'
+      "key",
+      "label",
+      "required",
+      "type",
+      "variant",
+      "disabled",
+      "multiline",
+      "rows",
+      "minRows",
+      "maxRows",
+      "multiple",
+      "value",
+      "defaultValue",
+      "placeholder",
     ],
-    type: ['text', 'password', 'number', 'email', 'tel', 'url', 'search', 'date', 'time', 'datetime-local', 'month', 'week']
+    type: [
+      "text",
+      "password",
+      "number",
+      "email",
+      "tel",
+      "url",
+      "search",
+      "date",
+      "time",
+      "datetime-local",
+      "month",
+      "week",
+    ],
   },
   ChatBot: {
     initialDimensions: {
       h: 150 / gridXY.rowHeight,
-      w: gridXY.cols / 2
+      w: gridXY.cols / 2,
     },
     variants: [],
-    props: ['key']
+    props: ["key"],
     // actions: [
     //   {
     //     type: 'chatbot',
@@ -273,171 +283,212 @@ export const DataforComponents: any = {
   Form: {
     initialDimensions: {
       h: 120 / gridXY.rowHeight,
-      w: gridXY.cols / 3
+      w: gridXY.cols / 3,
     },
     variants: [],
-    props: ['key']
+    props: ["key"],
   },
   DatePicker: {
     initialDimensions: {
       h: 20 / gridXY.rowHeight,
-      w: gridXY.cols / 10
+      w: gridXY.cols / 10,
     },
     variants: [],
-    props: ['key']
+    props: ["key"],
   },
   Checkbox: {
     initialDimensions: {
       h: 20 / gridXY.rowHeight,
-      w: gridXY.cols / 6
+      w: gridXY.cols / 6,
     },
     variants: [],
-    props: ['key', 'id', 'label', 'color', 'disabled', 'checked', 'defaultChecked']
+    props: [
+      "key",
+      "id",
+      "label",
+      "color",
+      "disabled",
+      "checked",
+      "defaultChecked",
+    ],
   },
   Radio: {
     initialDimensions: {
       h: 50 / gridXY.rowHeight,
-      w: gridXY.cols / 6
+      w: gridXY.cols / 6,
     },
     variants: [],
-    props: ['key', 'options', 'required', 'name', 'color', 'disabled', 'value', 'defaultValue']
+    props: [
+      "key",
+      "options",
+      "required",
+      "name",
+      "color",
+      "disabled",
+      "value",
+      "defaultValue",
+    ],
   },
   Select: {
     initialDimensions: {
       h: 20 / gridXY.rowHeight,
-      w: gridXY.cols / 6
+      w: gridXY.cols / 6,
     },
-    variants: ['filled', 'standard', 'outlined'],
-    props: ['key', 'options', 'label', 'disabled', 'value', 'defaultValue', 'variant']
+    variants: ["filled", "standard", "outlined"],
+    props: [
+      "key",
+      "options",
+      "label",
+      "disabled",
+      "value",
+      "defaultValue",
+      "variant",
+    ],
   },
   Typography: {
     initialDimensions: {
       h: 30 / gridXY.rowHeight,
-      w: gridXY.cols / 6
+      w: gridXY.cols / 6,
     },
-    variants: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'base', 'smallHeading', 'bold'],
-    textAlignments: ['left', 'center', 'right', 'start', 'end', 'justify'],
-    props: ['key', 'id', 'color', 'children', 'variant', 'textAlign']
+    variants: [
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "base",
+      "smallHeading",
+      "bold",
+    ],
+    textAlignments: ["left", "center", "right", "start", "end", "justify"],
+    props: ["key", "id", "color", "children", "variant", "textAlign"],
   },
   Icon: {
     initialDimensions: {
       h: 30 / gridXY.rowHeight,
-      w: gridXY.cols / 4
+      w: gridXY.cols / 4,
     },
-    props: ['key', 'src', 'variant'],
-    variants: ['square', 'circlular', 'rounded']
+    props: ["key", "src", "variant"],
+    variants: ["square", "circlular", "rounded"],
   },
   Accordion: {
     initialDimensions: {
       h: 30 / gridXY.rowHeight,
-      w: gridXY.cols / 4
+      w: gridXY.cols / 4,
     },
-    props: ['key', 'title', 'description', 'variant'],
-    variants: ['outlined', 'elevation']
+    props: ["key", "title", "description", "variant"],
+    variants: ["outlined", "elevation"],
   },
   Box: {
     initialDimensions: {
       h: 120 / gridXY.rowHeight,
-      w: gridXY.cols / 3
+      w: gridXY.cols / 3,
     },
     variants: [],
-    props: ['key']
+    props: ["key"],
   },
   Divider: {
     initialDimensions: {
       h: 24 / gridXY.rowHeight,
-      w: gridXY.cols / 5
+      w: gridXY.cols / 5,
     },
-    props: ['key', 'type'],
-    type: ['horizontal', 'vertical']
+    props: ["key", "type"],
+    type: ["horizontal", "vertical"],
   },
   Table: {
     initialDimensions: {
       h: 90 / gridXY.rowHeight,
-      w: gridXY.cols / 2
+      w: gridXY.cols / 2,
     },
-    variants: ['standard', 'outlined', 'bordered', 'simple'],
-    props: ['key', 'id', 'data', 'pagination', 'columns', 'checkbox']
-  }
-}
+    variants: ["standard", "outlined", "bordered", "simple"],
+    props: ["key", "id", "data", "pagination", "columns", "checkbox"],
+  },
+};
 
 export const allowedProps: any = {
-  key: 'string',
-  variant: 'string',
-  color: 'string',
-  onClick: 'function',
-  disabled: 'boolean',
-  href: 'string',
-  onChange: 'function',
-  value: 'string',
-  defaultValue: 'string',
-  label: 'string',
-  multiline: 'boolean',
-  maxRows: 'number',
-  rows: 'number',
-  minRows: 'number',
-  id: 'string',
-  placeholder: 'string',
-  autoFocus: 'boolean',
-  required: 'boolean',
-  type: 'string',
-  children: 'string',
-  options: 'array',
-  checked: 'boolean',
-  defaultChecked: 'boolean',
-  chatbot: 'chatbot',
-  src: 'string',
-  title: 'string',
-  description: 'sring',
-  orientation: 'string',
-  textAlign: 'string',
-  data: 'array',
-  customStyles: 'string',
-  pagination: 'boolean',
-  checkbox: 'boolean'
-}
+  key: "string",
+  variant: "string",
+  color: "string",
+  onClick: "function",
+  disabled: "boolean",
+  href: "string",
+  onChange: "function",
+  value: "string",
+  defaultValue: "string",
+  label: "string",
+  multiline: "boolean",
+  maxRows: "number",
+  rows: "number",
+  minRows: "number",
+  id: "string",
+  placeholder: "string",
+  autoFocus: "boolean",
+  required: "boolean",
+  type: "string",
+  children: "string",
+  options: "array",
+  checked: "boolean",
+  defaultChecked: "boolean",
+  chatbot: "chatbot",
+  src: "string",
+  title: "string",
+  description: "sring",
+  orientation: "string",
+  textAlign: "string",
+  data: "array",
+  customStyles: "string",
+  pagination: "boolean",
+  checkbox: "boolean",
+};
 
 export function formInitialChildren(type: string) {
-  const uniqueTime = ((Date.now() / 1000) * 1000)?.toString()
-  const textfield1Id = `TextField${(Math.random() + uniqueTime).toString(36).slice(2, 7)}`
-  const textfield2Id = `TextField${(Math.random() + uniqueTime).toString(36).slice(2, 7)}`
-  const ButtonId = `Button${(Math.random() + uniqueTime).toString(36).slice(2, 7)}`
-  if (type === 'Form') {
+  const uniqueTime = ((Date.now() / 1000) * 1000)?.toString();
+  const textfield1Id = `TextField${(Math.random() + uniqueTime)
+    .toString(36)
+    .slice(2, 7)}`;
+  const textfield2Id = `TextField${(Math.random() + uniqueTime)
+    .toString(36)
+    .slice(2, 7)}`;
+  const ButtonId = `Button${(Math.random() + uniqueTime)
+    .toString(36)
+    .slice(2, 7)}`;
+  if (type === "Form") {
     return {
       components: {
         [textfield1Id]: {
-          type: 'TextField',
+          type: "TextField",
           key: textfield1Id,
           props: {
-            label: '',
-            variant: 'outlined',
-            size: 'medium',
-            defaultValue: '',
-            placeholder: 'Enter username'
-          }
+            label: "",
+            variant: "outlined",
+            size: "medium",
+            defaultValue: "",
+            placeholder: "Enter username",
+          },
         },
         [textfield2Id]: {
-          type: 'TextField',
+          type: "TextField",
           key: textfield2Id,
           props: {
-            label: '',
-            variant: 'outlined',
-            size: 'medium',
-            defaultValue: '',
-            type: 'password',
-            placeholder: 'Enter password'
-          }
+            label: "",
+            variant: "outlined",
+            size: "medium",
+            defaultValue: "",
+            type: "password",
+            placeholder: "Enter password",
+          },
         },
         [ButtonId]: {
-          type: 'Button',
+          type: "Button",
           key: ButtonId,
           props: {
-            variant: 'contained',
-            color: 'success',
-            label: 'submit',
-            type: 'submit'
-          }
-        }
+            variant: "contained",
+            color: "success",
+            label: "submit",
+            type: "submit",
+          },
+        },
       },
       coordinates: {
         [textfield1Id]: {
@@ -448,7 +499,7 @@ export function formInitialChildren(type: string) {
           i: textfield1Id,
           moved: false,
           static: false,
-          isDraggable: true
+          isDraggable: true,
         },
         [textfield2Id]: {
           h: 30 / gridXY.rowHeight,
@@ -458,7 +509,7 @@ export function formInitialChildren(type: string) {
           i: textfield2Id,
           moved: false,
           static: false,
-          isDraggable: true
+          isDraggable: true,
         },
         [ButtonId]: {
           h: 20 / gridXY.rowHeight,
@@ -468,25 +519,25 @@ export function formInitialChildren(type: string) {
           i: ButtonId,
           moved: false,
           static: false,
-          isDraggable: true
-        }
-      }
-    }
+          isDraggable: true,
+        },
+      },
+    };
   }
-  if (type === 'ChatBot') {
+  if (type === "ChatBot") {
     return {
       components: {
         [textfield1Id]: {
-          type: 'TextField',
+          type: "TextField",
           key: textfield1Id,
           props: {
-            label: '',
-            variant: 'outlined',
-            size: 'medium',
-            defaultValue: '',
-            placeholder: 'Enter username'
-          }
-        }
+            label: "",
+            variant: "outlined",
+            size: "medium",
+            defaultValue: "",
+            placeholder: "Enter username",
+          },
+        },
       },
       coordinates: {
         [textfield1Id]: {
@@ -497,24 +548,28 @@ export function formInitialChildren(type: string) {
           i: textfield1Id,
           moved: false,
           static: false,
-          isDraggable: true
-        }
-      }
-    }
+          isDraggable: true,
+        },
+      },
+    };
   }
-  return { components: {}, coordinates: {} }
+  return { components: {}, coordinates: {} };
 }
 
 export const intefaceSetLocalStorage = (key: string, value: string) => {
-  if (process.env.REACT_APP_API_ENVIRONMENT === 'local') {
-    window.interfaceData = JSON.stringify({ ...JSON.parse(window?.interfaceData || '{}'), [key]: value })
-    return
+  if (process.env.REACT_APP_API_ENVIRONMENT === "local") {
+    window.interfaceData = JSON.stringify({
+      ...JSON.parse(window?.interfaceData || "{}"),
+      [key]: value,
+    });
+    return;
   }
-  localStorage.setItem(key, value)
-}
+  localStorage.setItem(key, value);
+};
 export const intefaceGetLocalStorage = (key: string) => {
-  if (process.env.REACT_APP_API_ENVIRONMENT === 'local') {
-    return JSON.parse(window?.interfaceData || '{}')?.[key]
+  if (process.env.REACT_APP_API_ENVIRONMENT === "local") {
+    console.log("window?.interfaceData", window?.interfaceData);
+    return JSON.parse(window?.interfaceData || "{}")?.[key];
   }
-  return localStorage.getItem(key)
-}
+  return localStorage.getItem(key);
+};

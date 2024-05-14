@@ -1,0 +1,157 @@
+:root {
+  // font size
+  --font-base: 14px;
+  --font-small-heading: 12px;
+  --font-heading: 24px;
+
+  --font-base-1: 16px;
+
+  // headings
+  // --fs-head1: clamp(22px, 2vw, 28px);
+  // --fs-head2: clamp(18px, 2vw, 22px);
+  // --fs-head3: clamp(16px, 1vw, 20px);
+  // --fs-head4: clamp(12px, 1vw, 16px);
+  // // base
+  // --fs-base: clamp(12px, 1vw, 14px);
+  // --fs-base3: clamp(24px, 2vw, 30px);
+  // --fs-base2: clamp(16px, 2vw, 20px);
+  // --fs-base1: clamp(10px, 1vw, 12px);
+
+  // button
+  --fs-button: 12px; //
+
+  //input size width
+  --width-small: clamp(100px, 18vw, 300px);
+  --width-medium: clamp(300px, 40vw, 600px);
+  --width-large: clamp(600px, 60vw, 900px);
+  --width-max: 100%;
+  --width-fill: 100%;
+
+  // input size height
+
+  --height-max: 100%;
+  --height-navbar: 56px;
+  //utility base
+
+  --u-base: 4px;
+
+  //slider width
+  --log-slider-w: 300px;
+  --log-slider-w-minus: -345px;
+  --project-slider-w: 300px;
+  --script-slider-w: 300px; //script slider
+  --embed-slider-w: clamp(280px, 18vw, 350px);
+  --template-slider-w: 340px;
+  --worflow-container-w: clamp(500px, 60vw, 800px);
+  --right-slider-w: clamp(450px, 45vw, 700px);
+  // --suggestion-box-w: clamp(340px, 30vw, 400px);
+  // --alert-slider-w: 400px;
+  --chatbot-slider-w: 30vw;
+  --suggestion-box-w: clamp(400px, 35vw, 600px);
+
+  --alert-slider-w: var(--chatbot-slider-w);
+  --plugin-dashboard-w: 300px;
+  //modal width
+  --create-modal-w: 500px;
+
+  //modal height
+  --create-modal-h: 500px;
+
+  //border-radius
+  --border-radius-mui: 2;
+  --block-radius: var(--u-base);
+
+  // colors
+  --col-accent: #70ffaf;
+  --col-white-dark: #c3c3c3;
+  --col-block-active: #2f7351;
+  --col-block-hover: #3d3d3d;
+  --col-project-slider-hover: #454545;
+  --col-flow-slider-hover: #525252;
+
+  //primary
+  --col-primary: #333333;
+  --col-primary-live: #333333;
+  --col-primary-draft: #000000;
+  --col-primary-log: #333333;
+
+  --col-primary-lite: #d9f2d9;
+  --col-navbar-live-log: #000000;
+  //danger
+  --col-danger: #f50000;
+  --col-danger-lite: #ffb9b9;
+
+  //dark
+  --col-dark: #1c1c1c;
+  --col-dark-lite: #e6e6e6;
+
+  //link
+  --col-link: #0d6efd;
+  --col-link-lite: #cce1ff;
+
+  --col-primary-20: #c6ecc6;
+  --col-primary-10: #ecf9ec;
+  --col-primary-5: rgba(156, 156, 154, 0.067);
+
+  --col-error: #8b0000;
+  --col-warning: #ed6c02;
+  --col-info: #0288d1;
+  --col-success: #2e7d32;
+  --col-link: #007bff;
+  --col-text-primary: rgba(0, 0, 0, 0.87);
+  --col-text-secondary: rgba(0, 0, 0, 0.6);
+  --col-text-disabled: rgba(0, 0, 0, 0.38);
+  --col-text-hint: rgba(0, 0, 0, 0.38);
+
+  --col-selected-tab: #f7f7f7;
+
+  --col-dark: #1c1c1c;
+  --col-grey-one: #818181;
+  --col-grey-two: #d5d9dc;
+  --col-grey-three: #ededed;
+  --col-grey-four: #fafafa;
+  --col-grey-white: #f7f7f7;
+
+  --col-border: #d5d9dc;
+
+  --col-white: #ffffff;
+  --colo-blue: blue;
+  --col-slider-layout: rgba(244, 243, 241, 1);
+  --col-project-slider: #2b2b2b;
+  --col-flow-slider: #383838;
+  --col-log-slider: lightgrey;
+  --col-template-slider: #fafafa;
+  --col-right-slider: #faf9f6;
+  --col-embed-slider: #f5f5f5;
+  --col-chatbot: #fff;
+  --col-siggestion-box: #f7f7f7;
+  --col-grey-background: #fff;
+  --col-alert-slider: rgb(253, 243, 234);
+
+  // slider blocks height
+  --slider-block-height: 28px;
+
+  // create button
+  --create-btn-color: #01c2ff;
+
+  // list Item Margin
+  --list-item-margin: 4px 0px;
+
+  // dialog/popup box
+  --dilaog-min-width: 600px;
+  --dialog-max-width: 600px;
+
+  // notes background color
+  --notes-bg-color: #fcfade;
+
+  // navabr notification color
+  // active
+  --navbar-bg-active: #e5f6fd;
+  --navbar-btn-bg-active: #1d94d6;
+  // delete
+  --navbar-bg-delete: #ffbabe;
+  --navbar-btn-bg-delete: #ffd672;
+  // pause
+  --navbar-bg-pause: #fff4e5;
+  --navbar-btn-bg-pause: #ffd672;
+}

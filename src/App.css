@@ -1,38 +1,136 @@
-.App {
-  text-align: center;
+body {
+  -ms-overflow-style: none !important;
+  background-color: white !important;
+  font-family: "Inter", sans-serif !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+::-webkit-scrollbar {
+  display: none !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* primary button classes */
+.panelDrawerBtn {
+  color: white !important;
+  width: auto !important;
+  height: 2rem !important;
+  background-color: black !important;
+  font-size: 12px !important;
+  margin-top: 7px !important;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.panelDrawerBtn:hover {
+  background-color: #2c3e50 !important;
+  color: white !important;
 }
 
-.App-link {
-  color: #61dafb;
+.useDollorSuggestion {
+  /* cursor: pointer; */
+  position: absolute;
+  right: 0%;
+  top: 100%;
+  transform: translate(0%, 0%);
+  color: rgb(87 85 85);
+  z-index: 999;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* dialog title in popupmodal */
+.dialogTitle {
+  font-weight: bolder !important;
+  font-size: 1.2rem !important;
+  padding: 0px 0px 0px 10px !important;
+}
+
+/* cursor class */
+.cur-pointer {
+  cursor: pointer !important;
+}
+
+.cur-grab {
+  cursor: grab !important;
+}
+
+.MuiOutlinedInput-root {
+  border-radius: 0px !important;
+}
+
+.body {
+  background-color: white !important;
+}
+
+textarea {
+  padding: 0 !important;
+  margin: 0 !important;
+  resize: none;
+}
+
+.actionBtns {
+  background-color: #1c2833 !important;
+  font-size: 12px !important;
+}
+
+.actionBtns:hover {
+  background-color: white !important;
+  color: #273746 !important;
+  font-weight: bold !important;
+}
+
+/* react-autosuggest-container css  */
+.react-autosuggest__container {
+  position: relative !important;
+  padding: 0px !important;
+  margin: 0px !important;
+  width: 95.2% !important;
+}
+
+/* making dragicon dull */
+.dragicon {
+  opacity: 50%;
+}
+
+.resizable-component {
+  position: fixed !important;
+  bottom: 0px !important;
+  left: 0px !important;
+  right: 0px !important;
+  z-index: 0 !important;
+}
+
+.chip {
+  background-color: cadetblue;
+}
+
+.custom-suggest-style {
+  min-width: 100%;
+  width: 100%;
+  max-width: 100% !important;
+  min-height: 100px !important;
+  outline: none !important;
+}
+
+.rawDataTitle {
+  font-weight: 600;
+}
+
+/* Add this CSS in a separate .css file or within your component's style block */
+.truncated-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.truncated-text:hover {
+  text-overflow: clip;
+  /* This will reveal the full text on hover */
+}
+
+.z-index-99 {
+  z-index: 99 !important;
+}
+
+.searchbar {
+  border: 0.1px solid #ccc;
+}
+
+.focus-border-search-bar {
+  border: 1px solid hsl(213.16deg 73.79% 40.39%) !important;
 }

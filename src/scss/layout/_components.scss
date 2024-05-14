@@ -1,0 +1,103 @@
+//blocks
+$accent: #70ffaf;
+@function calculate-five-percent($hex, $opacity) {
+  $r: red($hex);
+  $g: green($hex);
+  $b: blue($hex);
+
+  @return rgba($r, $g, $b, $opacity);
+}
+
+@mixin block {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: calc(var(--u-base) * 2);
+  font-size: var(--c-fs-3);
+  div {
+    padding: var(--u-base) calc(var(--u-base) * 2);
+  }
+}
+.block {
+  &__slider {
+    @include block;
+    .sliderblock {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  &__flow {
+    @include block;
+  }
+}
+
+.block {
+  // color: var(--col-white-dark);
+
+  &:hover {
+    background-color: var(--col-block-hover);
+  }
+}
+.block-active {
+  background-color: calculate-five-percent($accent, 0.05);
+  color: var(--col-accent);
+}
+
+//icons
+.icon {
+  &__slider {
+    width: 18px !important;
+    height: auto !important;
+  }
+}
+
+//Button
+.btn {
+  &__create:hover {
+    color: white !important;
+    cursor: pointer !important;
+  }
+}
+
+// list
+
+.more-icon-visible {
+  opacity: 0 !important;
+}
+
+.selected-list-item {
+  color: var(--col-white);
+  background-color: var(--col-block-active);
+  border-radius: var(--block-radius);
+  .icon__offwhite {
+    color: var(--col-white) !important;
+  }
+  .accordion-item {
+    color: var(--col-white) !important;
+  }
+  &:hover .opacity-0 {
+    opacity: 1 !important;
+  }
+}
+
+.accordion-list-item:hover {
+  background-color: var(--col-block-hover);
+  border-radius: var(--block-radius);
+
+  cursor: pointer;
+  .icon__offwhite {
+    color: var(--col-white) !important;
+  }
+  .accordion-item {
+    color: var(--col-white) !important;
+  }
+}
+
+.list-item {
+  &:hover .opacity-0 {
+    opacity: 1 !important;
+  }
+}
