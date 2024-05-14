@@ -119,19 +119,6 @@ export async function deleteComponentOrGridApi(
   return response?.data?.data;
 }
 
-export async function sendMessageChatbotapi(
-  interfaceId: string,
-  data: any
-): Promise<{ [key: string]: any }[]> {
-  const response = await axios.post(
-    `${process.env.REACT_APP_PLUGINSERVICESURL}/api/v1/chatbot/sendmessage/${interfaceId}`,
-    {
-      userId: data.userId,
-      userMessage: data.message,
-    }
-  );
-  return response?.data?.data;
-}
 export async function getPreviousMessage(
   interfaceId: string,
   threadId: string | null,

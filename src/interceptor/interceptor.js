@@ -30,8 +30,6 @@ const axios = setupCache(instance, {
 // const headerKey = (key) => {
 //   let head = key === 'accessToken' ? 'Authorization' : key
 //   head =
-//     process.env.REACT_APP_API_ENVIRONMENT !== 'local' &&
-//     process.env.REACT_APP_AUTH_URL === `https://${getSubdomain()}` &&
 //     (urlParams.get('mode') === MiscTypes.EMBED_MODE || urlParams.get('state'))
 //       ? 'Authorization'
 //       : head
@@ -63,9 +61,7 @@ axios.interceptors.request.use(
     //     ? getFromCookies(getCurrentEnvironment())
     //     : sessionStorage.getItem('ssoEmbedToken')
     // if (token) {
-    //   if (mode !== 'flow' && process.env.REACT_APP_API_ENVIRONMENT === 'local') {
-    //     config.headers['proxy_auth_token'] = localStorage.getItem('proxy_auth_token')
-    //   }
+
     //   if (intefaceGetLocalStorage('interfaceToken')) {
     //     key = 'Authorization'
     //     token = intefaceGetLocalStorage('interfaceToken')
@@ -101,13 +97,7 @@ axios.interceptors.response.use(
       removeCookie(getCurrentEnvironment());
       localStorage.clear();
 
-      let redirectUrl;
-
-      if (process.env.REACT_APP_API_ENVIRONMENT === "prod") {
-        redirectUrl = new URL(process.env.REACT_APP_VIASOCKET_HOME_PAGE_URL);
-      } else {
-        redirectUrl = new URL(window.location.origin);
-      }
+      const redirectUrl = new URL(window.location.origin);
 
       redirectUrl.searchParams.append("error", "session expired");
 

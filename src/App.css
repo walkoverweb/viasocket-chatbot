@@ -2,6 +2,8 @@ body {
   -ms-overflow-style: none !important;
   background-color: white !important;
   font-family: "Inter", sans-serif !important;
+  margin: 0px;
+  padding: 0px;
 }
 
 ::-webkit-scrollbar {

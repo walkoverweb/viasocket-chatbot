@@ -3,12 +3,13 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import "./scss/global.scss";
 import InterfaceEmbed from "./pages/interface/pages/InterfaceEmbed/InterfaceEmbed.tsx";
+import InterfaceChatbot from "./pages/interface/components/Interface-Chatbot/InterfaceChatbot.tsx";
 
-const Viewonlygrid = React.lazy(() =>
-  import(
-    /* webpackChunkName: "viewonlygrid" */ "./pages/interface/components/Grid/Viewonlygrid.tsx"
-  )
-);
+// const Viewonlygrid = React.lazy(() =>
+//   import(
+//     /* webpackChunkName: "viewonlygrid" */ "./pages/interface/components/Grid/Viewonlygrid.tsx"
+//   )
+// );
 
 // Interface Routes
 const Interface = React.lazy(() =>
@@ -51,7 +52,7 @@ function App() {
           element={
             <div id="parent-view-only-grid" className="h-100vh w-100">
               <React.Suspense fallback="Loading....">
-                <Viewonlygrid />
+                <InterfaceChatbot />
               </React.Suspense>
             </div>
           }

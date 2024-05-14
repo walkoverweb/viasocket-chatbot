@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useDispatch } from "react-redux";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -41,17 +41,22 @@ function Interface({ interfaceId }: InterfaceProps) {
   };
 
   return (
-    <Box className="interface__page flex w-100 h-100vh box-sizing-border-box ">
+    <Box className="flex w-100 h-100vh box-sizing-border-box">
+      <Box>
+        <ComponentSlider dragRef={dragRef} />
+      </Box>
       <Box className="interface__grid flex-grow h-100vh column box-sizing-border-box ">
         <div className="flex-spaceBetween-center p-2 box-sizing-border-box grid-header">
-          <Link
-            to={`${process.env.REACT_APP_INTERFACE_URL}/i/${interfaceId}`}
-            target="_blank"
+          <Button
+            variant="contained"
+            color="primary"
+            className="ml-3"
+            onClick={() => {
+              navigate(`/i/${interfaceId}`);
+            }}
           >
-            <Button variant="contained" color="primary" className="ml-3">
-              Preview
-            </Button>
-          </Link>
+            Preview
+          </Button>
           <Box className="flex-start-center">
             {isLoading ? (
               <>
@@ -99,10 +104,6 @@ function Interface({ interfaceId }: InterfaceProps) {
 
       <Box className={openConfigModal ? "" : "d-none"}>
         <ComponentConfigs />
-      </Box>
-
-      <Box className={openConfigModal ? "d-none" : ""}>
-        <ComponentSlider dragRef={dragRef} />
       </Box>
     </Box>
   );
