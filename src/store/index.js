@@ -1,4 +1,3 @@
-import thunkMiddleware from "redux-thunk";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import createSagaMiddleware from "redux-saga";
@@ -21,12 +20,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: persistedReducer,
-  middleware: [
-    ...getDefaultMiddleware(),
-    customMiddleware,
-    thunkMiddleware,
-    sagaMiddleware,
-  ], // Use 'thunk' directly here
+  middleware: [...getDefaultMiddleware(), customMiddleware, sagaMiddleware], // Use 'thunk' directly here
 });
 sagaMiddleware.run(rootSaga);
 export const persistor = persistStore(store);
