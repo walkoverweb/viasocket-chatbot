@@ -94,9 +94,7 @@ export async function deleteInterfaceApi(
 export async function getInterfaceByIdApi(
   interfaceId: string
 ): Promise<{ [key: string]: any }[]> {
-  const response = await axios.get(
-    `${URL}/interfaces/${interfaceId}/getoneinterface`
-  );
+  const response = await axios.get(`${URL}/chatbot/${interfaceId}/getchatbot`);
   return response?.data?.data;
 }
 
@@ -120,27 +118,26 @@ export async function deleteComponentOrGridApi(
 }
 
 export async function getPreviousMessage(
-  interfaceId: string,
   threadId: string | null,
-  bridge: string | null,
-  actionId: string | null
+  bridge: string | null
 ): Promise<{ [key: string]: any }[]> {
   const response = await axios.get(
-    `${URL}/interfaces/${interfaceId}/getData?threadId=${
-      threadId || ""
-    }&bridgeName=${bridge}&actionId=${actionId}`
+    // `${URL}/interfaces/${interfaceId}/getData?threadId=${
+    `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridge}`
   );
   return response?.data?.data;
 }
 export async function sendDataToAction(
-  actionId: string,
   data: any
 ): Promise<{ [key: string]: any }[]> {
   if (!data.threadId) data.threadId = "";
 
-  const response = await axios.post(`${URL}/interfaces/action/${actionId}`, {
-    ...data,
-  });
+  const response = await axios.post(
+    `${URL}/chatbot/${data.chatBotId}/sendMessage`,
+    {
+      ...data,
+    }
+  );
   return response?.data?.data;
 }
 

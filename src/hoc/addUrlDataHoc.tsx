@@ -1,18 +1,18 @@
 import React, { FC } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 
-export default function addUrlDataHoc(WrappedComponent: FC<any>) {
+export default function addUrlDataHoc(
+  WrappedComponent: FC<any>,
+  paramsToInject?: string[]
+) {
   return function addUrlDataHoc(props: any) {
-    // const urlParams = useParams()
-    // const location = useLocation()
+    const urlParams = useParams();
     const setSearchParams = useSearchParams()[1];
     const data: { [key: string]: string | boolean | undefined } = {};
+    paramsToInject?.forEach((key: string) => {
+      data.interfaceId = urlParams[key];
+    });
 
-    data.orgId = "752";
-    data.projectId = "proj3QrfYcn6";
-    data.scriptId = "scriptId";
-    data.interfaceId = "6641e344138660759c920c83";
-    if (!data.tabName) data.tabName = "draft";
     return (
       <WrappedComponent
         {...props}

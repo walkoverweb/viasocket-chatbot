@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { loginUser } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import {
@@ -8,33 +7,30 @@ import {
   getInterfaceDataByIdStart,
   setThreadId,
 } from "../../../../store/interface/interfaceSlice.ts";
-import {
-  intefaceGetLocalStorage,
-  intefaceSetLocalStorage,
-} from "../../utils/InterfaceUtils.ts";
+import { intefaceGetLocalStorage } from "../../utils/InterfaceUtils.ts";
 import InterfaceChatbot from "../Interface-Chatbot/InterfaceChatbot.tsx";
 
-async function authorizeUser(): Promise<string | null> {
-  try {
-    const verifiedUserDetails: any = await loginUser({ isAnonymousUser: true });
-    intefaceSetLocalStorage("interfaceToken", verifiedUserDetails?.token);
-    localStorage.setItem("interfaceUserId", verifiedUserDetails?.userId);
-    return verifiedUserDetails?.token;
-  } catch (error) {
-    console.error("Error during user authorization:", error);
-    return null;
-  }
-}
-function ChatbotWrapper({ chatBotId, loadInterface = true }) {
+// async function authorizeUser(): Promise<string | null> {
+//   try {
+//     const verifiedUserDetails: any = await loginUser({ isAnonymousUser: true });
+//     intefaceSetLocalStorage("interfaceToken", verifiedUserDetails?.token);
+//     localStorage.setItem("interfaceUserId", verifiedUserDetails?.userId);
+//     return verifiedUserDetails?.token;
+//   } catch (error) {
+//     console.error("Error during user authorization:", error);
+//     return null;
+//   }
+// }
+function ChatbotWrapper({ interfaceId, loadInterface = true }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
-      let interfaceToken = intefaceGetLocalStorage("interfaceToken");
-      if (!interfaceToken) {
-        interfaceToken = await authorizeUser();
-      }
-      if (chatBotId && interfaceToken && loadInterface) {
+      const interfaceToken = intefaceGetLocalStorage("interfaceToken");
+      // if (!interfaceToken) {
+      //   interfaceToken = await authorizeUser();
+      // }
+      if (interfaceId && interfaceToken && loadInterface) {
         dispatch(getInterfaceDataByIdStart({}));
       }
     })();
@@ -60,11 +56,11 @@ function ChatbotWrapper({ chatBotId, loadInterface = true }) {
         window.removeEventListener("message", handleMessage);
       }
     };
-  }, [chatBotId]);
+  }, [interfaceId]);
   return <InterfaceChatbot />;
 }
 
 // export default ChatbotWrapper
 export default React.memo(
-  addUrlDataHoc(React.memo(ChatbotWrapper), [ParamsEnums?.chatBotId])
+  addUrlDataHoc(React.memo(ChatbotWrapper), [ParamsEnums?.interfaceId])
 );

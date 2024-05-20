@@ -61,7 +61,7 @@ function isJSONString(str) {
 
 function InterfaceChatbot({
   props,
-  inpreview = false,
+  inpreview = true,
   interfaceId,
   gridId,
   componentId,
@@ -75,7 +75,7 @@ function InterfaceChatbot({
         ]?.actionId,
       interfaceContextData:
         state.Interface?.interfaceContext?.[interfaceId]?.interfaceData,
-      threadId: state.Interface?.threadId || "",
+      threadId: state.Interface?.threadId || "threadId",
       bridgeName: state.Interface?.bridgeName || "root",
     }));
   const [chatsLoading, setChatsLoading] = useState(false);
@@ -121,18 +121,13 @@ function InterfaceChatbot({
   const getallPreviousHistory = async () => {
     if (threadId && interfaceId) {
       setChatsLoading(true);
-      const previousChats = await getPreviousMessage(
-        interfaceId,
-        threadId,
-        bridgeName,
-        actionId
-      );
-      if (previousChats?.chats?.data.length === 0) {
+      const previousChats = await getPreviousMessage(threadId, bridgeName);
+      if (previousChats?.length === 0) {
         setDefaultQuestions([...previousChats?.defaultQuestions]);
         setMessages([]);
         setChatsLoading(false);
       } else {
-        setMessages([...(previousChats?.chats?.data || [])]);
+        setMessages([...(previousChats || [])]);
         setChatsLoading(false);
       }
     }
@@ -142,7 +137,7 @@ function InterfaceChatbot({
     setLoading(false);
     if (inpreview) {
       const subscribe = () => {
-        client.subscribe(interfaceId + (threadId || userId));
+        client.subscribe(interfaceId + ("threadId" || userId));
       };
       client.on("open", subscribe);
       subscribe();
@@ -171,23 +166,19 @@ function InterfaceChatbot({
   }, [threadId]);
 
   const sendMessage = async (message: string) => {
-    await sendDataToAction(actionId, {
+    await sendDataToAction({
       message: message,
       userId: userId,
       interfaceContextData: interfaceContextData || {},
-      threadId: threadId,
-      bridgeName: bridgeName,
+      threadId: "threadId",
+      slugName: bridgeName,
+      chatBotId: interfaceId,
     });
   };
 
   const onSend = () => {
     setDefaultQuestions([]);
-    if (!actionId) {
-      errorToast("Action is not available");
-      return;
-    }
     const message = messageRef.current.value;
-
     if (message?.trim()?.length === 0) return;
     startTimeoutTimer();
     sendMessage(message);

@@ -5,14 +5,10 @@ import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 /* eslint-disable-next-line import/no-cycle */
 import rootReducer from "./combineReducer";
 import rootSaga from "./rootSaga.ts";
+import { getInfoParamtersFromUrl } from "../utils/utilities";
 
 const customMiddleware = () => (next) => (action) => {
-  action.urlData = {
-    orgId: "752",
-    projectId: "proj3QrfYcn6",
-    scriptId: "scriptId",
-    interfaceId: "6641e344138660759c920c83",
-  };
+  action.urlData = getInfoParamtersFromUrl();
   return next(action);
 };
 const persistConfig = { key: "root", storage, blackList: ["appInfo"] };

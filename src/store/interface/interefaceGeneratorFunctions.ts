@@ -146,10 +146,11 @@ export function* updateInterFrontendfaceActionSaga(
   }
 }
 
-export function* getInterfaceByIdSaga(): any {
+export function* getInterfaceByIdSaga(
+  action: actionType<{ gridId: string; componentId: string }>
+): any {
   try {
-    // const { interfaceId = "661a1f54a8d5b8da46685c8c" } = action.urlData
-    const interfaceId = "661a1f54a8d5b8da46685c8c";
+    const { interfaceId } = action.urlData;
     const response: { [key: string]: any }[] = yield call(
       getInterfaceByIdApi,
       interfaceId

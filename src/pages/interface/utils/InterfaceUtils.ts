@@ -567,9 +567,8 @@ export const intefaceSetLocalStorage = (key: string, value: string) => {
   localStorage.setItem(key, value);
 };
 export const intefaceGetLocalStorage = (key: string) => {
-  if (process.env.REACT_APP_API_ENVIRONMENT === "local") {
-    console.log("window?.interfaceData", window?.interfaceData);
-    return JSON.parse(window?.interfaceData || "{}")?.[key];
-  }
+  // if (process.env.REACT_APP_API_ENVIRONMENT === "local") {
+  //   return JSON.parse(window?.interfaceData || "{}")?.[key];
+  // }
   return localStorage.getItem(key);
 };
