@@ -1,9 +1,9 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import "./scss/global.scss";
+import ChatbotWrapper from "./pages/interface/components/Chatbot-Wrapper/ChatbotWrapper.tsx";
 import InterfaceEmbed from "./pages/interface/pages/InterfaceEmbed/InterfaceEmbed.tsx";
-import InterfaceChatbot from "./pages/interface/components/Interface-Chatbot/InterfaceChatbot.tsx";
+import "./scss/global.scss";
 
 // const Viewonlygrid = React.lazy(() =>
 //   import(
@@ -52,7 +52,7 @@ function App() {
           element={
             <div id="parent-view-only-grid" className="h-100vh w-100">
               <React.Suspense fallback="Loading....">
-                <InterfaceChatbot />
+                <ChatbotWrapper />
               </React.Suspense>
             </div>
           }

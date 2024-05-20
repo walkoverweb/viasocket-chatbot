@@ -145,7 +145,7 @@ export async function sendDataToAction(
 }
 
 export async function loginUser(data: any): Promise<{ [key: string]: any }[]> {
-  const response = await axios.post(`${URL}/interfaces/loginuser`, {
+  const response = await axios.post(`${URL}/chatbot/login`, {
     ...data,
   });
   return response?.data?.data;

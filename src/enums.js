@@ -33,6 +33,7 @@ const ParamsEnums = {
   triggerId: "triggerId",
   stepName: "stepName",
   eventId: "eventId",
+  chatBotId: "chatBotId",
 };
 
 Object.freeze(EmbedVerificationStatus);
