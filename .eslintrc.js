@@ -61,5 +61,6 @@ module.exports = {
     "no-underscore-dangle": 0,
     "no-unsafe-optional-chaining": 0,
     "import/no-cycle": 0,
+    "react/no-array-index-key": 0,
   },
 };
