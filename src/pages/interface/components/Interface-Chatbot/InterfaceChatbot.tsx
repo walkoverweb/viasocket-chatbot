@@ -1,9 +1,10 @@
 /* eslint-disable */
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import EastIcon from "@mui/icons-material/East";
+import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import SendIcon from "@mui/icons-material/Send";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
-import EastIcon from "@mui/icons-material/East";
 import {
   Box,
   Grid,
@@ -19,7 +20,6 @@ import {
   getPreviousMessage,
   sendDataToAction,
 } from "../../../../api/InterfaceApis/InterfaceApis.ts";
-import { errorToast } from "../../../../components/customToast.js";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
@@ -75,7 +75,7 @@ function InterfaceChatbot({
         ]?.actionId,
       interfaceContextData:
         state.Interface?.interfaceContext?.[interfaceId]?.interfaceData,
-      threadId: state.Interface?.threadId || "threadId",
+      threadId: state.Interface?.threadId || "threadId1",
       bridgeName: state.Interface?.bridgeName || "root",
     }));
   const [chatsLoading, setChatsLoading] = useState(false);
@@ -121,13 +121,28 @@ function InterfaceChatbot({
   const getallPreviousHistory = async () => {
     if (threadId && interfaceId) {
       setChatsLoading(true);
-      const previousChats = await getPreviousMessage(threadId, bridgeName);
-      if (previousChats?.length === 0) {
-        setDefaultQuestions([...previousChats?.defaultQuestions]);
+      try {
+        const previousChats = await getPreviousMessage(threadId, bridgeName);
+
+        if (!previousChats) {
+          console.error("previousChats is null or undefined");
+          setMessages([]);
+        } else if (Array.isArray(previousChats)) {
+          if (previousChats.length === 0) {
+            // Handle the case where there are no previous chats
+            // setDefaultQuestions([...previousChats?.defaultQuestions]);
+            setMessages([]);
+          } else {
+            setMessages([...previousChats]);
+          }
+        } else {
+          console.error("previousChats is not an array");
+          setMessages([]);
+        }
+      } catch (error) {
+        console.error("Error fetching previous chats:", error);
         setMessages([]);
-        setChatsLoading(false);
-      } else {
-        setMessages([...(previousChats || [])]);
+      } finally {
         setChatsLoading(false);
       }
     }
@@ -137,7 +152,7 @@ function InterfaceChatbot({
     setLoading(false);
     if (inpreview) {
       const subscribe = () => {
-        client.subscribe(interfaceId + ("threadId" || userId));
+        client.subscribe(interfaceId + ("threadId1" || userId));
       };
       client.on("open", subscribe);
       subscribe();
@@ -170,7 +185,7 @@ function InterfaceChatbot({
       message: message,
       userId: userId,
       interfaceContextData: interfaceContextData || {},
-      threadId: "threadId",
+      threadId: "threadId1",
       slugName: bridgeName,
       chatBotId: interfaceId,
     });
@@ -228,19 +243,9 @@ function InterfaceChatbot({
   });
   return (
     <Box
-      // maxWidth='sm'
       sx={{
-        // width: windowHW.width,
-        // height: windowHW.height,
-        // minWidth: `${window.innerWidth - 20}px !important`,
-        // maxWidth: `${window.innerWidth - 20}px !important`,
-        // width: window.innerWidth - 20,
-        // minHeight: `${window.innerHeight - 20}px !important`,
-        // height: `${window.innerHeight - 20}px !important`, // Ensures full viewport height
         display: "flex", // Enables flexbox layout
         flexDirection: "column", // Stacks children vertically
-        // padding: '0px !important',// Removes padding to allow full width on small screens
-        // margin: '0px !important',
       }}
       className="w-100 h-100vh"
     >
@@ -346,8 +351,13 @@ function InterfaceChatbot({
                                 msgId={message?.createdAt}
                               />
                             ) : (
-                              <Typography className="ml-1">
-                                Invalid Response
+                              <Typography className="ml-1 flex-start-center">
+                                {message?.content}
+                                <ReportProblemIcon
+                                  fontSize="small"
+                                  color="error"
+                                  className=" ml-2"
+                                />
                               </Typography>
                             )}
                           </Box>

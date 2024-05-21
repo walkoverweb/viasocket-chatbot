@@ -163,7 +163,7 @@ export const reducers: ValidateSliceCaseReducers<
   deleteInterfaceError(state, action: actionType<any>) {},
 
   getInterfaceDataByIdStart(state, action: actionType<string>) {
-    const { interfaceId = "661a1f54a8d5b8da46685c8c" } = action?.urlData;
+    const { interfaceId } = action?.urlData;
     if (!state.interfaceData?.[interfaceId]) {
       state.interfaceData = {
         [interfaceId]: { ...sampleInterfaceData, isLoading: true },
@@ -173,23 +173,23 @@ export const reducers: ValidateSliceCaseReducers<
     }
   },
   getInterfaceDataByIdSuccess(state, action: actionType<InterFaceDataType>) {
-    const { interfaceId = "661a1f54a8d5b8da46685c8c" } = action?.urlData;
+    const { interfaceId } = action?.urlData;
     const tempData = { ...action.payload };
 
-    if (tempData.actions) {
-      tempData.actions = tempData.actions.reduce((acc, actionData) => {
-        if (actionData.gridId && actionData.componentId) {
-          acc[actionData.gridId] = {
-            ...acc[actionData.gridId],
-            [actionData.componentId]: {
-              actionId: actionData?.actionId,
-              ...actionData?.actionIdMapping,
-            },
-          };
-        }
-        return acc;
-      }, {});
-    }
+    // if (tempData.actions) {
+    //   tempData.actions = tempData.actions.reduce((acc, actionData) => {
+    //     if (actionData.gridId && actionData.componentId) {
+    //       acc[actionData.gridId] = {
+    //         ...acc[actionData.gridId],
+    //         [actionData.componentId]: {
+    //           actionId: actionData?.actionId,
+    //           ...actionData?.actionIdMapping,
+    //         },
+    //       };
+    //     }
+    //     return acc;
+    //   }, {});
+    // }
 
     state.interfaceData[interfaceId] = { ...tempData, isLoading: false };
   },
