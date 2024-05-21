@@ -7,47 +7,32 @@ import InterfaceErrorPage from "../../components/InterfaceErrorPage/InterfaceErr
 import { intefaceSetLocalStorage } from "../../utils/InterfaceUtils.ts";
 
 export default function InterfaceEmbed() {
-  const location = useLocation();
+  console.log("interfaceembed");
+  const { search } = useLocation();
   const navigate = useNavigate();
-
-  const queryParams = new URLSearchParams(location.search);
-  const { interface_id, project_id, userId, token } = JSON.parse(
-    queryParams.get("interfaceDetails") || "{}"
+  const { chatbot_id, userId, token } = JSON.parse(
+    new URLSearchParams(search).get("interfaceDetails") || "{}"
   );
   const [verifiedState, setVerifiedState] = useState(
     EmbedVerificationStatus.VERIFYING
   );
-  const [details, setDetails] = useState({ project_id: "", interface_id: "" });
+  const [details, setDetails] = useState({ chatbot_id: "" });
 
   useEffect(() => {
-    console.log(token, 12345, "token");
     if (token) authorizeUserAndSetDetails();
   }, [token]);
 
-  const fetchScriptsAndNavigateEmbedUser = () => {
-    try {
-      navigate(`/i/${details.interface_id}`);
-    } catch (e) {
-      console.log(e, "error");
-    }
-  };
-
   useEffect(() => {
     if (verifiedState === EmbedVerificationStatus.VERIFIED) {
-      fetchScriptsAndNavigateEmbedUser();
+      navigate(`/i/${details.chatbot_id}`);
     }
-  }, [verifiedState]);
+  }, [verifiedState, details.chatbot_id, navigate]);
 
-  // HANDLER-FUNCTIONS.
   const authorizeUserAndSetDetails = () => {
     intefaceSetLocalStorage("interfaceToken", token);
     setVerifiedState(EmbedVerificationStatus.VERIFIED);
-    setDetails({
-      interface_id,
-      project_id,
-    });
+    setDetails({ chatbot_id });
     localStorage.setItem("interfaceUserId", userId);
-    return null;
   };
 
   return (

@@ -14,7 +14,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import WebSocketClient from "rtlayer-client";
 import {
   getPreviousMessage,
@@ -31,6 +37,7 @@ const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
   "DprvynUwAdFwkE91V5Jj"
 );
+
 interface InterfaceChatbotProps {
   props: any;
   inpreview: boolean;
@@ -39,6 +46,7 @@ interface InterfaceChatbotProps {
   gridId: string;
   dragRef: any;
 }
+
 interface MessageType {
   content: string;
   role: string;
@@ -50,94 +58,84 @@ interface MessageType {
   id?: string;
 }
 
-function isJSONString(str) {
+const isJSONString = (str: string) => {
   try {
-    JSON.parse(str);
     return JSON.parse(str);
-  } catch (error) {
+  } catch {
     return {};
   }
-}
+};
 
 function InterfaceChatbot({
   props,
   inpreview = true,
   interfaceId,
-  gridId,
-  componentId,
   dragRef,
 }: InterfaceChatbotProps) {
-  const { actionId, interfaceContextData, threadId, bridgeName } =
-    useCustomSelector((state: $ReduxCoreType) => ({
-      actionId:
-        state.Interface?.interfaceData?.[interfaceId]?.actions?.[gridId]?.[
-          componentId
-        ]?.actionId,
+  const { interfaceContextData, threadId, bridgeName } = useCustomSelector(
+    (state: $ReduxCoreType) => ({
       interfaceContextData:
         state.Interface?.interfaceContext?.[interfaceId]?.interfaceData,
-      threadId: state.Interface?.threadId || "threadId1",
+      threadId: state.Interface?.threadId || "threadId",
       bridgeName: state.Interface?.bridgeName || "root",
-    }));
+    })
+  );
+
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
   const containerRef = useRef(null);
   const userId = localStorage.getItem("interfaceUserId");
   const [messages, setMessages] = useState<MessageType[]>(
-    !inpreview
-      ? [
-          { content: "hello how are you ", role: "user" },
-          {
-            responseId: "Response24131",
-            content:
-              '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
-            role: "assistant",
-          },
-        ]
-      : []
+    useMemo(
+      () =>
+        !inpreview
+          ? [
+              { content: "hello how are you ", role: "user" },
+              {
+                responseId: "Response24131",
+                content:
+                  '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
+                role: "assistant",
+              },
+            ]
+          : [],
+      [inpreview]
+    )
   );
   const [defaultQuestion, setDefaultQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const messageRef = useRef();
 
-  const startTimeoutTimer = () => {
+  const startTimeoutTimer = useCallback(() => {
     timeoutIdRef.current = setTimeout(() => {
-      setMessages((prevMessages): MessageType[] => {
-        prevMessages.pop();
-        setLoading(false);
+      setMessages((prevMessages) => {
         const updatedMessages = [
-          ...prevMessages,
+          ...prevMessages.slice(0, -1),
           { role: "assistant", wait: false, timeOut: true },
         ];
+        setLoading(false);
         return updatedMessages;
       });
-    }, 120000); //2 minutes
-  };
+    }, 120000); // 2 minutes
+  }, []);
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" && !loading) {
-      onSend();
-    }
-  };
-  const getallPreviousHistory = async () => {
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === "Enter" && !loading) onSend();
+    },
+    [loading]
+  );
+
+  const getallPreviousHistory = useCallback(async () => {
     if (threadId && interfaceId) {
       setChatsLoading(true);
       try {
         const previousChats = await getPreviousMessage(threadId, bridgeName);
-
-        if (!previousChats) {
-          console.error("previousChats is null or undefined");
-          setMessages([]);
-        } else if (Array.isArray(previousChats)) {
-          if (previousChats.length === 0) {
-            // Handle the case where there are no previous chats
-            // setDefaultQuestions([...previousChats?.defaultQuestions]);
-            setMessages([]);
-          } else {
-            setMessages([...previousChats]);
-          }
+        if (Array.isArray(previousChats)) {
+          setMessages(previousChats.length === 0 ? [] : [...previousChats]);
         } else {
-          console.error("previousChats is not an array");
           setMessages([]);
+          console.error("previousChats is not an array");
         }
       } catch (error) {
         console.error("Error fetching previous chats:", error);
@@ -146,13 +144,13 @@ function InterfaceChatbot({
         setChatsLoading(false);
       }
     }
-  };
+  }, [threadId, interfaceId, bridgeName]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setLoading(false);
     if (inpreview) {
       const subscribe = () => {
-        client.subscribe(interfaceId + ("threadId1" || userId));
+        client.subscribe(interfaceId + (threadId || userId));
       };
       client.on("open", subscribe);
       subscribe();
@@ -163,11 +161,10 @@ function InterfaceChatbot({
           const stringifiedJson =
             JSON.parse(message)?.response?.choices?.[0]?.message;
           setLoading(false);
-          setMessages((prevMessages) => {
-            prevMessages.pop();
-            const updatedMessages = [...prevMessages, stringifiedJson];
-            return updatedMessages;
-          });
+          setMessages((prevMessages) => [
+            ...prevMessages.slice(0, -1),
+            stringifiedJson,
+          ]);
         }
         clearTimeout(timeoutIdRef.current);
       };
@@ -178,78 +175,67 @@ function InterfaceChatbot({
         client.unsubscribe(interfaceId + threadId);
       };
     }
-  }, [threadId]);
+  }, [threadId, interfaceId, inpreview, userId]);
 
-  const sendMessage = async (message: string) => {
-    await sendDataToAction({
-      message: message,
-      userId: userId,
-      interfaceContextData: interfaceContextData || {},
-      threadId: "threadId1",
-      slugName: bridgeName,
-      chatBotId: interfaceId,
-    });
-  };
+  const sendMessage = useCallback(
+    async (message: string) => {
+      await sendDataToAction({
+        message,
+        userId,
+        interfaceContextData: interfaceContextData || {},
+        threadId: threadId,
+        slugName: bridgeName,
+        chatBotId: interfaceId,
+      });
+    },
+    [userId, interfaceContextData, bridgeName, interfaceId]
+  );
 
-  const onSend = () => {
+  const onSend = useCallback(() => {
+    const message = messageRef.current.value.trim();
+    if (!message) return;
     setDefaultQuestions([]);
-    const message = messageRef.current.value;
-    if (message?.trim()?.length === 0) return;
     startTimeoutTimer();
     sendMessage(message);
     setLoading(true);
-    setMessages((prevMessages): MessageType[] => {
-      const updatedMessages = [
-        ...prevMessages,
-        { role: "user", content: message },
-        { role: "assistant", wait: true },
-      ];
-      return updatedMessages;
-    });
-
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { role: "user", content: message },
+      { role: "assistant", wait: true },
+    ]);
     messageRef.current.value = "";
-  };
+  }, [startTimeoutTimer, sendMessage]);
 
-  const styles = {
-    height: window.innerHeight,
-  };
+  const movetoDown = useCallback(() => {
+    containerRef.current?.scrollTo({
+      top: containerRef?.current?.scrollHeight,
+      behavior: "smooth",
+    });
+  }, []);
 
-  const movetoDown = () => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
-        top: containerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  };
-  React.useEffect(() => {
+  useEffect(() => {
     movetoDown();
-  }, [messages]);
+  }, [messages, movetoDown]);
 
-  // console.log(window.innerWidth)
   const [windowHW, setWindowHW] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const handleResize = () => {
+
+  const handleResize = useCallback(() => {
     setWindowHW({ width: window.innerWidth, height: window.innerHeight - 20 });
-  };
+  }, []);
+
   useEffect(() => {
     window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [handleResize]);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  });
   return (
     <Box
-      sx={{
-        display: "flex", // Enables flexbox layout
-        flexDirection: "column", // Stacks children vertically
-      }}
+      sx={{ display: "flex", flexDirection: "column" }}
       className="w-100 h-100vh"
     >
-      {/* Header */}
       <Grid
         item
         xs={12}
@@ -278,137 +264,128 @@ function InterfaceChatbot({
           sx={{ height: 4 }}
         />
       )}
-      {/* Chat messages */}
-      {
-        <Grid
-          item
-          xs
-          className="second-grid"
-          sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
+      <Grid
+        item
+        xs
+        className="second-grid"
+        sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            height: "100%",
+            overflowY: "auto",
+            display: "flex",
+            flexDirection: "column",
+            padding: 2,
+          }}
+          ref={containerRef}
         >
-          <Paper
-            elevation={3}
-            sx={{
-              height: "100%",
-              overflowY: "auto",
-              display: "flex",
-              flexDirection: "column",
-              padding: 2,
-            }}
-            ref={containerRef}
-          >
-            <Box sx={{ flex: "1 1 auto", minHeight: 0 }}>
-              {messages.map((message, index) => (
-                <Box className="w-100" key={index}>
-                  {message?.role === "user" && (
-                    <Box className="flex w-100 chat-row box-sizing-border-box mr-2">
-                      <Box className="w-100 flex-start-center">
-                        <AccountBoxIcon />
-                        <Typography variant="body1" className="ml-2">
-                          {message?.content}
-                        </Typography>
-                      </Box>
+          <Box sx={{ flex: "1 1 auto", minHeight: 0 }}>
+            {messages.map((message, index) => (
+              <Box className="w-100" key={index}>
+                {message?.role === "user" && (
+                  <Box className="flex w-100 chat-row box-sizing-border-box mr-2">
+                    <Box className="w-100 flex-start-center">
+                      <AccountBoxIcon />
+                      <Typography variant="body1" className="ml-2">
+                        {message?.content}
+                      </Typography>
                     </Box>
-                  )}
-                  {message?.role === "assistant" && (
-                    <Box className="chat-row w-100 box-sizing-border-box mr-2">
-                      <Box className="w-100 flex-start-start">
-                        <SmartToyIcon className="mr-1" />
-                        {message?.wait === true ? (
-                          <Box className="flex-start-center w-100 gap-5 p-1">
-                            <>
-                              <Typography variant="body">
-                                Waiting for bot response
-                              </Typography>
-                              <div className="dot-pulse" />
-                            </>
-                          </Box>
-                        ) : message?.timeOut === true ? (
-                          <>
-                            <Box className="flex-start-center w-100 gap-5 p-1">
-                              <Typography variant="body">
-                                Timeout reached. Please try again later.
-                              </Typography>
-                            </Box>
-                          </>
-                        ) : (
-                          <Box className="w-100 flex-start-center">
-                            {isJSONString(message?.content || "{}")
-                              ?.responseId ? (
-                              <InterfaceGrid
-                                style={styles}
-                                dragRef={dragRef}
-                                inpreview={false}
-                                ingrid={false}
-                                gridId={
-                                  JSON.parse(message?.content || "{}")
-                                    ?.responseId || "default"
-                                }
-                                loadInterface={false}
-                                componentJson={JSON.parse(
-                                  message?.content || "{}"
-                                )}
-                                msgId={message?.createdAt}
-                              />
-                            ) : (
-                              <Typography className="ml-1 flex-start-center">
-                                {message?.content}
-                                <ReportProblemIcon
-                                  fontSize="small"
-                                  color="error"
-                                  className=" ml-2"
-                                />
-                              </Typography>
-                            )}
-                          </Box>
-                        )}
-                      </Box>
-                    </Box>
-                  )}
-                </Box>
-              ))}
-            </Box>
-            {/* move to down icon */}
-            {messages?.length > 10 && (
-              <IconButton
-                onClick={movetoDown}
-                className="move-to-down-button"
-                sx={{ backgroundColor: "#1976d2" }}
-                disableRipple
-              >
-                <KeyboardDoubleArrowDownIcon
-                  color="inherit"
-                  className="color-white"
-                  onClick={movetoDown}
-                />
-              </IconButton>
-            )}
-            {/* Dynamic default questions at the bottom */}
-            <Grid container spacing={2} sx={{ marginTop: 2 }}>
-              {defaultQuestion.map((response, index) => (
-                <Grid item xs={6} sm={6} key={index}>
-                  <Box
-                    sx={{
-                      borderRadius: "5px",
-                      boxShadow: "0px 1px 1px rgba(0, 0, 0, 0.2)",
-                      border: ".5px solid #1976d2",
-                    }}
-                    className="w-100 h-100 flex-spaceBetween-center cursor-pointer p-3 pl-3"
-                    onClick={() => {
-                      messageRef.current.value = response;
-                      onSend();
-                    }}
-                  >
-                    <Typography variant="subtitle2">{response}</Typography>
-                    <EastIcon />
                   </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </Paper>
-        </Grid>
-      }
-      {/* Text field */}
+                )}
+                {message?.role === "assistant" && (
+                  <Box className="chat-row w-100 box-sizing-border-box mr-2">
+                    <Box className="w-100 flex-start-start">
+                      <SmartToyIcon className="mr-1" />
+                      {message?.wait ? (
+                        <Box className="flex-start-center w-100 gap-5 p-1">
+                          <>
+                            <Typography variant="body">
+                              Waiting for bot response
+                            </Typography>
+                            <div className="dot-pulse" />
+                          </>
+                        </Box>
+                      ) : message?.timeOut ? (
+                        <Box className="flex-start-center w-100 gap-5 p-1">
+                          <Typography variant="body">
+                            Timeout reached. Please try again later.
+                          </Typography>
+                        </Box>
+                      ) : (
+                        <Box className="w-100 flex-start-center">
+                          {isJSONString(message?.content || "{}")
+                            ?.responseId ? (
+                            <InterfaceGrid
+                              style={{ height: window.innerHeight }}
+                              dragRef={dragRef}
+                              inpreview={false}
+                              ingrid={false}
+                              gridId={
+                                JSON.parse(message?.content || "{}")
+                                  ?.responseId || "default"
+                              }
+                              loadInterface={false}
+                              componentJson={JSON.parse(
+                                message?.content || "{}"
+                              )}
+                              msgId={message?.createdAt}
+                            />
+                          ) : (
+                            <Typography className="ml-1 flex-start-center">
+                              {message?.content}
+                              <ReportProblemIcon
+                                fontSize="small"
+                                color="error"
+                                className="ml-2"
+                              />
+                            </Typography>
+                          )}
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                )}
+              </Box>
+            ))}
+          </Box>
+          {messages?.length > 10 && (
+            <IconButton
+              onClick={movetoDown}
+              className="move-to-down-button"
+              sx={{ backgroundColor: "#1976d2" }}
+              disableRipple
+            >
+              <KeyboardDoubleArrowDownIcon
+                color="inherit"
+                className="color-white"
+              />
+            </IconButton>
+          )}
+          <Grid container spacing={2} sx={{ marginTop: 2 }}>
+            {defaultQuestion.map((response, index) => (
+              <Grid item xs={6} sm={6} key={index}>
+                <Box
+                  sx={{
+                    borderRadius: "5px",
+                    boxShadow: "0px 1px 1px rgba(0, 0, 0, 0.2)",
+                    border: ".5px solid #1976d2",
+                  }}
+                  className="w-100 h-100 flex-spaceBetween-center cursor-pointer p-3 pl-3"
+                  onClick={() => {
+                    messageRef.current.value = response;
+                    onSend();
+                  }}
+                >
+                  <Typography variant="subtitle2">{response}</Typography>
+                  <EastIcon />
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
+        </Paper>
+      </Grid>
       <Grid item xs={12} className="third-grid bg-white p-3 flex-center mb-2">
         <TextField
           inputRef={messageRef}
@@ -428,6 +405,7 @@ function InterfaceChatbot({
     </Box>
   );
 }
+
 export default React.memo(
-  addUrlDataHoc(React.memo(InterfaceChatbot), [ParamsEnums?.interfaceId])
+  addUrlDataHoc(React.memo(InterfaceChatbot), [ParamsEnums.interfaceId])
 );
