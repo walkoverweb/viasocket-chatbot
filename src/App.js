@@ -5,20 +5,9 @@ import ChatbotWrapper from "./pages/interface/components/Chatbot-Wrapper/Chatbot
 import InterfaceEmbed from "./pages/interface/pages/InterfaceEmbed/InterfaceEmbed.tsx";
 import "./scss/global.scss";
 
-// const Viewonlygrid = React.lazy(() =>
-//   import(
-//     /* webpackChunkName: "viewonlygrid" */ "./pages/interface/components/Grid/Viewonlygrid.tsx"
-//   )
-// );
-
 // Interface Routes
 const Interface = React.lazy(() =>
   import(/* webpackChunkName: "interface" */ "./pages/interface/interface.tsx")
-);
-const InterfaceSetupPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: "interfacesetuppage" */ "./pages/interface/components/InterfaceConfiguration/interfaceConfigSetup.tsx"
-  )
 );
 
 function App() {
@@ -32,16 +21,6 @@ function App() {
           element={
             <React.Suspense fallback="Loading....">
               <Interface />
-            </React.Suspense>
-          }
-        />
-
-        <Route
-          exact
-          path="/interfaceSetup"
-          element={
-            <React.Suspense fallback="Loading....">
-              <InterfaceSetupPage />
             </React.Suspense>
           }
         />
