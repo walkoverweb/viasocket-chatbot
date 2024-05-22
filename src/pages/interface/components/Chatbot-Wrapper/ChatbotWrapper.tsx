@@ -10,26 +10,13 @@ import {
 import { intefaceGetLocalStorage } from "../../utils/InterfaceUtils.ts";
 import InterfaceChatbot from "../Interface-Chatbot/InterfaceChatbot.tsx";
 
-// async function authorizeUser(): Promise<string | null> {
-//   try {
-//     const verifiedUserDetails: any = await loginUser({ isAnonymousUser: true });
-//     intefaceSetLocalStorage("interfaceToken", verifiedUserDetails?.token);
-//     localStorage.setItem("interfaceUserId", verifiedUserDetails?.userId);
-//     return verifiedUserDetails?.token;
-//   } catch (error) {
-//     console.error("Error during user authorization:", error);
-//     return null;
-//   }
-// }
 function ChatbotWrapper({ interfaceId, loadInterface = true }) {
+  console.log("chatbotwrapper");
   const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
       const interfaceToken = intefaceGetLocalStorage("interfaceToken");
-      // if (!interfaceToken) {
-      //   interfaceToken = await authorizeUser();
-      // }
       if (interfaceId && interfaceToken && loadInterface) {
         dispatch(getInterfaceDataByIdStart({}));
       }
@@ -56,11 +43,11 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
         window.removeEventListener("message", handleMessage);
       }
     };
-  }, [interfaceId]);
+  }, [dispatch, interfaceId, loadInterface]);
+
   return <InterfaceChatbot />;
 }
 
-// export default ChatbotWrapper
 export default React.memo(
-  addUrlDataHoc(React.memo(ChatbotWrapper), [ParamsEnums?.interfaceId])
+  addUrlDataHoc(React.memo(ChatbotWrapper), [ParamsEnums.interfaceId])
 );

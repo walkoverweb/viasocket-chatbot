@@ -557,13 +557,13 @@ export function formInitialChildren(type: string) {
 }
 
 export const intefaceSetLocalStorage = (key: string, value: string) => {
-  if (process.env.REACT_APP_API_ENVIRONMENT === "local") {
-    window.interfaceData = JSON.stringify({
-      ...JSON.parse(window?.interfaceData || "{}"),
-      [key]: value,
-    });
-    return;
-  }
+  // if (process.env.REACT_APP_API_ENVIRONMENT === "local") {
+  //   window.interfaceData = JSON.stringify({
+  //     ...JSON.parse(window?.interfaceData || "{}"),
+  //     [key]: value,
+  //   });
+  //   return;
+  // }
   localStorage.setItem(key, value);
 };
 export const intefaceGetLocalStorage = (key: string) => {

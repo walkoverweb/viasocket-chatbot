@@ -1,12 +1,7 @@
 import defaultAxios from "axios";
 import { buildKeyGenerator, setupCache } from "axios-cache-interceptor";
-// import { store } from '../store'
 import { errorToast } from "../components/customToast";
-import {
-  getCurrentEnvironment,
-  // getSubdomain,
-  removeCookie,
-} from "../utils/utilities";
+import { getCurrentEnvironment, removeCookie } from "../utils/utilities";
 
 const instance = defaultAxios.create();
 const axios = setupCache(instance, {
@@ -18,17 +13,6 @@ const axios = setupCache(instance, {
   })),
 });
 
-// const urlParams = new URLSearchParams(window.location.search)
-
-// const headerKey = (key) => {
-//   let head = key === 'accessToken' ? 'Authorization' : key
-//   head =
-//     (urlParams.get('mode') === MiscTypes.EMBED_MODE || urlParams.get('state'))
-//       ? 'Authorization'
-//       : head
-//   return head
-// }
-// request interceptor
 axios.interceptors.request.use(
   async (config) => {
     config.headers["Authorization"] = localStorage.getItem("interfaceToken");

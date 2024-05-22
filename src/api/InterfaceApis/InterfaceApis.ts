@@ -95,7 +95,7 @@ export async function getInterfaceByIdApi(
   interfaceId: string
 ): Promise<{ [key: string]: any }[]> {
   const response = await axios.get(`${URL}/chatbot/${interfaceId}/getchatbot`);
-  return response?.data?.data;
+  return response?.data;
 }
 
 export async function deleteComponentOrGridApi(
@@ -119,11 +119,10 @@ export async function deleteComponentOrGridApi(
 
 export async function getPreviousMessage(
   threadId: string | null,
-  bridge: string | null
+  bridgeName: string | null
 ): Promise<{ [key: string]: any }[]> {
   const response = await axios.get(
-    // `${URL}/interfaces/${interfaceId}/getData?threadId=${
-    `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridge}`
+    `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridgeName}`
   );
   return response?.data?.data;
 }
