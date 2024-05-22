@@ -23,9 +23,9 @@ function Message({ message, isJSONString, dragRef }) {
           <Box className="w-100 flex-start-start">
             <SmartToyIcon className="mr-1" />
             {message?.wait ? (
-              <Box className="flex-start-center w-100 gap-5 p-1">
-                <Typography variant="body">Waiting for bot response</Typography>
-                <div className="dot-pulse" />
+              <Box className="flex-start-center w-100 gap-2 p-1 ml-3">
+                <div className="loader" />
+                <Typography variant="body">{message?.content}</Typography>
               </Box>
             ) : message?.timeOut ? (
               <Box className="flex-start-center w-100 gap-5 p-1">

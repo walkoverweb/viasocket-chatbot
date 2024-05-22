@@ -152,16 +152,32 @@ function InterfaceChatbot({
       getallPreviousHistory();
 
       const handleMessage = (message: string) => {
-        if (message !== '{"status":"connected"}') {
-          const stringifiedJson =
-            JSON.parse(message)?.response?.choices?.[0]?.message;
+        console.log(message, 23423);
+        const parsedMessage = JSON.parse(message || "{}");
+        if (parsedMessage?.status === "connected") {
+          return;
+        } else if (parsedMessage?.function_call) {
+          setMessages((prevMessages) => [
+            ...prevMessages.slice(0, -1),
+            { role: "assistant", wait: true, content: "Function Calling" },
+          ]);
+        } else if (
+          parsedMessage?.function_call === false &&
+          !parsedMessage?.response
+        ) {
+          setMessages((prevMessages) => [
+            ...prevMessages.slice(0, -1),
+            { role: "assistant", wait: true, content: "Talking with AI" },
+          ]);
+        } else {
+          const stringifiedJson = message?.response?.choices?.[0]?.message;
           setLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
             stringifiedJson,
           ]);
+          clearTimeout(timeoutIdRef.current);
         }
-        clearTimeout(timeoutIdRef.current);
       };
 
       client.on("message", handleMessage);
@@ -196,7 +212,7 @@ function InterfaceChatbot({
     setMessages((prevMessages) => [
       ...prevMessages,
       { role: "user", content: message },
-      { role: "assistant", wait: true },
+      { role: "assistant", wait: true, content: "Talking with AI" },
     ]);
     messageRef.current.value = "";
   };
