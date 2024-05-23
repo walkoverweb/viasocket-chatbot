@@ -7,7 +7,11 @@ import InterfaceGrid from "../Grid/Grid.tsx";
 import "./InterfaceChatbot.scss";
 
 function Message({ message, isJSONString, dragRef }) {
-  console.log(JSON.parse(message?.content || "{}"), 23423);
+  try {
+    console.log(JSON.parse(message?.content || "{}"), 23423);
+  } catch (error) {
+    console.log(error);
+  }
   return (
     <Box className="w-100">
       {message?.role === "user" ? (
