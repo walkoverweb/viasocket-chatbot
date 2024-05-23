@@ -170,7 +170,8 @@ function InterfaceChatbot({
             { role: "assistant", wait: true, content: "Talking with AI" },
           ]);
         } else {
-          const stringifiedJson = message?.response?.choices?.[0]?.message;
+          const stringifiedJson =
+            parsedMessage?.response?.choices?.[0]?.message;
           setLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
