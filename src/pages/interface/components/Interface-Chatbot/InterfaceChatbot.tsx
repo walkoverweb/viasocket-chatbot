@@ -118,7 +118,7 @@ function InterfaceChatbot({
     (event: React.KeyboardEvent) => {
       if (event.key === "Enter" && !loading) onSend();
     },
-    [loading]
+    [loading, threadId]
   );
 
   const getallPreviousHistory = useCallback(async () => {
@@ -189,18 +189,21 @@ function InterfaceChatbot({
     }
   }, [threadId, interfaceId, inpreview, userId]);
 
-  const sendMessage = async (message: string) => {
-    await sendDataToAction({
-      message,
-      userId,
-      interfaceContextData: interfaceContextData || {},
-      threadId: threadId,
-      slugName: bridgeName,
-      chatBotId: interfaceId,
-    });
-  };
+  const sendMessage = useCallback(
+    async (message: string) => {
+      await sendDataToAction({
+        message,
+        userId,
+        interfaceContextData: interfaceContextData || {},
+        threadId: threadId,
+        slugName: bridgeName,
+        chatBotId: interfaceId,
+      });
+    },
+    [threadId]
+  );
 
-  const onSend = () => {
+  const onSend = useCallback(() => {
     const message = messageRef.current.value.trim();
     if (!message) return;
     setDefaultQuestions([]);
@@ -213,7 +216,7 @@ function InterfaceChatbot({
       { role: "assistant", wait: true, content: "Talking with AI" },
     ]);
     messageRef.current.value = "";
-  };
+  }, [threadId]);
 
   const movetoDown = useCallback(() => {
     containerRef.current?.scrollTo({
