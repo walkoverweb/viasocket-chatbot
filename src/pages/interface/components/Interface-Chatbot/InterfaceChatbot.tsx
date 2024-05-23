@@ -189,19 +189,16 @@ function InterfaceChatbot({
     }
   }, [threadId, interfaceId, inpreview, userId]);
 
-  const sendMessage = useCallback(
-    async (message: string) => {
-      await sendDataToAction({
-        message,
-        userId,
-        interfaceContextData: interfaceContextData || {},
-        threadId: threadId,
-        slugName: bridgeName,
-        chatBotId: interfaceId,
-      });
-    },
-    [userId, interfaceContextData, bridgeName, interfaceId, threadId]
-  );
+  const sendMessage = async (message: string) => {
+    await sendDataToAction({
+      message,
+      userId,
+      interfaceContextData: interfaceContextData || {},
+      threadId: threadId,
+      slugName: bridgeName,
+      chatBotId: interfaceId,
+    });
+  };
 
   const onSend = () => {
     const message = messageRef.current.value.trim();
