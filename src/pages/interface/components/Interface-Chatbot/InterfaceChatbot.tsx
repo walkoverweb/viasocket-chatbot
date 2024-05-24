@@ -7,13 +7,7 @@ import {
   LinearProgress,
   TextField,
 } from "@mui/material";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import WebSocketClient from "rtlayer-client";
 import {
   getPreviousMessage,
@@ -101,7 +95,7 @@ function InterfaceChatbot({
   const [loading, setLoading] = useState(false);
   const messageRef = useRef();
 
-  const startTimeoutTimer = useCallback(() => {
+  const startTimeoutTimer = () => {
     timeoutIdRef.current = setTimeout(() => {
       setMessages((prevMessages) => {
         const updatedMessages = [
@@ -111,17 +105,14 @@ function InterfaceChatbot({
         setLoading(false);
         return updatedMessages;
       });
-    }, 120000); // 2 minutes
-  }, []);
+    }, 120000);
+  };
 
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (event.key === "Enter" && !loading) onSend();
-    },
-    [loading, threadId]
-  );
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && !loading) onSend();
+  };
 
-  const getallPreviousHistory = useCallback(async () => {
+  const getallPreviousHistory = async () => {
     if (threadId && interfaceId) {
       setChatsLoading(true);
       try {
@@ -139,7 +130,7 @@ function InterfaceChatbot({
         setChatsLoading(false);
       }
     }
-  }, [threadId, interfaceId, bridgeName]);
+  };
 
   useEffect(() => {
     setLoading(false);
@@ -189,21 +180,18 @@ function InterfaceChatbot({
     }
   }, [threadId, interfaceId, inpreview, userId]);
 
-  const sendMessage = useCallback(
-    async (message: string) => {
-      await sendDataToAction({
-        message,
-        userId,
-        interfaceContextData: interfaceContextData || {},
-        threadId: threadId,
-        slugName: bridgeName,
-        chatBotId: interfaceId,
-      });
-    },
-    [threadId]
-  );
+  const sendMessage = async (message: string) => {
+    await sendDataToAction({
+      message,
+      userId,
+      interfaceContextData: interfaceContextData || {},
+      threadId: threadId,
+      slugName: bridgeName,
+      chatBotId: interfaceId,
+    });
+  };
 
-  const onSend = useCallback(() => {
+  const onSend = () => {
     const message = messageRef.current.value.trim();
     if (!message) return;
     setDefaultQuestions([]);
@@ -216,14 +204,14 @@ function InterfaceChatbot({
       { role: "assistant", wait: true, content: "Talking with AI" },
     ]);
     messageRef.current.value = "";
-  }, [threadId]);
+  };
 
-  const movetoDown = useCallback(() => {
+  const movetoDown = () => {
     containerRef.current?.scrollTo({
       top: containerRef?.current?.scrollHeight,
       behavior: "smooth",
     });
-  }, []);
+  };
 
   useEffect(() => {
     movetoDown();
