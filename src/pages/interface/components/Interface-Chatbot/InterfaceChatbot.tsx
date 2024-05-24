@@ -148,6 +148,8 @@ function InterfaceChatbot({
         if (parsedMessage?.status === "connected") {
           return;
         } else if (parsedMessage?.function_call) {
+          console.log("function calling");
+
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
             { role: "assistant", wait: true, content: "Function Calling" },
@@ -156,6 +158,7 @@ function InterfaceChatbot({
           parsedMessage?.function_call === false &&
           !parsedMessage?.response
         ) {
+          console.log("going to gpt");
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
             { role: "assistant", wait: true, content: "Talking with AI" },
@@ -163,6 +166,7 @@ function InterfaceChatbot({
         } else {
           const stringifiedJson =
             parsedMessage?.response?.choices?.[0]?.message;
+          console.log(stringifiedJson, "strinfified json");
           setLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
