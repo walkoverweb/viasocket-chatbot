@@ -7,13 +7,7 @@ import {
   LinearProgress,
   TextField,
 } from "@mui/material";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import WebSocketClient from "rtlayer-client";
 import {
   getPreviousMessage,
@@ -71,7 +65,7 @@ function InterfaceChatbot({
     (state: $ReduxCoreType) => ({
       interfaceContextData:
         state.Interface?.interfaceContext?.[interfaceId]?.interfaceData,
-      threadId: state.Interface?.threadId || "threadId",
+      threadId: state.Interface?.threadId || "",
       bridgeName: state.Interface?.bridgeName || "root",
     })
   );
@@ -101,7 +95,7 @@ function InterfaceChatbot({
   const [loading, setLoading] = useState(false);
   const messageRef = useRef();
 
-  const startTimeoutTimer = useCallback(() => {
+  const startTimeoutTimer = () => {
     timeoutIdRef.current = setTimeout(() => {
       setMessages((prevMessages) => {
         const updatedMessages = [
@@ -111,17 +105,14 @@ function InterfaceChatbot({
         setLoading(false);
         return updatedMessages;
       });
-    }, 120000); // 2 minutes
-  }, []);
+    }, 120000);
+  };
 
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (event.key === "Enter" && !loading) onSend();
-    },
-    [loading]
-  );
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && !loading) onSend();
+  };
 
-  const getallPreviousHistory = useCallback(async () => {
+  const getallPreviousHistory = async () => {
     if (threadId && interfaceId) {
       setChatsLoading(true);
       try {
@@ -139,7 +130,7 @@ function InterfaceChatbot({
         setChatsLoading(false);
       }
     }
-  }, [threadId, interfaceId, bridgeName]);
+  };
 
   useEffect(() => {
     setLoading(false);
@@ -157,6 +148,8 @@ function InterfaceChatbot({
         if (parsedMessage?.status === "connected") {
           return;
         } else if (parsedMessage?.function_call) {
+          console.log("function calling");
+
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
             { role: "assistant", wait: true, content: "Function Calling" },
@@ -165,12 +158,15 @@ function InterfaceChatbot({
           parsedMessage?.function_call === false &&
           !parsedMessage?.response
         ) {
+          console.log("going to gpt");
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
             { role: "assistant", wait: true, content: "Talking with AI" },
           ]);
         } else {
-          const stringifiedJson = message?.response?.choices?.[0]?.message;
+          const stringifiedJson =
+            parsedMessage?.response?.choices?.[0]?.message;
+          console.log(stringifiedJson, "strinfified json");
           setLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
@@ -188,19 +184,16 @@ function InterfaceChatbot({
     }
   }, [threadId, interfaceId, inpreview, userId]);
 
-  const sendMessage = useCallback(
-    async (message: string) => {
-      await sendDataToAction({
-        message,
-        userId,
-        interfaceContextData: interfaceContextData || {},
-        threadId: threadId,
-        slugName: bridgeName,
-        chatBotId: interfaceId,
-      });
-    },
-    [userId, interfaceContextData, bridgeName, interfaceId, threadId]
-  );
+  const sendMessage = async (message: string) => {
+    await sendDataToAction({
+      message,
+      userId,
+      interfaceContextData: interfaceContextData || {},
+      threadId: threadId,
+      slugName: bridgeName,
+      chatBotId: interfaceId,
+    });
+  };
 
   const onSend = () => {
     const message = messageRef.current.value.trim();
@@ -217,12 +210,12 @@ function InterfaceChatbot({
     messageRef.current.value = "";
   };
 
-  const movetoDown = useCallback(() => {
+  const movetoDown = () => {
     containerRef.current?.scrollTo({
       top: containerRef?.current?.scrollHeight,
       behavior: "smooth",
     });
-  }, []);
+  };
 
   useEffect(() => {
     movetoDown();
