@@ -183,7 +183,7 @@ function InterfaceChatbot({
       client.on("message", handleMessage);
 
       return () => {
-        client.unsubscribe(interfaceId + threadId);
+        client.unsubscribe(interfaceId + (threadId || userId));
       };
     }
   }, [threadId, interfaceId, inpreview, userId]);
