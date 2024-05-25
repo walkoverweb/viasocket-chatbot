@@ -65,7 +65,7 @@ function InterfaceChatbot({
     (state: $ReduxCoreType) => ({
       interfaceContextData:
         state.Interface?.interfaceContext?.[interfaceId]?.interfaceData,
-      threadId: state.Interface?.threadId || "threadId",
+      threadId: state.Interface?.threadId || "",
       bridgeName: state.Interface?.bridgeName || "root",
     })
   );
