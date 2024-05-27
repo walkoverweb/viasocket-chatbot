@@ -15,6 +15,10 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    window?.parent?.postMessage({ type: "interfaceLoaded" }, "*");
+  }, []);
+
+  useEffect(() => {
     (async () => {
       const interfaceToken = intefaceGetLocalStorage("interfaceToken");
       if (interfaceId && interfaceToken && loadInterface) {

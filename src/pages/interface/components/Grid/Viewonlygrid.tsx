@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import React, { useEffect } from "react";
+import React from "react";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
@@ -148,10 +148,6 @@ function Viewonlygrid({ dragRef, interfaceId, gridId = "root" }) {
       state?.Interface?.interfaceData?.[interfaceId]?.responseTypes?.[gridId]
         ?.components || {},
   }));
-
-  useEffect(() => {
-    window?.parent?.postMessage({ type: "interfaceLoaded" }, "*");
-  }, []);
 
   return (
     <Box className="column grid_parent">
