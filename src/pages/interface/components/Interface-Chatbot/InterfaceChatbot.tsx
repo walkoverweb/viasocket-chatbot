@@ -69,6 +69,7 @@ function InterfaceChatbot({
       bridgeName: state.Interface?.bridgeName || "root",
     })
   );
+  console.log(threadId, "on render chatbot");
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
@@ -133,9 +134,14 @@ function InterfaceChatbot({
   };
 
   useEffect(() => {
+    console.log(threadId, "threadId");
+  }, [threadId]);
+
+  useEffect(() => {
     setLoading(false);
     if (inpreview) {
       const subscribe = () => {
+        console.log(threadId, "subscribing");
         client.subscribe(interfaceId + (threadId || userId));
       };
       client.on("open", subscribe);
