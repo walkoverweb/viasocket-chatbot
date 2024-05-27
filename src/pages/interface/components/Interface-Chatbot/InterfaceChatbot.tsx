@@ -69,7 +69,6 @@ function InterfaceChatbot({
       bridgeName: state.Interface?.bridgeName || "root",
     })
   );
-  console.log(threadId, "on render chatbot");
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
@@ -134,14 +133,9 @@ function InterfaceChatbot({
   };
 
   useEffect(() => {
-    console.log(threadId, "threadId");
-  }, [threadId]);
-
-  useEffect(() => {
     setLoading(false);
     if (inpreview) {
       const subscribe = () => {
-        console.log(threadId, "subscribing");
         client.subscribe(interfaceId + (threadId || userId));
       };
       client.on("open", subscribe);
@@ -149,7 +143,6 @@ function InterfaceChatbot({
       getallPreviousHistory();
 
       const handleMessage = (message: string) => {
-        console.log(message, 23423);
         const parsedMessage = JSON.parse(message || "{}");
         if (parsedMessage?.status === "connected") {
           return;
@@ -172,7 +165,7 @@ function InterfaceChatbot({
         } else {
           const stringifiedJson =
             parsedMessage?.response?.choices?.[0]?.message;
-          console.log(stringifiedJson, "strinfified json");
+          // console.log(stringifiedJson, "strinfified json");
           setLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
