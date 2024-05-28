@@ -7,17 +7,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.chat-row {
-  margin-bottom: 8px;
-  padding: 10px;
-  /* Padding inside the container */
-  border: 0.5px solid #c0c0c0;
-  /* Solid border with color, adjust color and thickness as needed */
-  border-radius: 10px;
-  /* Rounded corners, adjust the radius as needed */
-  box-shadow: 0 4px 2px rgba(0, 0, 0, 0.1);
-}
-
 .interface-chatbot__body {
   // overflow-y: scroll;
   display: flex;
@@ -52,16 +41,10 @@
   // box-shadow: 1px 0 2px 2px rgba(0, 0, 0, 0.2);
 }
 
-// sx= {
-//     {
-//     flexGrow: 1, overflowY: 'auto', paddingX: 0.2, paddingBottom: 0.2
-//   }
-// }
-
 .first-grid {
   background-color: #1976d2;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  // border-top-left-radius: 10px;
+  // border-top-right-radius: 10px;
 }
 
 .second-grid {
@@ -74,32 +57,4 @@
   border-top: none;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
-}
-
-/* HTML: <div class="loader"></div> */
-.loader {
-  width: 20px;
-  aspect-ratio: 0.75;
-  --c: no-repeat linear-gradient(#000 0 0);
-  background: var(--c) 0% 50%, var(--c) 50% 50%, var(--c) 100% 50%;
-  background-size: 20% 50%;
-  animation: l6 1s infinite linear;
-}
-
-@keyframes l6 {
-  20% {
-    background-position: 0% 0%, 50% 50%, 100% 50%;
-  }
-
-  40% {
-    background-position: 0% 100%, 50% 0%, 100% 50%;
-  }
-
-  60% {
-    background-position: 0% 50%, 50% 100%, 100% 0%;
-  }
-
-  80% {
-    background-position: 0% 50%, 50% 50%, 100% 100%;
-  }
 }
