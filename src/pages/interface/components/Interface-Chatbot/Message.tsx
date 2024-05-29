@@ -23,16 +23,17 @@ function Message({ message, isJSONString, dragRef }) {
 
         <Stack
           sx={{
-            alignItems: "center",
+            alignItems: "flex-end",
             gap: "0px",
             width: "100%",
-            minHeight: "50px",
+            // minHeight: "50px",
             justifyContent: "flex-end",
             " @media(max-width:479px)": {
-              height: "80px",
+              // height: "90px",
+              height: "fit-content",
               columnGap: "5px",
             },
-            // flexWrap: 'wrap'
+            marginBottom: "20px",
           }}
           direction="row"
         >
@@ -42,7 +43,7 @@ function Message({ message, isJSONString, dragRef }) {
               padding: "10px",
               boxSizing: "border-box",
               height: "fit-content",
-              minWidth: "250px",
+              minWidth: "150px",
               borderRadius: "10px 10px 1px 10px",
               boxShadow: "0 4px 2px rgba(0, 0, 0, 0)",
               wordBreak: "break-all",
@@ -62,7 +63,7 @@ function Message({ message, isJSONString, dragRef }) {
               {message?.content}
             </Typography>
           </Box>
-          <Stack
+          {/* <Stack
             sx={{
               alignItems: "center",
               width: "40px",
@@ -70,8 +71,8 @@ function Message({ message, isJSONString, dragRef }) {
               " @media(max-width:479px)": { width: "50px" },
             }}
             spacing="5px"
-          >
-            {/* <Avatar
+          > */}
+          {/* <Avatar
               src="https://objectstorage.me-dubai-1.oraclecloud.com/n/axwzijd5v1vn/b/DSL_IMAGES/o/IMAGE/aaec5f35-44d0-4230-a9e6-bb127f2ff6eb-profile-picture-smiling-successful-young-260nw-2040223583.png"
               sx={{
                 borderRadius: 'calc(16px*1.5)',
@@ -91,7 +92,8 @@ function Message({ message, isJSONString, dragRef }) {
                 },
               }}
               alt=""></Avatar> */}
-            <AccountBoxIcon
+
+          {/* <AccountBoxIcon
               sx={{
                 borderRadius: "calc(16px*1.5)",
                 // boxShadow: '0px 0px calc(16px*1.5) gray',
@@ -110,8 +112,9 @@ function Message({ message, isJSONString, dragRef }) {
                 },
               }}
             />
+             */}
 
-            {/* <Typography
+          {/* <Typography
               variant="p"
               sx={{
                 fontFamily: 'var(--theme-font-family)',
@@ -122,7 +125,7 @@ function Message({ message, isJSONString, dragRef }) {
               }}>
               11:00 AM
             </Typography> */}
-          </Stack>
+          {/* </Stack> */}
         </Stack>
       ) : (
         // </Box>
@@ -172,14 +175,17 @@ function Message({ message, isJSONString, dragRef }) {
         // </Box>
         <Stack
           sx={{
-            alignItems: "center",
+            alignItems: "flex-end",
             gap: "10px",
-            width: "100%",
-            height: "110px",
+            // width: "100%",
+            maxWidth: "90%",
+            // minHeight: "50px",
             " @media(max-width:479px)": {
-              height: "90px",
+              // height: "90px",
+              height: "fit-content",
               columnGap: "5px",
             },
+            marginBottom: "15px",
           }}
           direction="row"
         >
@@ -212,7 +218,7 @@ function Message({ message, isJSONString, dragRef }) {
                 },
               }}
               alt=""></Avatar> */}
-            <SmartToyIcon
+            {/* <SmartToyIcon
               sx={{
                 borderRadius: "calc(16px*1.5)",
                 // boxShadow: '0px 0px calc(16px*1.5) gray',
@@ -230,7 +236,26 @@ function Message({ message, isJSONString, dragRef }) {
                   width: "25px",
                 },
               }}
-            />
+            /> */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-bot"
+            >
+              <path d="M12 8V4H8" />
+              <rect width="16" height="12" x="4" y="8" rx="2" />
+              <path d="M2 14h2" />
+              <path d="M20 14h2" />
+              <path d="M15 13v2" />
+              <path d="M9 13v2" />
+            </svg>
             {/* <Typography
               variant="p"
               sx={{

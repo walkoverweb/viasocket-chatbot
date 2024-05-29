@@ -1,8 +1,8 @@
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
-import { Box, IconButton, Paper } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import React from "react";
-import Message from "./Message.tsx";
 import "./InterfaceChatbot.scss";
+import Message from "./Message.tsx";
 
 function MessageList({
   messages,
@@ -12,8 +12,8 @@ function MessageList({
   containerRef,
 }) {
   return (
-    <Paper
-      elevation={3}
+    <Box
+      // elevation={1}
       sx={{
         height: "100%",
         overflowY: "auto",
@@ -46,7 +46,7 @@ function MessageList({
           />
         </IconButton>
       )}
-    </Paper>
+    </Box>
   );
 }
 

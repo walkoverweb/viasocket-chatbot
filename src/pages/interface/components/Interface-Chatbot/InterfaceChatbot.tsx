@@ -105,7 +105,7 @@ function InterfaceChatbot({
         setLoading(false);
         return updatedMessages;
       });
-    }, 2000);
+    }, 120000);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -254,6 +254,7 @@ function InterfaceChatbot({
       </Grid>
       <Grid item xs={12} className="third-grid bg-white p-3 flex-center mb-2">
         <TextField
+          className="input-field"
           inputRef={messageRef}
           onKeyDown={handleKeyDown}
           placeholder="Enter your message"
