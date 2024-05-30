@@ -22,7 +22,7 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
     (async () => {
       const interfaceToken = intefaceGetLocalStorage("interfaceToken");
       if (interfaceId && interfaceToken && loadInterface) {
-        dispatch(getInterfaceDataByIdStart({}));
+        // dispatch(getInterfaceDataByIdStart({}));
       }
     })();
 

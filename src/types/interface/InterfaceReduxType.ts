@@ -3,7 +3,7 @@ export interface $InterfaceReduxType {
   threadId: string;
   bridgeName: string;
   interfaceData: {
-    [interfaceId: string]: InterFaceDataType;
+    [interfaceId: string]: any;
   };
   interfaceContext: {
     [interfaceId: string]: any;

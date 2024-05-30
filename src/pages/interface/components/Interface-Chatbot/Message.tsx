@@ -8,6 +8,10 @@ import InterfaceGrid from "../Grid/Grid.tsx";
 import "./Message.scss";
 
 function Message({ message, isJSONString, dragRef }) {
+  // console.log(message, 2345)
+  if (message?.role === "assistant") {
+    console.log(JSON.parse(message?.content), 2345);
+  }
   return (
     <Box className="w-100">
       {message?.role === "user" ? (
@@ -77,26 +81,26 @@ function Message({ message, isJSONString, dragRef }) {
           {/* </Stack> */}
         </Stack>
       ) : (
-        <Stack
+        <Box
           sx={{
             alignItems: "flex-end",
+            flexDirection: "row",
             gap: "10px",
             maxWidth: "90%",
-            " @media(max-width:479px)": {
-              // height: "90px",
+            marginBottom: "15px",
+            "@media(max-width:479px)": {
               height: "fit-content",
               columnGap: "5px",
             },
-            marginBottom: "15px",
           }}
-          direction="row"
+          // direction="row"
         >
           <Stack
             sx={{
               alignItems: "center",
               width: "30px",
               justifyContent: "flex-end",
-              " @media(max-width:479px)": { width: "50px" },
+              "@media(max-width:479px)": { width: "50px" },
             }}
             spacing="5px"
           >
@@ -107,10 +111,10 @@ function Message({ message, isJSONString, dragRef }) {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-bot"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-bot"
             >
               <path d="M12 8V4H8" />
               <rect width="16" height="12" x="4" y="8" rx="2" />
@@ -120,26 +124,26 @@ function Message({ message, isJSONString, dragRef }) {
               <path d="M9 13v2" />
             </svg>
             {/* <Typography
-              variant="p"
-              sx={{
-                fontFamily: 'var(--theme-font-family)',
-                color: 'var(--theme-color-base)',
-                fontSize: '12px',
-                ' @media(max-width:991px)': { fontSize: '12px' },
-                ' @media(max-width:479px)': { fontSize: '10px' },
-              }}>
-              11:00 AM
-            </Typography> */}
+          variant="p"
+          sx={{
+            fontFamily: 'var(--theme-font-family)',
+            color: 'var(--theme-color-base)',
+            fontSize: '12px',
+            "@media(max-width:991px)": { fontSize: '12px' },
+            "@media(max-width:479px)": { fontSize: '10px' },
+          }}>
+          11:00 AM
+        </Typography> */}
           </Stack>
           <Box
             sx={{
               backgroundColor: "#EAEAEA",
               padding: "10px",
               boxSizing: "border-box",
-              height: "fit-content",
               minWidth: "250px",
               borderRadius: "10px 10px 10px 1px",
               width: "fit-content",
+              maxWidth: "100%", // Ensure it doesn't exceed the parent width
             }}
           >
             {message?.wait ? (
@@ -182,7 +186,7 @@ function Message({ message, isJSONString, dragRef }) {
               </Box>
             )}
           </Box>
-        </Stack>
+        </Box>
       )}
     </Box>
   );
