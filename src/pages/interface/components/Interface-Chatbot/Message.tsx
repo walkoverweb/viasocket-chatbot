@@ -1,7 +1,4 @@
 /* eslint-disable */
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import ReportProblemIcon from "@mui/icons-material/ReportProblem";
-import SmartToyIcon from "@mui/icons-material/SmartToy";
 import { Box, Stack, Typography } from "@mui/material";
 import React from "react";
 import InterfaceGrid from "../Grid/Grid.tsx";

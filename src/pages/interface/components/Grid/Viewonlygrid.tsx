@@ -2,12 +2,10 @@ import { Box } from "@mui/material";
 import React, { useContext } from "react";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
-import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
-import { useCustomSelector } from "../../../../utils/deepCheckSelector";
 import ComponentRenderer from "../ComponentRenderer.tsx";
 import { GridContext } from "./Grid.tsx";
 
-function Viewonlygrid({ dragRef, interfaceId, gridId = "root" }) {
+function Viewonlygrid({ dragRef }) {
   // const { components } = useCustomSelector((state: $ReduxCoreType) => ({
   //   components:
   //     state?.Interface?.interfaceData?.[interfaceId]?.responseTypes?.[gridId]

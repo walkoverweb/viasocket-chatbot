@@ -27,38 +27,38 @@ function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
   //   threadId: state.Interface?.threadId
   // }))
 
-  const handleFrontEndActions = () => {
-    // const actions: any = Object.values(frontEndActions || {})
-    // actions?.forEach((action: any) => {
-    //   if (action?.type === 'sendDataToFrontend') {
-    //     Object?.entries(ContextData)?.forEach(([responseKey, responseData]) => {
-    //       if (responseKey?.includes(responseJson?.msgId)) {
-    //         const data = {
-    //           message: responseData,
-    //           type: 'ChatbotResponse'
-    //         }
-    //         window?.parent?.postMessage(data, '*')
-    //       }
-    //     })
-    //   }
-    //   if (action?.type === 'navigate') {
-    //     let url = action?.url
-    //     if (urlPattern.test(url)) {
-    //       if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    //         url = `https://${url}`
-    //       }
-    //       if (action?.openInNewTab) {
-    //         window.open(url, '_blank')
-    //       } else {
-    //         window.open(url, '_self')
-    //       }
-    //     }
-    //   }
-    //   if (action?.type === 'alert') {
-    //     infoToast(action?.message || '')
-    //   }
-    // })
-  };
+  // const handleFrontEndActions = () => {
+  // const actions: any = Object.values(frontEndActions || {})
+  // actions?.forEach((action: any) => {
+  //   if (action?.type === 'sendDataToFrontend') {
+  //     Object?.entries(ContextData)?.forEach(([responseKey, responseData]) => {
+  //       if (responseKey?.includes(responseJson?.msgId)) {
+  //         const data = {
+  //           message: responseData,
+  //           type: 'ChatbotResponse'
+  //         }
+  //         window?.parent?.postMessage(data, '*')
+  //       }
+  //     })
+  //   }
+  //   if (action?.type === 'navigate') {
+  //     let url = action?.url
+  //     if (urlPattern.test(url)) {
+  //       if (!url.startsWith('http://') && !url.startsWith('https://')) {
+  //         url = `https://${url}`
+  //       }
+  //       if (action?.openInNewTab) {
+  //         window.open(url, '_blank')
+  //       } else {
+  //         window.open(url, '_self')
+  //       }
+  //     }
+  //   }
+  //   if (action?.type === 'alert') {
+  //     infoToast(action?.message || '')
+  //   }
+  // })
+  // };
 
   const handleOnClick = () => {
     // if (!inpreview) return
