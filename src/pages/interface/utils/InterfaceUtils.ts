@@ -555,7 +555,21 @@ export function formInitialChildren(type: string) {
   }
   return { components: {}, coordinates: {} };
 }
-
+export const perFormAction = (actionData: any) => {
+  debugger;
+  switch (actionData.type.toLowerCase()) {
+    case "senddatatofrontend":
+      const data = {
+        message: actionData.data,
+        type: "ChatbotResponse",
+      };
+      console.log("senddatatofrontend", data);
+      window?.parent?.postMessage(data, "*");
+      break;
+    default:
+      break;
+  }
+};
 export const intefaceSetLocalStorage = (key: string, value: string) => {
   // if (process.env.REACT_APP_API_ENVIRONMENT === "local") {
   //   window.interfaceData = JSON.stringify({

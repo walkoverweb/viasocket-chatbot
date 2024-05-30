@@ -23,7 +23,7 @@ import { GridContext } from "./Grid/Grid.tsx";
 
 interface ComponentRendererProps {
   gridId?: string;
-  id?: string;
+  componentId: string;
   dragRef?: any;
   inpreview?: boolean;
   interfaceId: string;
@@ -57,44 +57,50 @@ const componentMap: any = {
 };
 
 function ComponentRenderer({
-  gridId,
-  id: componentId,
+  // gridId,
+  componentId,
   dragRef,
   inpreview = false,
   interfaceId,
 }: ComponentRendererProps) {
-  const responseTypeJson = useContext(GridContext);
+  const responseTypeJson: any = useContext(GridContext);
+  // const { type, props, key, action } = componentData;
+  const type = responseTypeJson?.components?.[componentId]?.type;
+  const props = responseTypeJson?.components?.[componentId]?.props;
+  const action = responseTypeJson?.components?.[componentId]?.action;
 
-  const componentData = useCustomSelector(
-    (state: $ReduxCoreType) =>
-      state.Interface?.interfaceData?.[interfaceId]?.responseTypes?.[gridId]
-        ?.components?.[componentId]
-  );
-  const { type, props, key, action } = componentData;
-  const commonProps = {
-    ...(responseTypeJson?.[componentId]?.props || { ...props }),
-    key,
-  };
+  // const componentData = useCustomSelector(
+  //   (state: $ReduxCoreType) =>
+  //     state.Interface?.interfaceData?.[interfaceId]?.responseTypes?.[gridId]
+  //       ?.components?.[componentId]
+  // );
+  // const { type, props, key, action } = componentData;
+  // const commonProps = {
+  //   ...(responseTypeJson?.[componentId]?.props || { ...props }),
+  //   key,
+  // };
   const component = componentMap[type] || null;
 
   if ((component && type === "Button") || type === "ChatBot") {
     return component({
-      props: commonProps,
-      gridId,
+      props,
+      // gridId,
       componentId,
-      action,
+      // action,
       inpreview,
+      action,
     });
   }
 
   return component
     ? component({
-        props: commonProps,
-        gridId,
+        props,
+        // gridId,
         componentId,
-        action,
+        // action,
         inpreview,
         dragRef,
+        action,
       })
     : null;
 }
