@@ -139,7 +139,7 @@ function Message({ message, isJSONString, dragRef }) {
               height: "fit-content",
               minWidth: "250px",
               borderRadius: "10px 10px 10px 1px",
-              width: "100%",
+              width: "fit-content",
             }}
           >
             {message?.wait ? (
