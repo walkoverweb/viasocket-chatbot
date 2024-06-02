@@ -1,7 +1,5 @@
 /* eslint-disable */
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
-import SmartToyIcon from "@mui/icons-material/SmartToy";
 import { Box, Stack, Typography } from "@mui/material";
 import React from "react";
 import InterfaceGrid from "../Grid/Grid.tsx";
@@ -29,7 +27,7 @@ function Message({ message, isJSONString, dragRef }) {
         >
           <Box
             sx={{
-              backgroundColor: "#d4e9ff",
+              backgroundColor: "#e4e4e4",
               padding: "10px",
               boxSizing: "border-box",
               height: "fit-content",
@@ -96,7 +94,7 @@ function Message({ message, isJSONString, dragRef }) {
               alignItems: "center",
               width: "30px",
               justifyContent: "flex-end",
-              " @media(max-width:479px)": { width: "50px" },
+              " @media(max-width:479px)": { width: "30px" },
             }}
             spacing="5px"
           >
@@ -133,13 +131,13 @@ function Message({ message, isJSONString, dragRef }) {
           </Stack>
           <Box
             sx={{
-              backgroundColor: "#EAEAEA",
+              backgroundColor: "#eeeeee",
               padding: "10px",
               boxSizing: "border-box",
               height: "fit-content",
               minWidth: "250px",
               borderRadius: "10px 10px 10px 1px",
-              width: "fit-content",
+              width: "100%",
             }}
           >
             {message?.wait ? (

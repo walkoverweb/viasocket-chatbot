@@ -105,7 +105,7 @@ function InterfaceChatbot({
         setLoading(false);
         return updatedMessages;
       });
-    }, 120000);
+    }, 2000);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -209,17 +209,6 @@ function InterfaceChatbot({
     messageRef.current.value = "";
   };
 
-  const movetoDown = () => {
-    containerRef.current?.scrollTo({
-      top: containerRef?.current?.scrollHeight,
-      behavior: "smooth",
-    });
-  };
-
-  useEffect(() => {
-    movetoDown();
-  }, [messages, movetoDown]);
-
   return (
     <Box
       sx={{ display: "flex", flexDirection: "column" }}
@@ -243,7 +232,6 @@ function InterfaceChatbot({
           messages={messages}
           isJSONString={isJSONString}
           dragRef={dragRef}
-          movetoDown={movetoDown}
           containerRef={containerRef}
         />
         <DefaultQuestions
@@ -262,8 +250,8 @@ function InterfaceChatbot({
         />
         <IconButton
           onClick={() => (!loading ? onSend() : null)}
-          className="p-3 cursor-pointer ml-2"
-          sx={{ backgroundColor: "#1976d2", opacity: loading ? 0.5 : 1 }}
+          className="p-3 cursor-pointer ml-2 iconButton"
+          sx={{ opacity: loading ? 0.5 : 1 }}
           disableRipple
         >
           <SendIcon color="inherit" className="color-white" />
