@@ -33,16 +33,16 @@
 
 .move-to-down-button {
   position: absolute !important;
-  bottom: 140px !important;
-  right: 14px !important;
-  padding: 8px !important;
+  bottom: 120px !important;
+  right: 10px !important;
+  padding: 5px !important;
   border-radius: 50px !important;
   cursor: pointer !important;
   // box-shadow: 1px 0 2px 2px rgba(0, 0, 0, 0.2);
 }
 
 .first-grid {
-  background-color: #1976d2;
+  background-color: #333;
   // border-top-left-radius: 10px;
   // border-top-right-radius: 10px;
 }
@@ -57,6 +57,11 @@
   border-top: none;
   // border-bottom-right-radius: 10px;
   // border-bottom-left-radius: 10px;
+}
+
+.iconButton {
+  // background-color: #212529;
+  background-color: #343434 !important;
 }
 
 .input-field {
