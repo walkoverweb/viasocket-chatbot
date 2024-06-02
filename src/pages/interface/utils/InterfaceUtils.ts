@@ -556,15 +556,20 @@ export function formInitialChildren(type: string) {
   return { components: {}, coordinates: {} };
 }
 export const perFormAction = (actionData: any) => {
-  debugger;
+  let data;
   switch (actionData.type.toLowerCase()) {
     case "senddatatofrontend":
-      const data = {
+      data = {
         message: actionData.data,
         type: "ChatbotResponse",
       };
-      console.log("senddatatofrontend", data);
       window?.parent?.postMessage(data, "*");
+      break;
+    case "senddatatogpt":
+      data = {
+        message: actionData.data,
+        type: "ChatbotResponse",
+      };
       break;
     default:
       break;
