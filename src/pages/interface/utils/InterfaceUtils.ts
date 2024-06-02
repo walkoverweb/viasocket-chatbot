@@ -565,7 +565,7 @@ export const perFormAction = (actionData: any) => {
       };
       window?.parent?.postMessage(data, "*");
       break;
-    case "senddatatogpt":
+    case "senddatatoai":
       data = {
         message: actionData.data,
         type: "ChatbotResponse",
