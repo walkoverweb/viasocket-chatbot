@@ -105,7 +105,7 @@ function InterfaceChatbot({
         setLoading(false);
         return updatedMessages;
       });
-    }, 2000);
+    }, 120000);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
