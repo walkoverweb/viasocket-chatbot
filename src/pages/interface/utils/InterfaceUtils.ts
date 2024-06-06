@@ -556,11 +556,11 @@ export function formInitialChildren(type: string) {
   return { components: {}, coordinates: {} };
 }
 export const perFormAction = (actionData: any) => {
-  debugger;
-  switch (actionData.type.toLowerCase()) {
+  switch (actionData?.type?.toLowerCase()) {
     case "senddatatofrontend":
+      /* eslint-disable-next-line */
       const data = {
-        message: actionData.data,
+        message: actionData.variable,
         type: "ChatbotResponse",
       };
       console.log("senddatatofrontend", data);

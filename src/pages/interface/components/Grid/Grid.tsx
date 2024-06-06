@@ -15,10 +15,10 @@ function Grid({ componentJson, msgId, ...props }) {
 
   function replaceDynamicPaths(obj, context) {
     if (typeof obj === "string") {
-      if (obj.startsWith("data.")) {
-        return getValueByPath(obj, context);
-      }
-      return obj;
+      const dynamicPathRegex = /variables\.[a-zA-Z0-9_.]+/g;
+      return obj.replace(dynamicPathRegex, (match) =>
+        getValueByPath(match, context)
+      );
     }
 
     if (Array.isArray(obj)) {

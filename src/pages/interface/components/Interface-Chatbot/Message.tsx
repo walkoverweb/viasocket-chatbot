@@ -1,47 +1,13 @@
 /* eslint-disable */
 import { Box, Stack, Typography } from "@mui/material";
+import Markdown from "react-markdown";
 import React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import InterfaceGrid from "../Grid/Grid.tsx";
 import "./Message.scss";
-
+import ReportProblemIcon from "@mui/icons-material/ReportProblem.js";
 function Message({ message, isJSONString, dragRef }) {
-  const jsonstring = {
-    actions: {
-      actionId1: {
-        type: "SendDataToFrontend",
-        data: {
-          type: "function",
-          data: "data.isPalindrome",
-        },
-      },
-    },
-    data: {
-      isPalindrome:
-        "function isPalindrome(str) {\n  const cleanedStr = str.replace(/[^A-Za-z0-9]/g, '').toLowerCase();\n  const reversedStr = cleanedStr.split('').reverse().join('');\n  return cleanedStr === reversedStr;\n}",
-      buttonText: "Check Palindrome",
-    },
-    components: {
-      Typography: {
-        key: "text",
-        type: "Typography",
-        props: {
-          defaultValue: "data.isPalindrome",
-          children: "data.isPalindrome",
-        },
-      },
-      button: {
-        key: "button",
-        type: "Button",
-        value: "data.isPalindrome",
-        props: {
-          variant: "contained",
-          label: "data.buttonText",
-        },
-        action: "actionId1",
-      },
-    },
-  };
-
   return (
     <Box className="w-100">
       {message?.role === "user" ? (
@@ -169,36 +135,41 @@ function Message({ message, isJSONString, dragRef }) {
               maxWidth: "90%",
             }}
           >
-            {
-              // message?.wait ? (
-              //   <Box className="flex-start-center w-100 gap-2 p-1">
-              //     <div className="loader" />
-              //     <Typography variant="body">{message?.content}</Typography>
-              //   </Box>
-              // ) : message?.timeOut ? (
-              //   <Box className="flex-start-center w-100 gap-5 p-1">
-              //     <Typography variant="body">
-              //       Timeout reached. Please try again later.
-              //     </Typography>
-              //   </Box>
-              // ) : (
+            {message?.wait ? (
+              <Box className="flex-start-center w-100 gap-2 p-1">
+                <div className="loader" />
+                <Typography variant="body">{message?.content}</Typography>
+              </Box>
+            ) : message?.timeOut ? (
+              <Box className="flex-start-center w-100 gap-5 p-1">
+                <Typography variant="body">
+                  Timeout reached. Please try again later.
+                </Typography>
+              </Box>
+            ) : (
               <Box className="flex-start-center">
-                {/* {isJSONString(jsonstring || "{}")?.responseId ? ( */}
-                <InterfaceGrid
-                  style={{ height: window.innerHeight }}
-                  dragRef={dragRef}
-                  inpreview={false}
-                  ingrid={false}
-                  // gridId={
-                  //   JSON.parse(message?.content || "{}")?.responseId ||
-                  //   "default"
-                  // }
-                  loadInterface={false}
-                  // componentJson={JSON.parse(message?.content || "{}")}
-                  componentJson={jsonstring}
-                  msgId={message?.createdAt}
-                />
-                {/* ) : (
+                {isJSONString(message?.content || "{}") ? (
+                  JSON.parse(message.content)?.isMarkdown == true ? (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {JSON.parse(message.content)?.markdown}
+                    </ReactMarkdown>
+                  ) : (
+                    <InterfaceGrid
+                      style={{ height: window.innerHeight }}
+                      dragRef={dragRef}
+                      inpreview={false}
+                      ingrid={false}
+                      gridId={
+                        JSON.parse(message?.content || "{}")?.responseId ||
+                        "default"
+                      }
+                      loadInterface={false}
+                      componentJson={JSON.parse(message?.content || "{}")}
+                      // componentJson={jsonstring}
+                      msgId={message?.createdAt}
+                    />
+                  )
+                ) : (
                   <Typography className="ml-1 flex-start-center">
                     {message?.content}
                     <ReportProblemIcon
@@ -207,10 +178,9 @@ function Message({ message, isJSONString, dragRef }) {
                       className="ml-2"
                     />
                   </Typography>
-                )} */}
+                )}
               </Box>
-              // )
-            }
+            )}
           </Box>
         </Stack>
       )}

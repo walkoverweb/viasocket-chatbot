@@ -1,9 +1,9 @@
 import { Button, ButtonProps } from "@mui/material";
-import React, { useContext } from "react";
+import React from "react";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import { perFormAction } from "../../utils/InterfaceUtils.ts";
-import { GridContext } from "../Grid/Grid.tsx";
+// import { GridContext } from "../Grid/Grid.tsx";
 
 interface InterfaceButtonProps {
   props: ButtonProps | any;
@@ -16,8 +16,6 @@ interface InterfaceButtonProps {
 // const urlPattern = /^(?:(?:https?|ftp):\/\/)?(?:www\.)?[^\s/$.?#].[^\s]*$/i
 
 function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
-  const responseJson = useContext(GridContext);
-
   // const payload = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.context?.[gridId])
   // const interfaceContextData = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.interfaceData)
   // const ContextData = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.context)
@@ -64,8 +62,8 @@ function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
     // if (!inpreview) return
     // if (actionId) sendDataToAction(actionId, { payload: payload, interfaceContextData: interfaceContextData, threadId: threadId })
     // if (frontEndActions) handleFrontEndActions()
-    if (responseJson?.actions?.[action]) {
-      perFormAction(responseJson?.actions?.[action]);
+    if (action?.actionId) {
+      perFormAction(action);
     }
   };
 
@@ -76,7 +74,7 @@ function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
       {...props}
       onClick={handleOnClick}
     >
-      {props?.label || ""}
+      {props?.label || props?.children || ""}
     </Button>
   );
 }
