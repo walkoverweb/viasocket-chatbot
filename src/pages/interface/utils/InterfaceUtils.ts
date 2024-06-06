@@ -563,8 +563,13 @@ export const perFormAction = (actionData: any) => {
         message: actionData.variable,
         type: "ChatbotResponse",
       };
-      console.log("senddatatofrontend", data);
       window?.parent?.postMessage(data, "*");
+      break;
+    case "senddatatoai":
+      // data = {
+      //   message: actionData.data,
+      //   type: "ChatbotResponse",
+      // };
       break;
     default:
       break;
