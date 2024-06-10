@@ -13,7 +13,7 @@ function Viewonlygrid({ dragRef }) {
   // }));
 
   const responseTypeJson: any = useContext(GridContext);
-  const components = responseTypeJson?.components;
+  const components = responseTypeJson?.components || responseTypeJson;
 
   return (
     <Box className="column grid_parent">
