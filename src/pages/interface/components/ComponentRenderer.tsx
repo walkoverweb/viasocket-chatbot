@@ -1,28 +1,29 @@
-/* eslint-disable */
 import React, { useContext } from "react";
-import { ParamsEnums } from "../../../enums";
-import addUrlDataHoc from "../../../hoc/addUrlDataHoc.tsx";
 import "../Interface.scss";
-import { GridContext } from "./Grid/Grid.tsx";
-import InterfaceAccordion from "./Interface-Accordion/InterfaceAccordion.tsx";
-import InterfaceBox from "./Interface-Box/InterfaceBox.tsx";
-import InterfaceButton from "./Interface-Button/InterfaceButton.tsx";
-import InterfaceChatbot from "./Interface-Chatbot/InterfaceChatbot.tsx";
-import InterfaceCheckbox from "./Interface-Checkbox/InterfaceCheckbox.tsx";
-import InterfaceDivider from "./Interface-Divider/InterfaceDivider.tsx";
 import InterfaceDropdown from "./Interface-DropDown/InterfaceDropdown.tsx";
-import InterfaceForm from "./Interface-Form/InterfaceForm.tsx";
-import InterfaceIcon from "./Interface-Icon/InterfaceIcon.tsx";
-import InterfaceLink from "./Interface-Link/InterfaceLink.tsx";
-import InterfaceTable from "./Interface-Table/InterfaceTable.tsx";
-import InterfaceText from "./Interface-Text/InterfaceText.tsx";
+import InterfaceButton from "./Interface-Button/InterfaceButton.tsx";
 import InterfaceTextfield from "./Interface-TextField/InterfaceTextfield.tsx";
+import InterfaceDivider from "./Interface-Divider/InterfaceDivider.tsx";
+import InterfaceText from "./Interface-Text/InterfaceText.tsx";
+import InterfaceLink from "./Interface-Link/InterfaceLink.tsx";
+import InterfaceBox from "./Interface-Box/InterfaceBox.tsx";
+import InterfaceCheckbox from "./Interface-Checkbox/InterfaceCheckbox.tsx";
+import InterfaceForm from "./Interface-Form/InterfaceForm.tsx";
+import InterfaceChatbot from "./Interface-Chatbot/InterfaceChatbot.tsx";
 import Interfacedatepicker from "./InterfaceDatepicker/Interfacedatepicker.tsx";
 import InterfaceRadio from "./InterfaceRadio/InterfaceRadio.tsx";
+import InterfaceIcon from "./Interface-Icon/InterfaceIcon.tsx";
+import InterfaceAccordion from "./Interface-Accordion/InterfaceAccordion.tsx";
+import InterfaceTable from "./Interface-Table/InterfaceTable.tsx";
+import { useCustomSelector } from "../../../utils/deepCheckSelector";
+import { $ReduxCoreType } from "../../../types/reduxCore.ts";
+import { ParamsEnums } from "../../../enums";
+import addUrlDataHoc from "../../../hoc/addUrlDataHoc.tsx";
+import { GridContext } from "./Grid/Grid.tsx";
 
 interface ComponentRendererProps {
   gridId?: string;
-  componentId: string;
+  id?: string;
   dragRef?: any;
   inpreview?: boolean;
   interfaceId: string;
@@ -56,50 +57,44 @@ const componentMap: any = {
 };
 
 function ComponentRenderer({
-  // gridId,
-  componentId,
+  gridId,
+  id: componentId,
   dragRef,
   inpreview = false,
   interfaceId,
 }: ComponentRendererProps) {
-  const responseTypeJson: any = useContext(GridContext);
-  // const { type, props, key, action } = componentData;
-  const type = responseTypeJson?.components?.[componentId]?.type;
-  const props = responseTypeJson?.components?.[componentId]?.props;
-  const action = responseTypeJson?.components?.[componentId]?.action;
+  const responseTypeJson = useContext(GridContext);
 
-  // const componentData = useCustomSelector(
-  //   (state: $ReduxCoreType) =>
-  //     state.Interface?.interfaceData?.[interfaceId]?.responseTypes?.[gridId]
-  //       ?.components?.[componentId]
-  // );
-  // const { type, props, key, action } = componentData;
-  // const commonProps = {
-  //   ...(responseTypeJson?.[componentId]?.props || { ...props }),
-  //   key,
-  // };
+  const componentData = useCustomSelector(
+    (state: $ReduxCoreType) =>
+      state.Interface?.interfaceData?.[interfaceId]?.responseTypes?.[gridId]
+        ?.components?.[componentId]
+  );
+  const { type, props, key, action } = componentData;
+  const commonProps = {
+    ...(responseTypeJson?.[componentId]?.props || { ...props }),
+    key,
+  };
   const component = componentMap[type] || null;
 
   if ((component && type === "Button") || type === "ChatBot") {
     return component({
-      props,
-      // gridId,
+      props: commonProps,
+      gridId,
       componentId,
-      // action,
-      inpreview,
       action,
+      inpreview,
     });
   }
 
   return component
     ? component({
-        props,
-        // gridId,
+        props: commonProps,
+        gridId,
         componentId,
-        // action,
+        action,
         inpreview,
         dragRef,
-        action,
       })
     : null;
 }

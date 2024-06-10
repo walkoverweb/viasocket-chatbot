@@ -49,10 +49,9 @@ interface MessageType {
 
 const isJSONString = (str: string) => {
   try {
-    JSON.parse(str);
-    return true;
+    return JSON.parse(str);
   } catch {
-    return false;
+    return {};
   }
 };
 
@@ -182,7 +181,7 @@ function InterfaceChatbot({
         client.unsubscribe(interfaceId + (threadId || userId));
       };
     }
-  }, [threadId, interfaceId, inpreview, userId, bridgeName]);
+  }, [threadId, interfaceId, inpreview, userId]);
 
   const sendMessage = async (message: string) => {
     await sendDataToAction({
