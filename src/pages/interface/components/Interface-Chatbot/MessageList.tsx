@@ -1,16 +1,21 @@
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { Box, IconButton } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import "./InterfaceChatbot.scss";
 import Message from "./Message.tsx";
 
-function MessageList({
-  messages,
-  isJSONString,
-  dragRef,
-  movetoDown,
-  containerRef,
-}) {
+function MessageList({ messages, isJSONString, dragRef, containerRef }) {
+  const movetoDown = () => {
+    containerRef.current?.scrollTo({
+      top: containerRef?.current?.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
+  useEffect(() => {
+    movetoDown();
+  }, [messages, movetoDown]);
+
   return (
     <Box
       // elevation={1}
@@ -37,7 +42,7 @@ function MessageList({
         <IconButton
           onClick={movetoDown}
           className="move-to-down-button"
-          sx={{ backgroundColor: "#1976d2" }}
+          sx={{ backgroundColor: "#333" }}
           disableRipple
         >
           <KeyboardDoubleArrowDownIcon
