@@ -16,8 +16,18 @@ function Grid({ componentJson, msgId, ...props }) {
   function replaceDynamicPaths(obj, context) {
     if (typeof obj === "string") {
       const dynamicPathRegex = /variables\.[a-zA-Z0-9_.]+/g;
+      if (
+        obj.match(dynamicPathRegex) &&
+        obj.match(dynamicPathRegex).length === 1 &&
+        obj.trim() === obj.match(dynamicPathRegex)[0].trim()
+      ) {
+        // If the entire string is a variable path, return the value directly (preserving type)
+        return getValueByPath(obj, context);
+      }
+
+      // Otherwise, replace inline with strings
       return obj.replace(dynamicPathRegex, (match) =>
-        getValueByPath(match, context)
+        String(getValueByPath(match, context))
       );
     }
 

@@ -8,6 +8,7 @@ import InterfaceGrid from "../Grid/Grid.tsx";
 import "./Message.scss";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem.js";
 function Message({ message, isJSONString, dragRef }) {
+  console.log(message?.content, "content baba");
   return (
     <Box className="w-100">
       {message?.role === "user" ? (
@@ -147,8 +148,8 @@ function Message({ message, isJSONString, dragRef }) {
                 </Typography>
               </Box>
             ) : (
-              <Box className="flex-start-center">
-                {isJSONString(message?.content || "{}") ? (
+              <Box>
+                {isJSONString(message?.content) ? (
                   JSON.parse(message.content)?.isMarkdown == true ? (
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {JSON.parse(message.content)?.markdown}
@@ -170,14 +171,17 @@ function Message({ message, isJSONString, dragRef }) {
                     />
                   )
                 ) : (
-                  <Typography className="ml-1 flex-start-center">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {message?.content}
-                    <ReportProblemIcon
-                      fontSize="small"
-                      color="error"
-                      className="ml-2"
-                    />
-                  </Typography>
+                  </ReactMarkdown>
+                  // <Typography className="ml-1 flex-start-center">
+                  //   {message?.content}
+                  //   <ReportProblemIcon
+                  //     fontSize="small"
+                  //     color="error"
+                  //     className="ml-2"
+                  //   />
+                  // </Typography>
                 )}
               </Box>
             )}
