@@ -8,7 +8,7 @@ import InterfaceGrid from "../Grid/Grid.tsx";
 import "./Message.scss";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem.js";
 function Message({ message, isJSONString, dragRef }) {
-  console.log(message?.content, "content baba");
+
   return (
     <Box className="w-100">
       {message?.role === "user" ? (
