@@ -64,9 +64,9 @@ function ComponentRenderer({
 }: ComponentRendererProps) {
   const responseTypeJson: any = useContext(GridContext);
   // const { type, props, key, action } = componentData;
-  const type = responseTypeJson?.components?.[componentId]?.type;
-  const props = responseTypeJson?.components?.[componentId]?.props;
-  const action = responseTypeJson?.components?.[componentId]?.action;
+  const type = responseTypeJson?.components?.[componentId]?.type || responseTypeJson?.[componentId]?.type;
+  const props = responseTypeJson?.components?.[componentId]?.props || responseTypeJson?.[componentId]?.props;
+  const action = responseTypeJson?.components?.[componentId]?.action || responseTypeJson?.[componentId]?.action ;
 
   // const componentData = useCustomSelector(
   //   (state: $ReduxCoreType) =>
