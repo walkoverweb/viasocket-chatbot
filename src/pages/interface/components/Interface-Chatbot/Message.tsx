@@ -1,11 +1,14 @@
 /* eslint-disable */
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import { Box, Stack, Typography } from "@mui/material";
+import Markdown from "react-markdown";
 import React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import InterfaceGrid from "../Grid/Grid.tsx";
 import "./Message.scss";
-
 function Message({ message, isJSONString, dragRef }) {
+
   return (
     <Box className="w-100">
       {message?.role === "user" ? (
@@ -152,30 +155,40 @@ function Message({ message, isJSONString, dragRef }) {
                 </Typography>
               </Box>
             ) : (
-              <Box className="w-100 flex-start-center">
-                {isJSONString(message?.content || "{}")?.responseId ? (
-                  <InterfaceGrid
-                    style={{ height: window.innerHeight }}
-                    dragRef={dragRef}
-                    inpreview={false}
-                    ingrid={false}
-                    gridId={
-                      JSON.parse(message?.content || "{}")?.responseId ||
-                      "default"
-                    }
-                    loadInterface={false}
-                    componentJson={JSON.parse(message?.content || "{}")}
-                    msgId={message?.createdAt}
-                  />
-                ) : (
-                  <Typography className="ml-1 flex-start-center">
-                    {message?.content}
-                    <ReportProblemIcon
-                      fontSize="small"
-                      color="error"
-                      className="ml-2"
+              <Box>
+                {isJSONString(message?.content) ? (
+                  JSON.parse(message.content)?.isMarkdown == true ? (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {JSON.parse(message.content)?.markdown}
+                    </ReactMarkdown>
+                  ) : (
+                    <InterfaceGrid
+                      style={{ height: window.innerHeight }}
+                      dragRef={dragRef}
+                      inpreview={false}
+                      ingrid={false}
+                      gridId={
+                        JSON.parse(message?.content || "{}")?.responseId ||
+                        "default"
+                      }
+                      loadInterface={false}
+                      componentJson={JSON.parse(message?.content || "{}")}
+                      // componentJson={jsonstring}
+                      msgId={message?.createdAt}
                     />
-                  </Typography>
+                  )
+                ) : (
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {message?.content}
+                  </ReactMarkdown>
+                  // <Typography className="ml-1 flex-start-center">
+                  //   {message?.content}
+                  //   <ReportProblemIcon
+                  //     fontSize="small"
+                  //     color="error"
+                  //     className="ml-2"
+                  //   />
+                  // </Typography>
                 )}
               </Box>
             )}
