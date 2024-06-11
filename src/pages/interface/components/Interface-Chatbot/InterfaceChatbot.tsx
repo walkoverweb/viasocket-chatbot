@@ -2,12 +2,14 @@
 import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
+  Container,
+  CssBaseline,
   Grid,
   IconButton,
   LinearProgress,
   TextField,
-  useTheme,
 } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import WebSocketClient from "rtlayer-client";
 import {
@@ -16,6 +18,7 @@ import {
 } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
+import generateTheme from "../../../../theme.js";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector.js";
 import ChatbotHeader from "./ChatbotHeader.tsx";
@@ -62,9 +65,11 @@ function InterfaceChatbot({
   interfaceId,
   dragRef,
 }: InterfaceChatbotProps) {
-  const theme = useTheme();
-  const primaryColor = theme.palette.primary.main;
-  const isLight = isColorLight(primaryColor);
+  // const theme = useTheme();
+  const [color, setColor] = useState("#2196f3");
+  const [theme, setTheme] = useState(generateTheme(color));
+  // const primaryColor = theme.palette.primary.main;
+  const isLight = isColorLight(color);
 
   const { interfaceContextData, threadId, bridgeName } = useCustomSelector(
     (state: $ReduxCoreType) => ({
@@ -74,6 +79,11 @@ function InterfaceChatbot({
       bridgeName: state.Interface?.bridgeName || "root",
     })
   );
+  const handleColorChange = (event) => {
+    const selectedColor = event.target.value;
+    setColor(selectedColor);
+    setTheme(generateTheme(selectedColor));
+  };
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
@@ -215,79 +225,98 @@ function InterfaceChatbot({
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        height: "100vh",
-        backgroundColor: theme.palette.background.default,
-      }}
-    >
-      <ChatbotHeader title={props?.title} subtitle={props?.subtitle} />
-      {chatsLoading && (
-        <LinearProgress
-          variant="indeterminate"
-          color="primary"
-          sx={{ height: 4 }}
-        />
-      )}
-      <Grid
-        item
-        xs
-        className="second-grid"
-        sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
-      >
-        <MessageList
-          messages={messages}
-          isJSONString={isJSONString}
-          dragRef={dragRef}
-          containerRef={containerRef}
-        />
-        <DefaultQuestions
-          defaultQuestion={defaultQuestion}
-          messageRef={messageRef}
-          onSend={onSend}
-        />
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        className="third-grid"
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Container style={{ marginTop: "20px" }}>
+        <input type="color" value={color} onChange={handleColorChange} />
+        {/* <Select
+          value={color}
+          onChange={handleColorChange}
+          variant="outlined"
+          label="Color Name"
+        >
+          {colorMap.map((colorName) => (
+            <MenuItem key={colorName} value={colorName}>
+              {colorName}
+            </MenuItem>
+          ))}
+        </Select> */}
+      </Container>
+
+      <Box
         sx={{
-          backgroundColor: theme.palette.background.paper,
-          padding: theme.spacing(3),
           display: "flex",
-          alignItems: "center",
-          marginBottom: theme.spacing(2),
+          flexDirection: "column",
+          width: "100%",
+          height: "100vh",
+          backgroundColor: theme.palette.background.default,
         }}
       >
-        <TextField
-          className="input-field"
-          inputRef={messageRef}
-          onKeyDown={handleKeyDown}
-          placeholder="Enter your message"
-          fullWidth
-          sx={{
-            backgroundColor: theme.palette.background.default,
-          }}
-        />
-        <IconButton
-          onClick={() => (!loading ? onSend() : null)}
-          sx={{
-            opacity: loading ? 0.5 : 1,
-            marginLeft: theme.spacing(2),
-            backgroundColor: theme.palette.primary.main,
-            // "&:hover": {
-            //   backgroundColor: theme.palette.primary.dark,
-            // },
-          }}
-          disableRipple
+        <ChatbotHeader title={props?.title} subtitle={props?.subtitle} />
+        {chatsLoading && (
+          <LinearProgress
+            variant="indeterminate"
+            color="primary"
+            sx={{ height: 4 }}
+          />
+        )}
+        <Grid
+          item
+          xs
+          className="second-grid"
+          sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
         >
-          <SendIcon sx={{ color: isLight ? "black" : "white" }} />
-        </IconButton>
-      </Grid>
-    </Box>
+          <MessageList
+            messages={messages}
+            isJSONString={isJSONString}
+            dragRef={dragRef}
+            containerRef={containerRef}
+          />
+          <DefaultQuestions
+            defaultQuestion={defaultQuestion}
+            messageRef={messageRef}
+            onSend={onSend}
+          />
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          className="third-grid"
+          sx={{
+            backgroundColor: theme.palette.background.paper,
+            padding: theme.spacing(3),
+            display: "flex",
+            alignItems: "center",
+            marginBottom: theme.spacing(2),
+          }}
+        >
+          <TextField
+            className="input-field"
+            inputRef={messageRef}
+            onKeyDown={handleKeyDown}
+            placeholder="Enter your message"
+            fullWidth
+            sx={{
+              backgroundColor: theme.palette.background.default,
+            }}
+          />
+          <IconButton
+            onClick={() => (!loading ? onSend() : null)}
+            sx={{
+              opacity: loading ? 0.5 : 1,
+              marginLeft: theme.spacing(2),
+              backgroundColor: theme.palette.primary.main,
+              // "&:hover": {
+              //   backgroundColor: theme.palette.primary.dark,
+              // },
+            }}
+            disableRipple
+          >
+            <SendIcon sx={{ color: isLight ? "black" : "white" }} />
+          </IconButton>
+        </Grid>
+      </Box>
+    </ThemeProvider>
   );
 }
 
@@ -313,3 +342,26 @@ function isColorLight(color) {
   // Return true if the color is light, otherwise false
   return brightness > 128;
 }
+
+const colorMap = [
+  "#f44336",
+  "#e91e63",
+  "#9c27b0",
+  "#673ab7",
+  "#3f51b5",
+  "#2196f3",
+  "#03a9f4",
+  "#00bcd4",
+  "#009688",
+  "#4caf50",
+  "#8bc34a",
+  "#cddc39",
+  "#ffeb3b",
+  "#ffc107",
+  "#ff9800",
+  "#ff5722",
+  "#795548",
+  "#9e9e9e",
+  "#607d8b",
+  "#000000",
+];
