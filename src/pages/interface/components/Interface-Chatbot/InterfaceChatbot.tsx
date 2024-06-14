@@ -2,7 +2,6 @@
 import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
-  Container,
   CssBaseline,
   Grid,
   IconButton,
@@ -65,11 +64,9 @@ function InterfaceChatbot({
   interfaceId,
   dragRef,
 }: InterfaceChatbotProps) {
-  // const theme = useTheme();
-  const [color, setColor] = useState("#2196f3");
-  const [theme, setTheme] = useState(generateTheme(color));
+  const theme = generateTheme(props?.themeColor);
   // const primaryColor = theme.palette.primary.main;
-  const isLight = isColorLight(color);
+  const isLight = isColorLight(props?.themeColor);
 
   const { interfaceContextData, threadId, bridgeName } = useCustomSelector(
     (state: $ReduxCoreType) => ({
@@ -79,11 +76,6 @@ function InterfaceChatbot({
       bridgeName: state.Interface?.bridgeName || "root",
     })
   );
-  const handleColorChange = (event) => {
-    const selectedColor = event.target.value;
-    setColor(selectedColor);
-    setTheme(generateTheme(selectedColor));
-  };
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
@@ -227,21 +219,6 @@ function InterfaceChatbot({
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container style={{ marginTop: "20px" }}>
-        <input type="color" value={color} onChange={handleColorChange} />
-        {/* <Select
-          value={color}
-          onChange={handleColorChange}
-          variant="outlined"
-          label="Color Name"
-        >
-          {colorMap.map((colorName) => (
-            <MenuItem key={colorName} value={colorName}>
-              {colorName}
-            </MenuItem>
-          ))}
-        </Select> */}
-      </Container>
 
       <Box
         sx={{
@@ -342,26 +319,3 @@ function isColorLight(color) {
   // Return true if the color is light, otherwise false
   return brightness > 128;
 }
-
-const colorMap = [
-  "#f44336",
-  "#e91e63",
-  "#9c27b0",
-  "#673ab7",
-  "#3f51b5",
-  "#2196f3",
-  "#03a9f4",
-  "#00bcd4",
-  "#009688",
-  "#4caf50",
-  "#8bc34a",
-  "#cddc39",
-  "#ffeb3b",
-  "#ffc107",
-  "#ff9800",
-  "#ff5722",
-  "#795548",
-  "#9e9e9e",
-  "#607d8b",
-  "#000000",
-];
