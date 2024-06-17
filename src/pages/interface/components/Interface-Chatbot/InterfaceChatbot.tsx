@@ -180,6 +180,7 @@ function InterfaceChatbot({
 
       return () => {
         client.unsubscribe(interfaceId + (threadId || userId));
+        clearTimeout(timeoutIdRef.current);
       };
     }
   }, [threadId, interfaceId, inpreview, userId, bridgeName]);
