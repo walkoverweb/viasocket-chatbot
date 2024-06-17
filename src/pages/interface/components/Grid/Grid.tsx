@@ -4,7 +4,6 @@ import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import "./Grid.scss";
 
-const Editabledgrid = React.lazy(() => import("./Editabledgrid.tsx"));
 const Viewonlygrid = React.lazy(() => import("./Viewonlygrid.tsx"));
 export const GridContext = createContext({});
 
@@ -55,11 +54,11 @@ function Grid({ componentJson, msgId, ...props }) {
     <GridContext.Provider value={gridContextValue}>
       <Box className="column h-100 w-100 box-sizing-border-box">
         <React.Suspense fallback={<div>Loading...</div>}>
-          {props?.projectId ? (
+          {/* {props?.projectId ? (
             <Editabledgrid {...props} />
-          ) : (
-            <Viewonlygrid {...props} />
-          )}
+          ) : ( */}
+          <Viewonlygrid {...props} />
+          {/* )} */}
         </React.Suspense>
       </Box>
     </GridContext.Provider>
