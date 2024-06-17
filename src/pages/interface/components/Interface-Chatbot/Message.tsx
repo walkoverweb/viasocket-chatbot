@@ -8,7 +8,6 @@ import remarkGfm from "remark-gfm";
 import InterfaceGrid from "../Grid/Grid.tsx";
 import "./Message.scss";
 function Message({ message, isJSONString, dragRef }) {
-
   return (
     <Box className="w-100">
       {message?.role === "user" ? (
@@ -108,10 +107,10 @@ function Message({ message, isJSONString, dragRef }) {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-bot"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-bot"
             >
               <path d="M12 8V4H8" />
               <rect width="16" height="12" x="4" y="8" rx="2" />
