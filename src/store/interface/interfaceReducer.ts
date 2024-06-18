@@ -378,10 +378,6 @@ export const reducers: ValidateSliceCaseReducers<
         ...action?.payload,
       },
     };
-    state.interfaceContext[interfaceId].interfaceData = {
-      ...state.interfaceContext[interfaceId]?.interfaceData,
-      ...action?.payload,
-    };
   },
   setThreadId(state, action: actionType<any>) {
     const data = action.payload;
