@@ -96,6 +96,19 @@ function InterfaceChatbot({
   const [loading, setLoading] = useState(false);
   const messageRef = useRef();
 
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event?.data?.type === "refresh") {
+        getallPreviousHistory();
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
+
   const startTimeoutTimer = () => {
     timeoutIdRef.current = setTimeout(() => {
       setMessages((prevMessages) => {
@@ -183,7 +196,7 @@ function InterfaceChatbot({
         clearTimeout(timeoutIdRef.current);
       };
     }
-  }, [threadId, interfaceId, inpreview, userId, bridgeName]);
+  }, [threadId, interfaceId, userId, bridgeName]);
 
   const sendMessage = async (message: string) => {
     await sendDataToAction({
