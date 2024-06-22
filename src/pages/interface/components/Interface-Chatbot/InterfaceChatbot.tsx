@@ -36,7 +36,6 @@ interface InterfaceChatbotProps {
   componentId: string;
   gridId: string;
   dragRef: any;
-  onThemeChange: any;
 }
 
 interface MessageType {
@@ -64,15 +63,7 @@ function InterfaceChatbot({
   inpreview = true,
   interfaceId,
   dragRef,
-  onThemeChange,
 }: InterfaceChatbotProps) {
-  useEffect(() => {
-    if (props?.themeColor) {
-      onThemeChange(props.themeColor || "#ffffff"); // Update the theme color when the component mounts
-    }
-  }, [props?.themeColor]);
-
-  // const isLight = isColorLight(props?.themeColor);
   const theme = useTheme(); // Hook to access the theme
   const isLight = isColorLight(theme.palette.primary.main);
 

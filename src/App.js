@@ -1,16 +1,11 @@
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import React, { useCallback, useState } from "react";
-import { ThemeProvider, CssBaseline } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import "./scss/global.scss";
+import generateTheme from "./hoc/theme";
 import ChatbotWrapper from "./pages/interface/components/Chatbot-Wrapper/ChatbotWrapper.tsx";
 import InterfaceEmbed from "./pages/interface/pages/InterfaceEmbed/InterfaceEmbed.tsx";
-import generateTheme from "./hoc/theme";
-
-// Interface Routes
-const Interface = React.lazy(() =>
-  import(/* webpackChunkName: "interface" */ "./pages/interface/interface.tsx")
-);
+import "./scss/global.scss";
 
 function App() {
   const [themeColor, setThemeColor] = useState("#000000"); // Default color
@@ -26,25 +21,18 @@ function App() {
       <Routes>
         <Route
           exact
-          path="/interface"
+          path="/i/:interfaceId"
           element={
-            <React.Suspense fallback="Loading....">
-              <Interface />
-            </React.Suspense>
+            <div id="parent-view-only-grid" className="h-100vh w-100">
+              <ChatbotWrapper />
+            </div>
           }
         />
         <Route
           exact
-          path="/i/:interfaceId"
-          element={
-            <div id="parent-view-only-grid" className="h-100vh w-100">
-              <React.Suspense fallback="Loading....">
-                <ChatbotWrapper onThemeChange={handleThemeChange} />
-              </React.Suspense>
-            </div>
-          }
+          path="/i"
+          element={<InterfaceEmbed onThemeChange={handleThemeChange} />}
         />
-        <Route exact path="/i" element={<InterfaceEmbed />} />
       </Routes>
     </ThemeProvider>
   );
