@@ -5,6 +5,8 @@ import "./InterfaceChatbot.scss";
 import Message from "./Message.tsx";
 
 function MessageList({ messages, isJSONString, dragRef, containerRef }) {
+  // const isLightBackground = isColorLight(theme.palette.primary.main);
+
   const movetoDown = () => {
     containerRef.current?.scrollTo({
       top: containerRef?.current?.scrollHeight,
@@ -14,17 +16,17 @@ function MessageList({ messages, isJSONString, dragRef, containerRef }) {
 
   useEffect(() => {
     movetoDown();
-  }, [messages, movetoDown]);
+  }, [messages]);
 
   return (
     <Box
-      // elevation={1}
       sx={{
         height: "100%",
         overflowY: "auto",
         display: "flex",
         flexDirection: "column",
         padding: 2,
+        // backgroundColor: theme.palette.primary.main,
       }}
       ref={containerRef}
     >
@@ -42,13 +44,10 @@ function MessageList({ messages, isJSONString, dragRef, containerRef }) {
         <IconButton
           onClick={movetoDown}
           className="move-to-down-button"
-          sx={{ backgroundColor: "#333" }}
+          sx={{ backgroundColor: "#333", color: "white" }}
           disableRipple
         >
-          <KeyboardDoubleArrowDownIcon
-            color="inherit"
-            className="color-white"
-          />
+          <KeyboardDoubleArrowDownIcon color="inherit" />
         </IconButton>
       )}
     </Box>

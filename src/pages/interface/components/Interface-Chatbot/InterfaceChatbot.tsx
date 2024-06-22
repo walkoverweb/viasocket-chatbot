@@ -6,6 +6,7 @@ import {
   IconButton,
   LinearProgress,
   TextField,
+  useTheme,
 } from "@mui/material";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import WebSocketClient from "rtlayer-client";
@@ -21,6 +22,7 @@ import ChatbotHeader from "./ChatbotHeader.tsx";
 import DefaultQuestions from "./DefaultQuestions.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
+import isColorLight from "../../../../utils/themeUtility.js";
 
 const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
@@ -34,6 +36,7 @@ interface InterfaceChatbotProps {
   componentId: string;
   gridId: string;
   dragRef: any;
+  onThemeChange: any;
 }
 
 interface MessageType {
@@ -61,7 +64,18 @@ function InterfaceChatbot({
   inpreview = true,
   interfaceId,
   dragRef,
+  onThemeChange,
 }: InterfaceChatbotProps) {
+  useEffect(() => {
+    if (props?.themeColor) {
+      onThemeChange(props.themeColor || "#ffffff"); // Update the theme color when the component mounts
+    }
+  }, [props.themeColor]);
+
+  // const isLight = isColorLight(props?.themeColor);
+  const theme = useTheme(); // Hook to access the theme
+  const isLight = isColorLight(theme.palette.primary.main);
+
   const { interfaceContextData, threadId, bridgeName } = useCustomSelector(
     (state: $ReduxCoreType) => ({
       interfaceContextData:
@@ -224,10 +238,19 @@ function InterfaceChatbot({
     messageRef.current.value = "";
   };
 
+  console.log(isLight, "isLight");
+
   return (
     <Box
-      sx={{ display: "flex", flexDirection: "column" }}
-      className="w-100 h-100vh"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "100vh",
+        overflow: "hidden",
+        position: "relative",
+        // backgroundColor: theme.palette.background.default,
+      }}
     >
       <ChatbotHeader title={props?.title} subtitle={props?.subtitle} />
       {chatsLoading && (
@@ -255,21 +278,39 @@ function InterfaceChatbot({
           onSend={onSend}
         />
       </Grid>
-      <Grid item xs={12} className="third-grid bg-white p-3 flex-center mb-2">
+      <Grid
+        item
+        xs={12}
+        className="third-grid"
+        sx={{
+          backgroundColor: theme.palette.background.paper,
+          paddingX: theme.spacing(3),
+          display: "flex",
+          alignItems: "center",
+          marginBottom: theme.spacing(2),
+          // borderTop:"2px black solid"
+        }}
+      >
         <TextField
           className="input-field"
           inputRef={messageRef}
           onKeyDown={handleKeyDown}
           placeholder="Enter your message"
           fullWidth
+          sx={{
+            backgroundColor: theme.palette.background.default,
+          }}
         />
         <IconButton
           onClick={() => (!loading ? onSend() : null)}
-          className="p-3 cursor-pointer ml-2 iconButton"
-          sx={{ opacity: loading ? 0.5 : 1 }}
+          sx={{
+            opacity: loading ? 0.5 : 1,
+            marginLeft: theme.spacing(2),
+            backgroundColor: theme.palette.primary.main,
+          }}
           disableRipple
         >
-          <SendIcon color="inherit" className="color-white" />
+          <SendIcon sx={{ color: isLight ? "black" : "white" }} />
         </IconButton>
       </Grid>
     </Box>

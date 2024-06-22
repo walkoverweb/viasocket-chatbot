@@ -1,13 +1,19 @@
 /* eslint-disable */
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
-import { Box, Stack, Typography } from "@mui/material";
-import Markdown from "react-markdown";
+import { Box, Stack, Typography, useTheme } from "@mui/material";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import InterfaceGrid from "../Grid/Grid.tsx";
 import "./Message.scss";
+import isColorLight from "../../../../utils/themeUtility.js";
+import { CSSTransition } from "react-transition-group";
+
 function Message({ message, isJSONString, dragRef }) {
+  const theme = useTheme();
+  const backgroundColor = theme.palette.primary.main;
+  const textColor = isColorLight(backgroundColor) ? "black" : "white";
+
   return (
     <Box className="w-100">
       {message?.role === "user" ? (
@@ -16,10 +22,8 @@ function Message({ message, isJSONString, dragRef }) {
             alignItems: "flex-end",
             gap: "0px",
             width: "100%",
-            // minHeight: "50px",
             justifyContent: "flex-end",
-            " @media(max-width:479px)": {
-              // height: "90px",
+            "@media(max-width:479px)": {
               height: "fit-content",
               columnGap: "5px",
             },
@@ -29,52 +33,30 @@ function Message({ message, isJSONString, dragRef }) {
         >
           <Box
             sx={{
-              backgroundColor: "#e4e4e4",
+              backgroundColor: theme.palette.primary.main,
               padding: "10px",
               boxSizing: "border-box",
               height: "fit-content",
               minWidth: "150px",
               borderRadius: "10px 10px 1px 10px",
-              boxShadow: "0 4px 2px rgba(0, 0, 0, 0)",
+              // boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
               wordBreak: "break-all",
               maxWidth: "80%",
             }}
           >
             <Typography
-              variant="p"
+              variant="body1"
               sx={{
-                fontFamily: "var(--theme-font-family)",
-                color: "var(--theme-color-base)",
-                fontSize: "15px",
-                " @media(max-width:991px)": { fontSize: "14px" },
-                " @media(max-width:479px)": { fontSize: "12px" },
+                // fontFamily: "var(--theme-font-family)",
+                color: textColor,
+                // fontSize: "15px",
+                // "@media(max-width:991px)": { fontSize: "14px" },
+                // "@media(max-width:479px)": { fontSize: "12px" },
               }}
             >
               {message?.content}
             </Typography>
           </Box>
-          {/* <Stack
-            sx={{
-              alignItems: "center",
-              width: "40px",
-              justifyContent: "flex-end",
-              " @media(max-width:479px)": { width: "50px" },
-            }}
-            spacing="5px"
-          > */}
-
-          {/* <Typography
-              variant="p"
-              sx={{
-                fontFamily: 'var(--theme-font-family)',
-                color: 'var(--theme-color-base)',
-                fontSize: '12px',
-                ' @media(max-width:991px)': { fontSize: '12px' },
-                ' @media(max-width:479px)': { fontSize: '10px' },
-              }}>
-              11:00 AM
-            </Typography> */}
-          {/* </Stack> */}
         </Stack>
       ) : (
         <Stack
@@ -82,8 +64,7 @@ function Message({ message, isJSONString, dragRef }) {
             alignItems: "flex-end",
             gap: "10px",
             maxWidth: "90%",
-            " @media(max-width:479px)": {
-              // height: "90px",
+            "@media(max-width:479px)": {
               height: "fit-content",
               columnGap: "5px",
             },
@@ -96,7 +77,7 @@ function Message({ message, isJSONString, dragRef }) {
               alignItems: "center",
               width: "30px",
               justifyContent: "flex-end",
-              " @media(max-width:479px)": { width: "30px" },
+              "@media(max-width:479px)": { width: "30px" },
             }}
             spacing="5px"
           >
@@ -119,37 +100,29 @@ function Message({ message, isJSONString, dragRef }) {
               <path d="M15 13v2" />
               <path d="M9 13v2" />
             </svg>
-            {/* <Typography
-              variant="p"
-              sx={{
-                fontFamily: 'var(--theme-font-family)',
-                color: 'var(--theme-color-base)',
-                fontSize: '12px',
-                ' @media(max-width:991px)': { fontSize: '12px' },
-                ' @media(max-width:479px)': { fontSize: '10px' },
-              }}>
-              11:00 AM
-            </Typography> */}
           </Stack>
           <Box
             sx={{
-              backgroundColor: "#eeeeee",
+              backgroundColor: theme.palette.background.default,
               padding: "10px",
               boxSizing: "border-box",
               height: "fit-content",
-              minWidth: "250px",
+              minWidth: "150px",
               borderRadius: "10px 10px 10px 1px",
-              width: "100%",
+              boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
+              wordBreak: "break-all",
+              maxWidth: "80%",
+              color: "black",
             }}
           >
             {message?.wait ? (
               <Box className="flex-start-center w-100 gap-2 p-1">
                 <div className="loader" />
-                <Typography variant="body">{message?.content}</Typography>
+                <Typography variant="body1">{message?.content}</Typography>
               </Box>
             ) : message?.timeOut ? (
               <Box className="flex-start-center w-100 gap-5 p-1">
-                <Typography variant="body">
+                <Typography variant="body1">
                   Timeout reached. Please try again later.
                 </Typography>
               </Box>
@@ -172,7 +145,6 @@ function Message({ message, isJSONString, dragRef }) {
                       }
                       loadInterface={false}
                       componentJson={JSON.parse(message?.content || "{}")}
-                      // componentJson={jsonstring}
                       msgId={message?.createdAt}
                     />
                   )
@@ -180,14 +152,6 @@ function Message({ message, isJSONString, dragRef }) {
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {message?.content}
                   </ReactMarkdown>
-                  // <Typography className="ml-1 flex-start-center">
-                  //   {message?.content}
-                  //   <ReportProblemIcon
-                  //     fontSize="small"
-                  //     color="error"
-                  //     className="ml-2"
-                  //   />
-                  // </Typography>
                 )}
               </Box>
             )}
@@ -197,4 +161,5 @@ function Message({ message, isJSONString, dragRef }) {
     </Box>
   );
 }
+
 export default Message;

@@ -10,7 +10,7 @@ import {
 import { intefaceGetLocalStorage } from "../../utils/InterfaceUtils.ts";
 import InterfaceChatbot from "../Interface-Chatbot/InterfaceChatbot.tsx";
 
-function ChatbotWrapper({ interfaceId, loadInterface = true }) {
+function ChatbotWrapper({ interfaceId, loadInterface = true, onThemeChange }) {
   console.log("chatbotwrapper");
   const dispatch = useDispatch();
 
@@ -50,7 +50,7 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
     };
   }, [dispatch, interfaceId, loadInterface]);
 
-  return <InterfaceChatbot />;
+  return <InterfaceChatbot onThemeChange={onThemeChange} />;
 }
 
 export default React.memo(
