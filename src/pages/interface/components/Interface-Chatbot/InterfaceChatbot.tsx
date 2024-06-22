@@ -70,7 +70,7 @@ function InterfaceChatbot({
     if (props?.themeColor) {
       onThemeChange(props.themeColor || "#ffffff"); // Update the theme color when the component mounts
     }
-  }, [props.themeColor]);
+  }, [props?.themeColor]);
 
   // const isLight = isColorLight(props?.themeColor);
   const theme = useTheme(); // Hook to access the theme
