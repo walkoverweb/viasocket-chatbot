@@ -45,7 +45,6 @@ function Grid({ componentJson, msgId, ...props }) {
   }
 
   const resolvedJson = replaceDynamicPaths(componentJson, componentJson);
-  // console.log(resolvedJson, 'resolvedJson')
 
   const gridContextValue = useMemo(() => {
     return { ...resolvedJson, msgId };

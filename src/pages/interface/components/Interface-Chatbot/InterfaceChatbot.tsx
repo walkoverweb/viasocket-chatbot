@@ -184,7 +184,6 @@ function InterfaceChatbot({
         } else {
           const stringifiedJson =
             parsedMessage?.response?.choices?.[0]?.message;
-          // console.log(stringifiedJson, "strinfified json");
           setLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
@@ -228,8 +227,6 @@ function InterfaceChatbot({
     ]);
     messageRef.current.value = "";
   };
-
-  console.log(isLight, "isLight");
 
   return (
     <Box

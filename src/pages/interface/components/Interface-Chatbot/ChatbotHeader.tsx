@@ -6,11 +6,6 @@ import isColorLight from "../../../../utils/themeUtility";
 function ChatbotHeader({ title, subtitle }) {
   const theme = useTheme();
   const isLightBackground = isColorLight(theme.palette.primary.main);
-  console.log(
-    isLightBackground,
-    theme.palette.primary.main,
-    "isLightBackground"
-  );
   const textColor = isLightBackground ? "black" : "white";
 
   return (

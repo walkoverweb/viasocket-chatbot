@@ -1,56 +1,57 @@
-import { useLayoutEffect, useRef } from 'react'
-import useResizeObserver from '../../hooks/ResizeObserverHook.tsx'
+import { useLayoutEffect, useRef } from "react";
+import useResizeObserver from "../../hooks/ResizeObserverHook.tsx";
 
 export type DimensionType = {
-  key: string
-  width: number
-  height: number
-}
+  key: string;
+  width: number;
+  height: number;
+};
 
 export type ReactGridItemWrapperProps = {
-  keyName: string
-  onResizeItem: (dimension: DimensionType) => void
-}
+  keyName: string;
+  onResizeItem: (dimension: DimensionType) => void;
+};
 
-function ReactGridItemWrapper({ children, onResizeItem, keyName = '' }: any) {
-  const ref = useRef<HTMLDivElement>(null)
-  const dimensions = useResizeObserver(ref)
-  // console.log(dimensions, 'dimensions', ref.current?.offsetHeight)
+function ReactGridItemWrapper({ children, onResizeItem, keyName = "" }: any) {
+  const ref = useRef<HTMLDivElement>(null);
+  const dimensions = useResizeObserver(ref);
   const recalculateDimensions = () => {
     if (ref.current) {
       onResizeItem({
         key: keyName,
         width: ref.current.offsetWidth,
-        height: ref.current.offsetHeight || ref.current.clientHeight
-      })
+        height: ref.current.offsetHeight || ref.current.clientHeight,
+      });
     }
-  }
+  };
 
-  const substringsToCheck = ['TextField', 'Typography', 'Table', 'Form']
+  const substringsToCheck = ["TextField", "Typography", "Table", "Form"];
   useLayoutEffect(() => {
-    const includesSubstring = substringsToCheck.some((substring) => keyName.includes(substring))
+    const includesSubstring = substringsToCheck.some((substring) =>
+      keyName.includes(substring)
+    );
     if (includesSubstring) {
       const timeoutId = setTimeout(() => {
-        recalculateDimensions()
-        window.addEventListener('resize', recalculateDimensions)
-      }, 100) // Adjust the timeout duration as needed
+        recalculateDimensions();
+        window.addEventListener("resize", recalculateDimensions);
+      }, 100); // Adjust the timeout duration as needed
 
       return () => {
-        clearTimeout(timeoutId)
-        window.removeEventListener('resize', recalculateDimensions)
-      }
+        clearTimeout(timeoutId);
+        window.removeEventListener("resize", recalculateDimensions);
+      };
     }
     // Ensure cleanup for cases where the condition doesn't match
     return () => {
-      window.removeEventListener('resize', recalculateDimensions)
-    }
-  }, [keyName, dimensions]) // Ensure effect is re-run if keyName changes
+      window.removeEventListener("resize", recalculateDimensions);
+    };
+  }, [keyName, dimensions]); // Ensure effect is re-run if keyName changes
 
   return (
-    <div ref={ref} key={keyName} style={{ height: 'fit-content' }}>
+    <div ref={ref} key={keyName} style={{ height: "fit-content" }}>
       {children}
     </div>
-  )
+  );
 }
 
-export { ReactGridItemWrapper }
+export { ReactGridItemWrapper };
