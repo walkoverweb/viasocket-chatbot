@@ -29,12 +29,13 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
     const handleMessage = (event: MessageEvent) => {
       if (event?.data?.type === "interfaceData") {
         const receivedData = event?.data?.data;
-        dispatch(
-          setThreadId({
-            threadId: receivedData?.threadId,
-            bridgeName: receivedData?.bridgeName || "root",
-          })
-        );
+        const { threadId, bridgeName } = receivedData;
+        if (threadId) {
+          dispatch(setThreadId({ threadId: threadId }));
+        }
+        if (bridgeName) {
+          dispatch(setThreadId({ bridgeName: bridgeName || "root" }));
+        }
         dispatch(addDefaultContext({ ...receivedData?.variables }));
       }
     };
