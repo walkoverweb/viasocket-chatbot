@@ -128,31 +128,34 @@ function Message({ message, isJSONString, dragRef }) {
               </Box>
             ) : (
               <Box>
-                {isJSONString(message?.content) ? (
-                  JSON.parse(message.content)?.isMarkdown == true ? (
+                {(() => {
+                  const parsedContent = isJSONString(message?.content)
+                    ? JSON.parse(message.content)
+                    : null;
+                  if (parsedContent && "isMarkdown" in parsedContent) {
+                    return parsedContent.isMarkdown ? (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {parsedContent.markdown}
+                      </ReactMarkdown>
+                    ) : (
+                      <InterfaceGrid
+                        style={{ height: window.innerHeight }}
+                        dragRef={dragRef}
+                        inpreview={false}
+                        ingrid={false}
+                        gridId={parsedContent.responseId || "default"}
+                        loadInterface={false}
+                        componentJson={parsedContent}
+                        msgId={message?.createdAt}
+                      />
+                    );
+                  }
+                  return (
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {JSON.parse(message.content)?.markdown}
+                      {message?.content}
                     </ReactMarkdown>
-                  ) : (
-                    <InterfaceGrid
-                      style={{ height: window.innerHeight }}
-                      dragRef={dragRef}
-                      inpreview={false}
-                      ingrid={false}
-                      gridId={
-                        JSON.parse(message?.content || "{}")?.responseId ||
-                        "default"
-                      }
-                      loadInterface={false}
-                      componentJson={JSON.parse(message?.content || "{}")}
-                      msgId={message?.createdAt}
-                    />
-                  )
-                ) : (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {message?.content}
-                  </ReactMarkdown>
-                )}
+                  );
+                })()}
               </Box>
             )}
           </Box>
