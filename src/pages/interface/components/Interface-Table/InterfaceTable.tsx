@@ -9,14 +9,14 @@ function generateColumns(data: { [key: string]: any }) {
   }));
 }
 function generateRows(data) {
-  return data.map((row, index) => ({ id: index, ...row }));
+  return (data || [])?.map((row, index) => ({ id: index, ...row }));
 }
 interface InterfaceTableProps {
   props: any;
 }
 
 function InterfaceTable({ props }: InterfaceTableProps) {
-  const columns = generateColumns(props?.data[0]);
+  const columns = generateColumns(props?.data?.[0]);
   const rows = generateRows(props?.data);
   return (
     <DataGrid
