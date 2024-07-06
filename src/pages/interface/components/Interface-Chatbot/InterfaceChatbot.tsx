@@ -196,8 +196,9 @@ function InterfaceChatbot({
       client.on("message", handleMessage);
 
       return () => {
-        client.unsubscribe(interfaceId + (threadId || userId));
         clearTimeout(timeoutIdRef.current);
+        client.unsubscribe(interfaceId + (threadId || userId));
+        client.removeListener("message", handleMessage);
       };
     }
   }, [threadId, interfaceId, userId, bridgeName]);
