@@ -1,6 +1,7 @@
 /* eslint-disable */
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -58,7 +59,7 @@ function Message({ message, isJSONString, dragRef }) {
             </Typography>
           </Box>
         </Stack>
-      ) : (
+      ) : message?.role === "assistant" ? (
         <Stack
           sx={{
             alignItems: "flex-end",
@@ -160,7 +161,23 @@ function Message({ message, isJSONString, dragRef }) {
             )}
           </Box>
         </Stack>
-      )}
+      ) : message?.role === "tools_call" && Object.keys(message?.function) ? (
+        <Box className="flex gap-2 mb-2">
+          <Stack
+            sx={{
+              alignItems: "center",
+              width: "30px",
+              justifyContent: "flex-end",
+              "@media(max-width:479px)": { width: "30px" },
+            }}
+            spacing="5px"
+          ></Stack>
+          <CheckCircleIcon color="success" />
+          <Typography>
+            {Object.keys(message?.function).length} Functions executed
+          </Typography>
+        </Box>
+      ) : null}
     </Box>
   );
 }
