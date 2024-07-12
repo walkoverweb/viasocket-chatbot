@@ -369,16 +369,43 @@ export const reducers: ValidateSliceCaseReducers<
       },
     };
   },
+
+  // addDefaultContext(state, action: actionType<any>) {
+  //   const { interfaceId } = action.urlData;
+  //   state.interfaceContext[interfaceId] = {
+  //     ...state.interfaceContext[interfaceId],
+  //     interfaceData: {
+  //       ...state.interfaceContext[interfaceId]?.interfaceData,
+  //       ...action?.payload,
+  //     },
+  //   };
+  // },
+
   addDefaultContext(state, action: actionType<any>) {
     const { interfaceId } = action.urlData;
-    state.interfaceContext[interfaceId] = {
-      ...state.interfaceContext[interfaceId],
+    const bridgeName = action.payload?.bridgeName || state.bridgeName || "root";
+    const variables = action.payload?.variables;
+
+    // Ensure the interfaceId level is initialized if not already
+    if (!state.interfaceContext[interfaceId]) {
+      state.interfaceContext[interfaceId] = {};
+    }
+
+    // Ensure the bridgeName level is initialized under the current interfaceId if not already
+    if (!state.interfaceContext[interfaceId][bridgeName]) {
+      state.interfaceContext[interfaceId][bridgeName] = { interfaceData: {} };
+    }
+
+    // Update the state with new data under the specific interfaceId and bridgeName
+    state.interfaceContext[interfaceId][bridgeName] = {
+      ...state.interfaceContext[interfaceId][bridgeName],
       interfaceData: {
-        ...state.interfaceContext[interfaceId]?.interfaceData,
-        ...action?.payload,
+        ...state.interfaceContext[interfaceId][bridgeName].interfaceData,
+        ...variables,
       },
     };
   },
+
   setThreadId(state, action: actionType<any>) {
     const data = action.payload;
     const tempData = {};
