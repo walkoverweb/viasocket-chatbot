@@ -6,7 +6,7 @@ export interface $InterfaceReduxType {
     [interfaceId: string]: InterFaceDataType;
   };
   interfaceContext: {
-    [interfaceId: string]: any;
+    [interfaceId: string]: { [bridgeName: string]: any };
   };
   currentSelectedComponent: {
     [key: string]: any;

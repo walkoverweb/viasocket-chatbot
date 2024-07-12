@@ -70,7 +70,9 @@ function InterfaceChatbot({
   const { interfaceContextData, threadId, bridgeName } = useCustomSelector(
     (state: $ReduxCoreType) => ({
       interfaceContextData:
-        state.Interface?.interfaceContext?.[interfaceId]?.interfaceData,
+        state.Interface?.interfaceContext?.[interfaceId]?.[
+          state.Interface?.bridgeName || "root"
+        ]?.interfaceData,
       threadId: state.Interface?.threadId || "",
       bridgeName: state.Interface?.bridgeName || "root",
     })

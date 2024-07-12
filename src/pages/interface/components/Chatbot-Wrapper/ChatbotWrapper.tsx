@@ -35,8 +35,17 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
         }
         if (bridgeName) {
           dispatch(setThreadId({ bridgeName: bridgeName || "root" }));
+          dispatch(
+            addDefaultContext({
+              variables: { ...receivedData?.variables },
+              bridgeName: bridgeName,
+            })
+          );
+        } else {
+          dispatch(
+            addDefaultContext({ variables: { ...receivedData?.variables } })
+          );
         }
-        dispatch(addDefaultContext({ ...receivedData?.variables }));
       }
     };
 
