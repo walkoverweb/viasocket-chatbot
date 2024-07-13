@@ -7,6 +7,7 @@ import { MessageContext } from "./InterfaceChatbot.tsx";
 
 function MessageList({ dragRef, containerRef }) {
   const MessagesList: any = useContext(MessageContext);
+  const { messages } = MessagesList;
 
   const movetoDown = () => {
     containerRef.current?.scrollTo({
@@ -17,7 +18,7 @@ function MessageList({ dragRef, containerRef }) {
 
   useEffect(() => {
     movetoDown();
-  }, [MessagesList?.messages]);
+  }, [messages]);
 
   return (
     <Box
@@ -32,11 +33,11 @@ function MessageList({ dragRef, containerRef }) {
       ref={containerRef}
     >
       <Box sx={{ flex: "1 1 auto", minHeight: 0 }}>
-        {MessagesList?.messages?.map((message, index) => (
+        {messages?.map((message, index) => (
           <Message key={index} message={message} dragRef={dragRef} />
         ))}
       </Box>
-      {MessagesList?.messages?.length > 10 && (
+      {messages?.length > 10 && (
         <IconButton
           onClick={movetoDown}
           className="move-to-down-button"

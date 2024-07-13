@@ -54,7 +54,10 @@ interface MessageType {
   function?: () => void;
   id?: string;
 }
-export const MessageContext = createContext<{ messages: MessageType[] | [] }>({
+export const MessageContext = createContext<{
+  messages: MessageType[] | [];
+  addMessage?: (message: MessageType) => void;
+}>({
   messages: [],
 });
 
@@ -99,6 +102,9 @@ function InterfaceChatbot({
       [inpreview]
     )
   );
+  const addMessage = (message: MessageType) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
+  };
   const [defaultQuestion, setDefaultQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const messageRef = useRef();
@@ -232,7 +238,7 @@ function InterfaceChatbot({
   };
 
   return (
-    <MessageContext.Provider value={{ messages: messages }}>
+    <MessageContext.Provider value={{ messages: messages, addMessage }}>
       <Box
         sx={{
           display: "flex",
