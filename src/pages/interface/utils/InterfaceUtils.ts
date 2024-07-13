@@ -591,3 +591,12 @@ export const intefaceGetLocalStorage = (key: string) => {
   // }
   return localStorage.getItem(key);
 };
+
+export const isJSONString = (str: string) => {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch {
+    return false;
+  }
+};

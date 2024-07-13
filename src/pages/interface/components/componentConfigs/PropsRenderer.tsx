@@ -25,7 +25,11 @@ import {
 } from "../../../../store/interface/interfaceSlice.ts";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector";
-import { DataforComponents, allowedProps } from "../../utils/InterfaceUtils.ts";
+import {
+  DataforComponents,
+  allowedProps,
+  isJSONString,
+} from "../../utils/InterfaceUtils.ts";
 import "./componentConfigs.scss";
 import { generateNewId } from "../../../../utils/utilities";
 import { createScripts } from "../../../../api/InterfaceApis/InterfaceApis.ts";
@@ -68,14 +72,6 @@ function ComponentToTakePropValue({
   );
   const [isNavigateCheck, setNavigateCheck] = useState(false);
   const [url, setUrl] = useState("");
-  const isJSONString = (str) => {
-    try {
-      JSON.parse(str);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  };
 
   if (allowedProps[propName] === "boolean")
     return (

@@ -9,8 +9,9 @@ import InterfaceGrid from "../Grid/Grid.tsx";
 import "./Message.scss";
 import isColorLight from "../../../../utils/themeUtility.js";
 import { CSSTransition } from "react-transition-group";
+import { isJSONString } from "../../utils/InterfaceUtils.ts";
 
-function Message({ message, isJSONString, dragRef }) {
+function Message({ message, dragRef }) {
   const theme = useTheme();
   const backgroundColor = theme.palette.primary.main;
   const textColor = isColorLight(backgroundColor) ? "black" : "white";

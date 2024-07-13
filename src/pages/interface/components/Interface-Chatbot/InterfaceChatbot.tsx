@@ -8,7 +8,13 @@ import {
   TextField,
   useTheme,
 } from "@mui/material";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import WebSocketClient from "rtlayer-client";
 import {
   getPreviousMessage,
@@ -48,15 +54,12 @@ interface MessageType {
   function?: () => void;
   id?: string;
 }
-
-const isJSONString = (str: string) => {
-  try {
-    JSON.parse(str);
-    return true;
-  } catch {
-    return false;
-  }
-};
+export const MessageContext = createContext<{
+  messages: MessageType[] | [];
+  addMessage?: (message: MessageType) => void;
+}>({
+  messages: [],
+});
 
 function InterfaceChatbot({
   props,
@@ -99,6 +102,9 @@ function InterfaceChatbot({
       [inpreview]
     )
   );
+  const addMessage = (message: MessageType) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
+  };
   const [defaultQuestion, setDefaultQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const messageRef = useRef();
@@ -232,79 +238,76 @@ function InterfaceChatbot({
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        height: "100vh",
-        overflow: "hidden",
-        position: "relative",
-        // backgroundColor: theme.palette.background.default,
-      }}
-    >
-      <ChatbotHeader title={props?.title} subtitle={props?.subtitle} />
-      {chatsLoading && (
-        <LinearProgress
-          variant="indeterminate"
-          color="primary"
-          sx={{ height: 4 }}
-        />
-      )}
-      <Grid
-        item
-        xs
-        className="second-grid"
-        sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
-      >
-        <MessageList
-          messages={messages}
-          isJSONString={isJSONString}
-          dragRef={dragRef}
-          containerRef={containerRef}
-        />
-        <DefaultQuestions
-          defaultQuestion={defaultQuestion}
-          messageRef={messageRef}
-          onSend={onSend}
-        />
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        className="third-grid"
+    <MessageContext.Provider value={{ messages: messages, addMessage }}>
+      <Box
         sx={{
-          backgroundColor: theme.palette.background.paper,
-          paddingX: theme.spacing(3),
           display: "flex",
-          alignItems: "center",
-          marginBottom: theme.spacing(2),
-          // borderTop:"2px black solid"
+          flexDirection: "column",
+          width: "100%",
+          height: "100vh",
+          overflow: "hidden",
+          position: "relative",
+          // backgroundColor: theme.palette.background.default,
         }}
       >
-        <TextField
-          className="input-field"
-          inputRef={messageRef}
-          onKeyDown={handleKeyDown}
-          placeholder="Enter your message"
-          fullWidth
-          sx={{
-            backgroundColor: theme.palette.background.default,
-          }}
-        />
-        <IconButton
-          onClick={() => (!loading ? onSend() : null)}
-          sx={{
-            opacity: loading ? 0.5 : 1,
-            marginLeft: theme.spacing(2),
-            backgroundColor: theme.palette.primary.main,
-          }}
-          disableRipple
+        <ChatbotHeader title={props?.title} subtitle={props?.subtitle} />
+        {chatsLoading && (
+          <LinearProgress
+            variant="indeterminate"
+            color="primary"
+            sx={{ height: 4 }}
+          />
+        )}
+        <Grid
+          item
+          xs
+          className="second-grid"
+          sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
         >
-          <SendIcon sx={{ color: isLight ? "black" : "white" }} />
-        </IconButton>
-      </Grid>
-    </Box>
+          <MessageList dragRef={dragRef} containerRef={containerRef} />
+          <DefaultQuestions
+            defaultQuestion={defaultQuestion}
+            messageRef={messageRef}
+            onSend={onSend}
+          />
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          className="third-grid"
+          sx={{
+            backgroundColor: theme.palette.background.paper,
+            paddingX: theme.spacing(3),
+            display: "flex",
+            alignItems: "center",
+            marginBottom: theme.spacing(2),
+            // borderTop:"2px black solid"
+          }}
+        >
+          <TextField
+            className="input-field"
+            inputRef={messageRef}
+            onKeyDown={handleKeyDown}
+            placeholder="Enter your message"
+            fullWidth
+            sx={{
+              backgroundColor: theme.palette.background.default,
+            }}
+          />
+          <IconButton
+            onClick={() => (!loading ? onSend() : null)}
+            sx={{
+              opacity: loading ? 0.5 : 1,
+              marginLeft: theme.spacing(2),
+              backgroundColor: theme.palette.primary.main,
+            }}
+            disableRipple
+          >
+            <SendIcon sx={{ color: isLight ? "black" : "white" }} />
+          </IconButton>
+        </Grid>
+      </Box>
+    </MessageContext.Provider>
   );
 }
 
