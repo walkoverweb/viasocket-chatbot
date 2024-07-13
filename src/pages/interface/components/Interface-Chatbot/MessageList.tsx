@@ -1,11 +1,12 @@
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { Box, IconButton } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import "./InterfaceChatbot.scss";
 import Message from "./Message.tsx";
+import { MessageContext } from "./InterfaceChatbot.tsx";
 
-function MessageList({ messages, isJSONString, dragRef, containerRef }) {
-  // const isLightBackground = isColorLight(theme.palette.primary.main);
+function MessageList({ dragRef, containerRef }) {
+  const MessagesList: any = useContext(MessageContext);
 
   const movetoDown = () => {
     containerRef.current?.scrollTo({
@@ -16,7 +17,7 @@ function MessageList({ messages, isJSONString, dragRef, containerRef }) {
 
   useEffect(() => {
     movetoDown();
-  }, [messages]);
+  }, [MessagesList?.messages]);
 
   return (
     <Box
@@ -31,16 +32,11 @@ function MessageList({ messages, isJSONString, dragRef, containerRef }) {
       ref={containerRef}
     >
       <Box sx={{ flex: "1 1 auto", minHeight: 0 }}>
-        {messages.map((message, index) => (
-          <Message
-            key={index}
-            message={message}
-            isJSONString={isJSONString}
-            dragRef={dragRef}
-          />
+        {MessagesList?.messages?.map((message, index) => (
+          <Message key={index} message={message} dragRef={dragRef} />
         ))}
       </Box>
-      {messages?.length > 10 && (
+      {MessagesList?.messages?.length > 10 && (
         <IconButton
           onClick={movetoDown}
           className="move-to-down-button"
