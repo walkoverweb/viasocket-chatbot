@@ -1,6 +1,12 @@
 import { DataGrid } from "@mui/x-data-grid";
 
-function generateColumns(data: { [key: string]: any }) {
+function generateColumns(data) {
+  // Check if data is an object and not null
+  if (typeof data !== "object" || data === null) {
+    console.error("Invalid data format. Expected an object.");
+    return [];
+  }
+  // Generate columns
   return Object.keys(data || {}).map((key) => ({
     id: key, // Use the key as the unique ID for each column definition
     field: key,
@@ -8,8 +14,15 @@ function generateColumns(data: { [key: string]: any }) {
     flex: 1,
   }));
 }
-function generateRows(data) {
-  return (data || [])?.map((row, index) => ({ id: index, ...row }));
+
+function generateRows(data: any) {
+  // Check if data is an array
+  if (!Array.isArray(data)) {
+    console.error("Invalid data format. Expected an array.");
+    return [];
+  }
+  // Generate rows
+  return (data || []).map((row, index) => ({ id: index, ...row }));
 }
 interface InterfaceTableProps {
   props: any;
@@ -24,7 +37,7 @@ function InterfaceTable({ props }: InterfaceTableProps) {
       columns={columns || []}
       hideFooterPagination={!props?.pagination || false}
       initialState={{
-        pagination: props.pagination
+        pagination: props?.pagination
           ? {
               paginationModel: { page: 0, pageSize: 10 },
             }
