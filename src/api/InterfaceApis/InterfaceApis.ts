@@ -4,6 +4,7 @@ import { InterFaceDataType } from "../../types/interface/InterfaceReduxType.ts";
 import { UrlDataType } from "../../types/utility.ts";
 
 const URL = process.env.REACT_APP_API_BASE_URL;
+let currentController: AbortController | null = null;
 
 export async function getAllInterfaceApi(
   projectId: string
@@ -121,11 +122,27 @@ export async function getPreviousMessage(
   threadId: string | null,
   bridgeName: string | null
 ): Promise<{ [key: string]: any }[]> {
-  const response = await axios.get(
-    `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridgeName}`
-  );
-  return response?.data?.data;
+  if (currentController) {
+    currentController.abort();
+  }
+  currentController = new AbortController();
+
+  try {
+    const response = await axios.get(
+      `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridgeName}`,
+      { signal: currentController.signal }
+    );
+    return response?.data?.data;
+  } catch (error) {
+    if (error.name === "AbortError") {
+      console.log("Request aborted:", error.message);
+    } else {
+      console.error("Error fetching previous messages:", error);
+    }
+    return [];
+  }
 }
+
 export async function sendDataToAction(
   data: any
 ): Promise<{ [key: string]: any }[]> {
