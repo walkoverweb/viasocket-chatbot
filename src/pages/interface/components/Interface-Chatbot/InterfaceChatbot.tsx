@@ -243,104 +243,97 @@ function InterfaceChatbot({
     <MessageContext.Provider value={{ messages: messages, addMessage }}>
       <Box
         sx={{
-          backgroundImage:
-            "url(https://cdn.britannica.com/17/83817-050-67C814CD/Mount-Everest.jpg)",
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          height: "100vh",
+          overflow: "hidden",
+          position: "relative",
         }}
+        className={chatbotConfig?.backgroundTheme || "chatbot-bg-light"}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            height: "100vh",
-            overflow: "hidden",
-            position: "relative",
-          }}
-          className={chatbotConfig?.backgroundTheme || "chatbot-bg-light"}
-        >
-          {!chatbotConfig?.hideHeader && (
-            <ChatbotHeader title={props?.title} subtitle={props?.subtitle} />
-          )}
-          {chatsLoading && (
-            <LinearProgress
-              variant="indeterminate"
-              color="primary"
-              sx={{ height: 4 }}
-            />
-          )}
-          {!chatbotConfig?.askOnly && (
-            <Grid
-              item
-              xs
-              className="second-grid"
-              sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
-            >
-              <MessageList dragRef={dragRef} containerRef={containerRef} />
-              <DefaultQuestions
-                defaultQuestion={defaultQuestion}
-                messageRef={messageRef}
-                onSend={onSend}
-              />
-            </Grid>
-          )}
+        {!chatbotConfig?.hideHeader && (
+          <ChatbotHeader title={props?.title} subtitle={props?.subtitle} />
+        )}
+        {chatsLoading && (
+          <LinearProgress
+            variant="indeterminate"
+            color="primary"
+            sx={{ height: 4 }}
+          />
+        )}
+        {!chatbotConfig?.askOnly && (
           <Grid
             item
-            xs={12}
-            className="third-grid"
-            sx={{
-              // backgroundColor: theme.palette.background.paper,
-              paddingX: theme.spacing(3),
-              display: "flex",
-              alignItems: "center",
-              marginBottom: theme.spacing(2),
-              // borderTop:"2px black solid"
-            }}
+            xs
+            className="second-grid"
+            sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
           >
-            <TextField
-              className="input-field"
-              inputRef={messageRef}
-              onKeyDown={handleKeyDown}
-              placeholder="Ask AI"
-              fullWidth
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    {/* <IconButton> */}
-                    <img
-                      src={AIstarLogo}
-                      height={20}
-                      width={20}
-                      className="mr-2"
-                    />
-
-                    {/* <SearchIcon /> */}
-                    {/* </IconButton> */}
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                backgroundColor: theme.palette.background.default,
-              }}
+            <MessageList dragRef={dragRef} containerRef={containerRef} />
+            <DefaultQuestions
+              defaultQuestion={defaultQuestion}
+              messageRef={messageRef}
+              onSend={onSend}
             />
-            <div className="w-5 flex-center-center">
-              {!loading || !chatbotConfig?.askOnly ? (
-                <IconButton
-                  onClick={() => (!loading ? onSend() : null)}
-                  sx={{
-                    opacity: loading ? 0.5 : 1,
-                    marginLeft: theme.spacing(2),
-                    backgroundColor: theme.palette.primary.main,
-                  }}
-                  disableRipple
-                >
-                  <SendIcon sx={{ color: isLight ? "black" : "white" }} />
-                </IconButton>
-              ) : (
-                <div className="loader"></div>
-              )}
-            </div>
           </Grid>
-        </Box>
+        )}
+        <Grid
+          item
+          xs={12}
+          className="third-grid"
+          sx={{
+            // backgroundColor: theme.palette.background.paper,
+            paddingX: theme.spacing(3),
+            display: "flex",
+            alignItems: "center",
+            marginBottom: theme.spacing(2),
+            // borderTop:"2px black solid"
+          }}
+        >
+          <TextField
+            className="input-field"
+            inputRef={messageRef}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask AI"
+            fullWidth
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  {/* <IconButton> */}
+                  <img
+                    src={AIstarLogo}
+                    height={20}
+                    width={20}
+                    className="mr-2"
+                  />
+
+                  {/* <SearchIcon /> */}
+                  {/* </IconButton> */}
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              backgroundColor: theme.palette.background.default,
+            }}
+          />
+          <div className="w-5 flex-center-center">
+            {!loading || !chatbotConfig?.askOnly ? (
+              <IconButton
+                onClick={() => (!loading ? onSend() : null)}
+                sx={{
+                  opacity: loading ? 0.5 : 1,
+                  marginLeft: theme.spacing(2),
+                  backgroundColor: theme.palette.primary.main,
+                }}
+                disableRipple
+              >
+                <SendIcon sx={{ color: isLight ? "black" : "white" }} />
+              </IconButton>
+            ) : (
+              <div className="loader"></div>
+            )}
+          </div>
+        </Grid>
       </Box>
     </MessageContext.Provider>
   );
