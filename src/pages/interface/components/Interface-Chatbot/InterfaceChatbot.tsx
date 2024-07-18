@@ -4,6 +4,7 @@ import {
   Box,
   Grid,
   IconButton,
+  InputAdornment,
   LinearProgress,
   TextField,
   useTheme,
@@ -29,6 +30,7 @@ import DefaultQuestions from "./DefaultQuestions.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
 import isColorLight from "../../../../utils/themeUtility.js";
+import { AIstarLogo } from "../../../../assests/assestsIndex.ts";
 
 const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
@@ -70,16 +72,16 @@ function InterfaceChatbot({
   const theme = useTheme(); // Hook to access the theme
   const isLight = isColorLight(theme.palette.primary.main);
 
-  const { interfaceContextData, threadId, bridgeName } = useCustomSelector(
-    (state: $ReduxCoreType) => ({
+  const { interfaceContextData, threadId, bridgeName, chatbotConfig } =
+    useCustomSelector((state: $ReduxCoreType) => ({
       interfaceContextData:
         state.Interface?.interfaceContext?.[interfaceId]?.[
           state.Interface?.bridgeName || "root"
         ]?.interfaceData,
       threadId: state.Interface?.threadId || "",
       bridgeName: state.Interface?.bridgeName || "root",
-    })
-  );
+      chatbotConfig: state.Interface?.chatbotData?.config || {},
+    }));
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
@@ -241,71 +243,104 @@ function InterfaceChatbot({
     <MessageContext.Provider value={{ messages: messages, addMessage }}>
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          height: "100vh",
-          overflow: "hidden",
-          position: "relative",
-          // backgroundColor: theme.palette.background.default,
+          backgroundImage:
+            "url(https://cdn.britannica.com/17/83817-050-67C814CD/Mount-Everest.jpg)",
         }}
       >
-        <ChatbotHeader title={props?.title} subtitle={props?.subtitle} />
-        {chatsLoading && (
-          <LinearProgress
-            variant="indeterminate"
-            color="primary"
-            sx={{ height: 4 }}
-          />
-        )}
-        <Grid
-          item
-          xs
-          className="second-grid"
-          sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
-        >
-          <MessageList dragRef={dragRef} containerRef={containerRef} />
-          <DefaultQuestions
-            defaultQuestion={defaultQuestion}
-            messageRef={messageRef}
-            onSend={onSend}
-          />
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          className="third-grid"
+        <Box
           sx={{
-            backgroundColor: theme.palette.background.paper,
-            paddingX: theme.spacing(3),
             display: "flex",
-            alignItems: "center",
-            marginBottom: theme.spacing(2),
-            // borderTop:"2px black solid"
+            flexDirection: "column",
+            width: "100%",
+            height: "100vh",
+            overflow: "hidden",
+            position: "relative",
           }}
+          className={chatbotConfig?.backgroundTheme || "chatbot-bg-light"}
         >
-          <TextField
-            className="input-field"
-            inputRef={messageRef}
-            onKeyDown={handleKeyDown}
-            placeholder="Enter your message"
-            fullWidth
+          {!chatbotConfig?.hideHeader && (
+            <ChatbotHeader title={props?.title} subtitle={props?.subtitle} />
+          )}
+          {chatsLoading && (
+            <LinearProgress
+              variant="indeterminate"
+              color="primary"
+              sx={{ height: 4 }}
+            />
+          )}
+          {!chatbotConfig?.askOnly && (
+            <Grid
+              item
+              xs
+              className="second-grid"
+              sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
+            >
+              <MessageList dragRef={dragRef} containerRef={containerRef} />
+              <DefaultQuestions
+                defaultQuestion={defaultQuestion}
+                messageRef={messageRef}
+                onSend={onSend}
+              />
+            </Grid>
+          )}
+          <Grid
+            item
+            xs={12}
+            className="third-grid"
             sx={{
-              backgroundColor: theme.palette.background.default,
+              // backgroundColor: theme.palette.background.paper,
+              paddingX: theme.spacing(3),
+              display: "flex",
+              alignItems: "center",
+              marginBottom: theme.spacing(2),
+              // borderTop:"2px black solid"
             }}
-          />
-          <IconButton
-            onClick={() => (!loading ? onSend() : null)}
-            sx={{
-              opacity: loading ? 0.5 : 1,
-              marginLeft: theme.spacing(2),
-              backgroundColor: theme.palette.primary.main,
-            }}
-            disableRipple
           >
-            <SendIcon sx={{ color: isLight ? "black" : "white" }} />
-          </IconButton>
-        </Grid>
+            <TextField
+              className="input-field"
+              inputRef={messageRef}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask AI"
+              fullWidth
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    {/* <IconButton> */}
+                    <img
+                      src={AIstarLogo}
+                      height={20}
+                      width={20}
+                      className="mr-2"
+                    />
+
+                    {/* <SearchIcon /> */}
+                    {/* </IconButton> */}
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                backgroundColor: theme.palette.background.default,
+              }}
+            />
+            <div className="w-5 flex-center-center">
+              {!loading || !chatbotConfig?.askOnly ? (
+                <IconButton
+                  onClick={() => (!loading ? onSend() : null)}
+                  sx={{
+                    opacity: loading ? 0.5 : 1,
+                    marginLeft: theme.spacing(2),
+                    backgroundColor: theme.palette.primary.main,
+                  }}
+                  disableRipple
+                >
+                  <SendIcon sx={{ color: isLight ? "black" : "white" }} />
+                </IconButton>
+              ) : (
+                <div className="loader"></div>
+              )}
+            </div>
+          </Grid>
+        </Box>
       </Box>
     </MessageContext.Provider>
   );

@@ -47,5 +47,6 @@ export const {
   addInterfaceContext,
   addDefaultContext,
   setThreadId,
+  updateChatbotDetails,
 } = interfaceSlice.actions;
 export default interfaceSlice.reducer;

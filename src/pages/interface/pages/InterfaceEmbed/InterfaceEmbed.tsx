@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import { EmbedVerificationStatus } from "../../../../enums";
+import { updateChatbotDetails } from "../../../../store/interface/interfaceSlice.ts";
 import InterfaceErrorPage from "../../components/InterfaceErrorPage/InterfaceErrorPage.tsx";
 import { intefaceSetLocalStorage } from "../../utils/InterfaceUtils.ts";
 
@@ -11,12 +13,23 @@ interface InterfaceEmbedProps {
 }
 export default function InterfaceEmbed({ onThemeChange }: InterfaceEmbedProps) {
   console.log("interfaceembed");
+  const dispatch = useDispatch();
   const { search } = useLocation();
   const navigate = useNavigate();
   const { chatbot_id, userId, token, config } = JSON.parse(
     new URLSearchParams(search).get("interfaceDetails") || "{}"
   );
   useEffect(() => {
+    dispatch(
+      updateChatbotDetails({
+        config: {
+          ...config,
+          hideHeader: false,
+          askOnly: false,
+          backgroundTheme: "chatbot-bg-glossy",
+        },
+      })
+    );
     if (config?.themeColor) {
       onThemeChange(config.themeColor || "#000000"); // Update the theme color when the component mounts
     }

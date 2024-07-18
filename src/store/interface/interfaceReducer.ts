@@ -25,6 +25,7 @@ const sampleInterfaceData: any = {
   updatedAt: "",
   threadId: "",
   bridgeName: "root",
+  chatbotData: {},
 };
 
 export const initialState: $InterfaceReduxType = {
@@ -413,5 +414,9 @@ export const reducers: ValidateSliceCaseReducers<
       tempData[element] = data[element];
     });
     return { ...state, ...tempData };
+  },
+
+  updateChatbotDetails(state, action) {
+    state.chatbotData = { ...state.chatbotData, ...action.payload };
   },
 };

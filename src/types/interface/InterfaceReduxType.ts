@@ -1,6 +1,7 @@
 export interface $InterfaceReduxType {
   isLoading: boolean;
   threadId: string;
+  chatbotData: any;
   bridgeName: string;
   interfaceData: {
     [interfaceId: string]: InterFaceDataType;

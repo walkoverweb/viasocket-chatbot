@@ -1,10 +1,12 @@
 import socketIcon from "./socketIcon.png";
 import socketAIIcon from "./Viasocket_AI.svg";
+import AIStarLogo from "./AIStarLogo.svg";
 import defaultApp from "./App.png";
 
 export const ChatBotIcon = socketAIIcon;
 export const SocketIcon = socketIcon;
 export const DefaultApp = defaultApp;
+export const AIstarLogo = AIStarLogo;
 
 function makeImageUrl(imageId: string): string {
   return `https://imagedelivery.net/Vv7GgOGQbSyClWJqhyP0VQ/${imageId}/public`;
