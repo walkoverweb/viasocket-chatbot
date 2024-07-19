@@ -556,24 +556,28 @@ export function formInitialChildren(type: string) {
   return { components: {}, coordinates: {} };
 }
 export const perFormAction = (actionData: any) => {
-  switch (actionData?.type?.toLowerCase()) {
+  let data: any;
+  let type =
+    actionData?.type?.toLowerCase() || actionData?.actionType?.toLowerCase();
+  switch (type) {
     case "senddatatofrontend":
       /* eslint-disable-next-line */
-      const data = {
+      data = {
         message: actionData.variable,
         type: "ChatbotResponse",
       };
       window?.parent?.postMessage(data, "*");
       break;
     case "senddatatoai":
-      // data = {
-      //   message: actionData.data,
-      //   type: "ChatbotResponse",
-      // };
+      data = {
+        message: actionData.variables.selected,
+        type: "ChatbotResponse",
+      };
       break;
     default:
       break;
   }
+  return data;
 };
 export const intefaceSetLocalStorage = (key: string, value: string) => {
   // if (process.env.REACT_APP_API_ENVIRONMENT === "local") {

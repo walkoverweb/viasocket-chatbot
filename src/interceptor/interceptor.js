@@ -5,7 +5,7 @@ import { getCurrentEnvironment, removeCookie } from "../utils/utilities";
 
 const instance = defaultAxios.create();
 const axios = setupCache(instance, {
-  ttl: 1000 * 60 * 5, // 5 minute.
+  ttl: 1, // 5 minute.
   methods: ["get"],
   generateKey: buildKeyGenerator((request) => ({
     method: request.method,

@@ -3,7 +3,10 @@ import React from "react";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import { perFormAction } from "../../utils/InterfaceUtils.ts";
+import { sendDataToAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 // import { GridContext } from "../Grid/Grid.tsx";
+import { useCustomSelector } from "../../../../utils/deepCheckSelector";
+import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 
 interface InterfaceButtonProps {
   props: ButtonProps | any;
@@ -15,15 +18,18 @@ interface InterfaceButtonProps {
 }
 // const urlPattern = /^(?:(?:https?|ftp):\/\/)?(?:www\.)?[^\s/$.?#].[^\s]*$/i
 
-function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
+function InterfaceButton({
+  props,
+  action,
+  interfaceId,
+}: InterfaceButtonProps): JSX.Element {
   // const payload = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.context?.[gridId])
   // const interfaceContextData = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.interfaceData)
   // const ContextData = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.context)
-  // const { actionId, frontEndActions, threadId } = useCustomSelector((state: $ReduxCoreType) => ({
-  //   actionId: state.Interface?.interfaceData?.[interfaceId]?.actions?.[gridId]?.[componentId]?.actionId,
-  //   frontEndActions: state.Interface?.interfaceData?.[interfaceId]?.frontendActions?.[gridId]?.[componentId],
-  //   threadId: state.Interface?.threadId
-  // }))
+  const { slugName, threadId } = useCustomSelector((state: $ReduxCoreType) => ({
+    slugName: state.Interface?.bridgeName,
+    threadId: state.Interface?.threadId,
+  }));
 
   // const handleFrontEndActions = () => {
   // const actions: any = Object.values(frontEndActions || {})
@@ -58,12 +64,22 @@ function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
   // })
   // };
 
-  const handleOnClick = () => {
+  const handleOnClick = async () => {
     // if (!inpreview) return
     // if (actionId) sendDataToAction(actionId, { payload: payload, interfaceContextData: interfaceContextData, threadId: threadId })
     // if (frontEndActions) handleFrontEndActions()
     if (action?.actionId) {
-      perFormAction(action);
+      const data = perFormAction(action);
+      // debugger
+      await sendDataToAction({
+        message: "",
+        optionSelected: data,
+        userId: null,
+        interfaceContextData: {},
+        threadId: threadId,
+        slugName: slugName,
+        chatBotId: interfaceId,
+      });
     }
   };
 

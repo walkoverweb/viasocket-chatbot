@@ -132,7 +132,7 @@ export async function sendDataToAction(
   if (!data.threadId) data.threadId = "";
 
   const response = await axios.post(
-    `${URL}/chatbot/${data.chatBotId}/sendMessage`,
+    `http://localhost:8080/chatbot/${data.chatBotId}/sendMessage`,
     {
       ...data,
     }

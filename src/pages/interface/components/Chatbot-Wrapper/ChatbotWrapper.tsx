@@ -29,7 +29,7 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
     const handleMessage = (event: MessageEvent) => {
       if (event?.data?.type === "interfaceData") {
         const receivedData = event?.data?.data;
-        const { threadId, bridgeName } = receivedData;
+        const { threadId = null, bridgeName } = receivedData;
         if (threadId) {
           dispatch(setThreadId({ threadId: threadId }));
         }
