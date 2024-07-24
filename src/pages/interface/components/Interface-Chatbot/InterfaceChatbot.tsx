@@ -114,6 +114,10 @@ function InterfaceChatbot({
       if (event?.data?.type === "refresh") {
         getallPreviousHistory();
       }
+      if (event?.data?.type === "askAi") {
+        const message = event?.data?.data;
+        onSend(message);
+      }
     };
 
     window.addEventListener("message", handleMessage);
@@ -174,8 +178,6 @@ function InterfaceChatbot({
         if (parsedMessage?.status === "connected") {
           return;
         } else if (parsedMessage?.function_call) {
-          console.log("function calling");
-
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
             { role: "assistant", wait: true, content: "Function Calling" },
@@ -184,7 +186,6 @@ function InterfaceChatbot({
           parsedMessage?.function_call === false &&
           !parsedMessage?.response
         ) {
-          console.log("going to gpt");
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
             { role: "assistant", wait: true, content: "Talking with AI" },
@@ -222,8 +223,8 @@ function InterfaceChatbot({
     });
   };
 
-  const onSend = () => {
-    const message = messageRef.current.value.trim();
+  const onSend = (msg: string) => {
+    const message = msg || messageRef.current.value.trim();
     if (!message) return;
     setDefaultQuestions([]);
     startTimeoutTimer();

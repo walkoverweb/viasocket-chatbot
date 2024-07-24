@@ -29,22 +29,24 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
     const handleMessage = (event: MessageEvent) => {
       if (event?.data?.type === "interfaceData") {
         const receivedData = event?.data?.data;
-        const { threadId, bridgeName } = receivedData;
-        if (threadId) {
-          dispatch(setThreadId({ threadId: threadId }));
-        }
-        if (bridgeName) {
-          dispatch(setThreadId({ bridgeName: bridgeName || "root" }));
-          dispatch(
-            addDefaultContext({
-              variables: { ...receivedData?.variables },
-              bridgeName: bridgeName,
-            })
-          );
-        } else {
-          dispatch(
-            addDefaultContext({ variables: { ...receivedData?.variables } })
-          );
+        if (receivedData) {
+          const { threadId = null, bridgeName = null } = receivedData;
+          if (threadId) {
+            dispatch(setThreadId({ threadId: threadId }));
+          }
+          if (bridgeName) {
+            dispatch(setThreadId({ bridgeName: bridgeName || "root" }));
+            dispatch(
+              addDefaultContext({
+                variables: { ...receivedData?.variables },
+                bridgeName: bridgeName,
+              })
+            );
+          } else {
+            dispatch(
+              addDefaultContext({ variables: { ...receivedData?.variables } })
+            );
+          }
         }
       }
     };
