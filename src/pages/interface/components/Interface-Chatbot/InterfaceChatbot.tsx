@@ -1,13 +1,5 @@
 /* eslint-disable */
-import SendIcon from "@mui/icons-material/Send";
-import {
-  Box,
-  Grid,
-  IconButton,
-  LinearProgress,
-  TextField,
-  useTheme,
-} from "@mui/material";
+import { Box, Grid, LinearProgress, useTheme } from "@mui/material";
 import React, {
   createContext,
   useEffect,
@@ -25,10 +17,10 @@ import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector.js";
 import ChatbotHeader from "./ChatbotHeader.tsx";
+import ChatbotTextField from "./ChatbotTextField.tsx";
 import DefaultQuestions from "./DefaultQuestions.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
-import isColorLight from "../../../../utils/themeUtility.js";
 
 const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
@@ -68,7 +60,6 @@ function InterfaceChatbot({
   dragRef,
 }: InterfaceChatbotProps) {
   const theme = useTheme(); // Hook to access the theme
-  const isLight = isColorLight(theme.palette.primary.main);
 
   const { interfaceContextData, threadId, bridgeName } = useCustomSelector(
     (state: $ReduxCoreType) => ({
@@ -137,10 +128,6 @@ function InterfaceChatbot({
         return updatedMessages;
       });
     }, 120000);
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" && !loading) onSend();
   };
 
   const getallPreviousHistory = async () => {
@@ -224,15 +211,15 @@ function InterfaceChatbot({
   };
 
   const onSend = (msg: string) => {
-    const message = msg || messageRef.current.value.trim();
-    if (!message) return;
+    const textMessage = msg || messageRef.current.value;
+    if (!textMessage) return;
     setDefaultQuestions([]);
     startTimeoutTimer();
-    sendMessage(message);
+    sendMessage(textMessage);
     setLoading(true);
     setMessages((prevMessages) => [
       ...prevMessages,
-      { role: "user", content: message },
+      { role: "user", content: textMessage },
       { role: "assistant", wait: true, content: "Talking with AI" },
     ]);
     messageRef.current.value = "";
@@ -266,11 +253,11 @@ function InterfaceChatbot({
           sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
         >
           <MessageList dragRef={dragRef} containerRef={containerRef} />
-          <DefaultQuestions
+          {/* <DefaultQuestions
             defaultQuestion={defaultQuestion}
             messageRef={messageRef}
             onSend={onSend}
-          />
+          /> */}
         </Grid>
         <Grid
           item
@@ -280,32 +267,16 @@ function InterfaceChatbot({
             backgroundColor: theme.palette.background.paper,
             paddingX: theme.spacing(3),
             display: "flex",
-            alignItems: "center",
+            alignItems: "end",
             marginBottom: theme.spacing(2),
             // borderTop:"2px black solid"
           }}
         >
-          <TextField
-            className="input-field"
-            inputRef={messageRef}
-            onKeyDown={handleKeyDown}
-            placeholder="Enter your message"
-            fullWidth
-            sx={{
-              backgroundColor: theme.palette.background.default,
-            }}
+          <ChatbotTextField
+            loading={loading}
+            onSend={onSend}
+            messageRef={messageRef}
           />
-          <IconButton
-            onClick={() => (!loading ? onSend() : null)}
-            sx={{
-              opacity: loading ? 0.5 : 1,
-              marginLeft: theme.spacing(2),
-              backgroundColor: theme.palette.primary.main,
-            }}
-            disableRipple
-          >
-            <SendIcon sx={{ color: isLight ? "black" : "white" }} />
-          </IconButton>
         </Grid>
       </Box>
     </MessageContext.Provider>
