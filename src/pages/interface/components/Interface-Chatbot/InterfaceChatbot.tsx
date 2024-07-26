@@ -18,7 +18,6 @@ import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector.js";
 import ChatbotHeader from "./ChatbotHeader.tsx";
 import ChatbotTextField from "./ChatbotTextField.tsx";
-import DefaultQuestions from "./DefaultQuestions.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
 
@@ -48,7 +47,7 @@ interface MessageType {
 }
 export const MessageContext = createContext<{
   messages: MessageType[] | [];
-  addMessage?: (message: MessageType) => void;
+  addMessage?: (message: string) => void;
 }>({
   messages: [],
 });
@@ -74,7 +73,6 @@ function InterfaceChatbot({
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
-  const containerRef = useRef(null);
   const userId = localStorage.getItem("interfaceUserId");
   const [messages, setMessages] = useState<MessageType[]>(
     useMemo(
@@ -93,10 +91,11 @@ function InterfaceChatbot({
       [inpreview]
     )
   );
-  const addMessage = (message: MessageType) => {
-    setMessages((prevMessages) => [...prevMessages, message]);
+
+  const addMessage = (message: string) => {
+    onSend(message);
   };
-  const [defaultQuestion, setDefaultQuestions] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const messageRef = useRef();
 
@@ -106,8 +105,20 @@ function InterfaceChatbot({
         getallPreviousHistory();
       }
       if (event?.data?.type === "askAi") {
-        const message = event?.data?.data;
-        onSend(message);
+        const data = event?.data?.data;
+        if (typeof data === "string") {
+          // this is for when direct sending message through window.askAi("hello")
+          onSend(data);
+        } else {
+          // this is for when sending from SendDataToChatbot mehtod window.SendDataToChatbot({bridgeName: 'asdlfj', askAi: "hello"})
+          sendMessage(
+            data.askAi || "",
+            data?.variables || {},
+            data?.threadId || null,
+            data?.bridgeName || null
+          );
+          onSend(data.askAi || "", false);
+        }
       }
     };
 
@@ -199,23 +210,27 @@ function InterfaceChatbot({
     }
   }, [threadId, interfaceId, userId, bridgeName]);
 
-  const sendMessage = async (message: string) => {
+  const sendMessage = async (
+    message: string,
+    variables = {},
+    thread = "",
+    bridge = ""
+  ) => {
     await sendDataToAction({
       message,
       userId,
-      interfaceContextData: interfaceContextData || {},
-      threadId: threadId,
-      slugName: bridgeName,
+      interfaceContextData: { ...interfaceContextData, ...variables } || {},
+      threadId: thread || threadId,
+      slugName: bridge || bridgeName,
       chatBotId: interfaceId,
     });
   };
 
-  const onSend = (msg: string) => {
+  const onSend = (msg: string, apiCall: boolean = true) => {
     const textMessage = msg || messageRef.current.value;
     if (!textMessage) return;
-    setDefaultQuestions([]);
     startTimeoutTimer();
-    sendMessage(textMessage);
+    apiCall && sendMessage(textMessage);
     setLoading(true);
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -252,7 +267,7 @@ function InterfaceChatbot({
           className="second-grid"
           sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
         >
-          <MessageList dragRef={dragRef} containerRef={containerRef} />
+          <MessageList dragRef={dragRef} />
           {/* <DefaultQuestions
             defaultQuestion={defaultQuestion}
             messageRef={messageRef}
