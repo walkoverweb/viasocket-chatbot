@@ -1,11 +1,12 @@
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { Box, IconButton } from "@mui/material";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import "./InterfaceChatbot.scss";
 import Message from "./Message.tsx";
 import { MessageContext } from "./InterfaceChatbot.tsx";
 
-function MessageList({ dragRef, containerRef }) {
+function MessageList({ dragRef }) {
+  const containerRef = useRef<any>(null);
   const MessagesList: any = useContext(MessageContext);
   const { messages } = MessagesList;
 
