@@ -1,15 +1,13 @@
 /* eslint-disable */
-import ReportProblemIcon from "@mui/icons-material/ReportProblem";
-import { Box, Stack, Typography, useTheme } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { Box, Stack, Typography, useTheme } from "@mui/material";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import isColorLight from "../../../../utils/themeUtility.js";
+import { isJSONString } from "../../utils/InterfaceUtils.ts";
 import InterfaceGrid from "../Grid/Grid.tsx";
 import "./Message.scss";
-import isColorLight from "../../../../utils/themeUtility.js";
-import { CSSTransition } from "react-transition-group";
-import { isJSONString } from "../../utils/InterfaceUtils.ts";
 
 function Message({ message, dragRef }) {
   const theme = useTheme();
@@ -51,6 +49,7 @@ function Message({ message, dragRef }) {
               sx={{
                 // fontFamily: "var(--theme-font-family)",
                 color: textColor,
+                whiteSpace: "pre-wrap",
                 // fontSize: "15px",
                 // "@media(max-width:991px)": { fontSize: "14px" },
                 // "@media(max-width:479px)": { fontSize: "12px" },
