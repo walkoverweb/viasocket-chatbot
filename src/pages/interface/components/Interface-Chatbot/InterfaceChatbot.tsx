@@ -117,7 +117,9 @@ function InterfaceChatbot({
             data?.threadId || null,
             data?.bridgeName || null
           );
-          onSend(data.askAi || "", false);
+          setTimeout(() => {
+            onSend(data.askAi || "", false);
+          }, 1000);
         }
       }
     };
