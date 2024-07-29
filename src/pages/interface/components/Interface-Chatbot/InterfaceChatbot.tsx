@@ -20,6 +20,7 @@ import ChatbotHeader from "./ChatbotHeader.tsx";
 import ChatbotTextField from "./ChatbotTextField.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
+import { errorToast } from "../../../../components/customToast.js";
 
 const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
@@ -74,6 +75,9 @@ function InterfaceChatbot({
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
   const userId = localStorage.getItem("interfaceUserId");
+  const [loading, setLoading] = useState(false);
+  const messageRef = useRef();
+
   const [messages, setMessages] = useState<MessageType[]>(
     useMemo(
       () =>
@@ -96,30 +100,32 @@ function InterfaceChatbot({
     onSend(message);
   };
 
-  const [loading, setLoading] = useState(false);
-  const messageRef = useRef();
-
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event?.data?.type === "refresh") {
         getallPreviousHistory();
       }
       if (event?.data?.type === "askAi") {
-        const data = event?.data?.data;
-        if (typeof data === "string") {
-          // this is for when direct sending message through window.askAi("hello")
-          onSend(data);
+        if (!loading) {
+          const data = event?.data?.data;
+          if (typeof data === "string") {
+            // this is for when direct sending message through window.askAi("hello")
+            onSend(data);
+          } else {
+            // this is for when sending from SendDataToChatbot mehtod window.SendDataToChatbot({bridgeName: 'asdlfj', askAi: "hello"})
+            sendMessage(
+              data.askAi || "",
+              data?.variables || {},
+              data?.threadId || null,
+              data?.bridgeName || null
+            );
+            setTimeout(() => {
+              onSend(data.askAi || "", false);
+            }, 1000);
+          }
         } else {
-          // this is for when sending from SendDataToChatbot mehtod window.SendDataToChatbot({bridgeName: 'asdlfj', askAi: "hello"})
-          sendMessage(
-            data.askAi || "",
-            data?.variables || {},
-            data?.threadId || null,
-            data?.bridgeName || null
-          );
-          setTimeout(() => {
-            onSend(data.askAi || "", false);
-          }, 1000);
+          errorToast("Please wait for the response from AI");
+          return;
         }
       }
     };
