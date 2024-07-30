@@ -2,6 +2,7 @@
 import { Box, Grid, LinearProgress, useTheme } from "@mui/material";
 import React, {
   createContext,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -100,41 +101,44 @@ function InterfaceChatbot({
     onSend(message);
   };
 
-  const handleMessage = (event: MessageEvent) => {
-    if (event?.data?.type === "refresh") {
-      getallPreviousHistory();
-    }
-    if (event?.data?.type === "askAi") {
-      if (!loading) {
-        const data = event?.data?.data;
-        if (typeof data === "string") {
-          // this is for when direct sending message through window.askAi("hello")
-          onSend(data);
-        } else {
-          // this is for when sending from SendDataToChatbot mehtod window.SendDataToChatbot({bridgeName: 'asdlfj', askAi: "hello"})
-          sendMessage(
-            data.askAi || "",
-            data?.variables || {},
-            data?.threadId || null,
-            data?.bridgeName || null
-          );
-          setTimeout(() => {
-            onSend(data.askAi || "", false);
-          }, 1000);
-        }
-      } else {
-        errorToast("Please wait for the response from AI");
-        return;
+  const handleMessage = useCallback(
+    (event: MessageEvent) => {
+      if (event?.data?.type === "refresh") {
+        getallPreviousHistory();
       }
-    }
-  };
+      if (event?.data?.type === "askAi") {
+        if (!loading) {
+          const data = event?.data?.data;
+          if (typeof data === "string") {
+            // this is for when direct sending message through window.askAi("hello")
+            onSend(data);
+          } else {
+            // this is for when sending from SendDataToChatbot method window.SendDataToChatbot({bridgeName: 'asdlfj', askAi: "hello"})
+            sendMessage(
+              data.askAi || "",
+              data?.variables || {},
+              data?.threadId || null,
+              data?.bridgeName || null
+            );
+            setTimeout(() => {
+              onSend(data.askAi || "", false);
+            }, 1000);
+          }
+        } else {
+          errorToast("Please wait for the response from AI");
+          return;
+        }
+      }
+    },
+    [loading]
+  );
 
   useEffect(() => {
     window.addEventListener("message", handleMessage);
     return () => {
       window.removeEventListener("message", handleMessage);
     };
-  }, []);
+  }, [handleMessage]);
 
   const startTimeoutTimer = () => {
     timeoutIdRef.current = setTimeout(() => {
