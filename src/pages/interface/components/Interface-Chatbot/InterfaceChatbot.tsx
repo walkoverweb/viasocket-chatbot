@@ -170,7 +170,6 @@ function InterfaceChatbot({
   };
 
   useEffect(() => {
-    setLoading(false);
     if (inpreview) {
       const subscribe = () => {
         client.subscribe(interfaceId + (threadId || userId));
