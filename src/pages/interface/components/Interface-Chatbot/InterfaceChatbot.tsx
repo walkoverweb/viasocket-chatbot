@@ -237,7 +237,7 @@ function InterfaceChatbot({
     });
   };
 
-  const onSend = (msg: string, apiCall: boolean = true) => {
+  const onSend = (msg?: string, apiCall: boolean = true) => {
     const textMessage = msg || messageRef.current.value;
     if (!textMessage) return;
     startTimeoutTimer();
@@ -300,7 +300,9 @@ function InterfaceChatbot({
         >
           <ChatbotTextField
             loading={loading}
-            onSend={onSend}
+            onSend={() => {
+              onSend();
+            }}
             messageRef={messageRef}
           />
         </Grid>
