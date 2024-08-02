@@ -204,7 +204,6 @@ function InterfaceChatbot({
             ...prevMessages.slice(0, -1),
             {
               role: "assistant",
-              wait: true,
               content: `${parsedMessage?.error || "Error in AI"}`,
             },
           ]);
