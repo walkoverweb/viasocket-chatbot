@@ -207,6 +207,8 @@ function InterfaceChatbot({
               content: `${parsedMessage?.error || "Error in AI"}`,
             },
           ]);
+          setLoading(false);
+          clearTimeout(timeoutIdRef.current);
         } else {
           const stringifiedJson =
             parsedMessage?.response?.choices?.[0]?.message;
