@@ -199,6 +199,16 @@ function InterfaceChatbot({
             ...prevMessages.slice(0, -1),
             { role: "assistant", wait: true, content: "Talking with AI" },
           ]);
+        } else if (!parsedMessage?.response && parsedMessage?.error) {
+          setMessages((prevMessages) => [
+            ...prevMessages.slice(0, -1),
+            {
+              role: "assistant",
+              content: `${parsedMessage?.error || "Error in AI"}`,
+            },
+          ]);
+          setLoading(false);
+          clearTimeout(timeoutIdRef.current);
         } else {
           const stringifiedJson =
             parsedMessage?.response?.choices?.[0]?.message;
