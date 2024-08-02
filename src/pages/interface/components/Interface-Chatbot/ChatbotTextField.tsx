@@ -6,7 +6,7 @@ import {
   TextField,
   useTheme,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import isColorLight from "../../../../utils/themeUtility";
 
 interface ChatbotTextFieldType {
@@ -20,7 +20,6 @@ function ChatbotTextField({
   messageRef,
 }: ChatbotTextFieldType) {
   const [message, setMessage] = useState("");
-
   const theme = useTheme(); // Hook to access the theme
   const isLight = isColorLight(theme.palette.primary.main);
 
@@ -30,6 +29,19 @@ function ChatbotTextField({
       onSend(message);
     }
   };
+
+  const handleMessage = useCallback((event: MessageEvent) => {
+    if (event?.data?.type === "open") {
+      messageRef.current.focus();
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, [handleMessage]);
 
   return (
     <Box sx={{ position: "relative", width: "100%" }}>
@@ -42,6 +54,7 @@ function ChatbotTextField({
         onKeyDown={handleKeyDown}
         placeholder="Enter your message"
         fullWidth
+        focused
         InputProps={{
           endAdornment: (
             <InputAdornment position="end" sx={{ visibility: "hidden" }}>
