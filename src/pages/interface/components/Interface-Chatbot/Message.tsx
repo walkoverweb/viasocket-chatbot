@@ -1,13 +1,45 @@
 /* eslint-disable */
+import React from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
-import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vs } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import isColorLight from "../../../../utils/themeUtility.js";
 import { isJSONString } from "../../utils/InterfaceUtils.ts";
 import InterfaceGrid from "../Grid/Grid.tsx";
 import "./Message.scss";
+
+const Code = ({
+  inline,
+  className,
+  children,
+  ...props
+}: {
+  inline?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}) => {
+  const match = /language-(\w+)/.exec(className || "");
+  return !inline && match ? (
+    <SyntaxHighlighter
+      // style={vs}
+      className="bg-transparent outline-none border-0 mt-0"
+      language={match[1]}
+      wrapLongLines={true} // Enable word wrapping
+      codeTagProps={{ style: { whiteSpace: "pre-wrap" } }} // Ensure word wrapping
+      PreTag="div"
+      {...props}
+    >
+      {String(children).replace(/\n$/, "")}
+    </SyntaxHighlighter>
+  ) : (
+    <code className={className} {...props}>
+      {children}
+    </code>
+  );
+};
 
 function Message({ message, dragRef }) {
   const theme = useTheme();
@@ -39,9 +71,11 @@ function Message({ message, dragRef }) {
               height: "fit-content",
               minWidth: "150px",
               borderRadius: "10px 10px 1px 10px",
-              // boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
-              wordBreak: "break-all",
+              wordBreak: "break-word",
+              whiteSpace: "normal",
+              overflowWrap: "break-word",
               maxWidth: "80%",
+              //  boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
             }}
           >
             <Typography
@@ -111,9 +145,13 @@ function Message({ message, dragRef }) {
               minWidth: "150px",
               borderRadius: "10px 10px 10px 1px",
               boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
-              wordBreak: "break-all",
-              maxWidth: "80%",
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
+              maxWidth: "100%",
               color: "black",
+              textAlign: "justify",
+              // overflow: "hidden",
+              whiteSpace: "pre-wrap",
             }}
           >
             {message?.wait ? (
@@ -135,7 +173,12 @@ function Message({ message, dragRef }) {
                     : null;
                   if (parsedContent && "isMarkdown" in parsedContent) {
                     return parsedContent.isMarkdown ? (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          code: Code,
+                        }}
+                      >
                         {parsedContent.markdown}
                       </ReactMarkdown>
                     ) : (
@@ -152,7 +195,12 @@ function Message({ message, dragRef }) {
                     );
                   }
                   return (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        code: Code,
+                      }}
+                    >
                       {message?.content}
                     </ReactMarkdown>
                   );
