@@ -25,7 +25,7 @@ const Code = ({
 }) => {
   const [tipForCopy, setTipForCopy] = useState(false);
 
-  const handlecopyfunction = (text: string) => {
+  const handlecopyfunction = (text: any) => {
     copy(text);
     setTipForCopy(true);
     setTimeout(() => {
