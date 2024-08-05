@@ -1,13 +1,84 @@
 /* eslint-disable */
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { Box, Stack, Typography, useTheme } from "@mui/material";
-import React from "react";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { Box, Stack, Tooltip, Typography, useTheme } from "@mui/material";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import remarkGfm from "remark-gfm";
 import isColorLight from "../../../../utils/themeUtility.js";
 import { isJSONString } from "../../utils/InterfaceUtils.ts";
 import InterfaceGrid from "../Grid/Grid.tsx";
+import DoneIcon from "@mui/icons-material/Done";
 import "./Message.scss";
+import copy from "copy-to-clipboard";
+
+const Code = ({
+  inline,
+  className,
+  children,
+  ...props
+}: {
+  inline?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}) => {
+  const [tipForCopy, setTipForCopy] = useState(false);
+
+  const handlecopyfunction = (text: any) => {
+    copy(text);
+    setTipForCopy(true);
+    setTimeout(() => {
+      setTipForCopy(false);
+    }, 800);
+  };
+  const match = /language-(\w+)/.exec(className || "");
+  return !inline && match ? (
+    <div className="m-0">
+      <p
+        className="m-0 flex-end-center cursor-pointer p-1 pr-2"
+        style={{
+          backgroundColor: "#DCDCDC",
+          borderTopRightRadius: 8,
+          borderTopLeftRadius: 8,
+        }}
+        onClick={() => handlecopyfunction(children)}
+      >
+        {!tipForCopy ? (
+          <>
+            {" "}
+            <ContentCopyIcon
+              fontSize="inherit"
+              sx={{ height: 20 }}
+              className="mr-1"
+            />
+            copy
+          </>
+        ) : (
+          <>
+            <DoneIcon fontSize="inherit" sx={{ height: 20 }} className="mr-1" />
+            copied!
+          </>
+        )}
+      </p>
+      <SyntaxHighlighter
+        // style={vs}
+        className="bg-white outline-none border-0 m-0"
+        language={match[1]}
+        wrapLongLines={true} // Enable word wrapping
+        codeTagProps={{ style: { whiteSpace: "pre-wrap" } }} // Ensure word wrapping
+        PreTag="div"
+        {...props}
+      >
+        {String(children).replace(/\n$/, "")}
+      </SyntaxHighlighter>
+    </div>
+  ) : (
+    <code className={className} {...props}>
+      {children}
+    </code>
+  );
+};
 
 function Message({ message, dragRef }) {
   const theme = useTheme();
@@ -39,9 +110,11 @@ function Message({ message, dragRef }) {
               height: "fit-content",
               minWidth: "150px",
               borderRadius: "10px 10px 1px 10px",
-              // boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
-              wordBreak: "break-all",
+              wordBreak: "break-word",
+              whiteSpace: "normal",
+              overflowWrap: "break-word",
               maxWidth: "80%",
+              //  boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
             }}
           >
             <Typography
@@ -111,9 +184,13 @@ function Message({ message, dragRef }) {
               minWidth: "150px",
               borderRadius: "10px 10px 10px 1px",
               boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
-              wordBreak: "break-all",
-              maxWidth: "80%",
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
+              maxWidth: "100%",
               color: "black",
+              textAlign: "justify",
+              // overflow: "hidden",
+              whiteSpace: "pre-wrap",
             }}
           >
             {message?.wait ? (
@@ -135,7 +212,12 @@ function Message({ message, dragRef }) {
                     : null;
                   if (parsedContent && "isMarkdown" in parsedContent) {
                     return parsedContent.isMarkdown ? (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          code: Code,
+                        }}
+                      >
                         {parsedContent.markdown}
                       </ReactMarkdown>
                     ) : (
@@ -152,7 +234,12 @@ function Message({ message, dragRef }) {
                     );
                   }
                   return (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        code: Code,
+                      }}
+                    >
                       {message?.content}
                     </ReactMarkdown>
                   );
