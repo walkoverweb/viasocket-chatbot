@@ -1,15 +1,17 @@
 /* eslint-disable */
-import React from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { Box, Stack, Typography, useTheme } from "@mui/material";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { Box, Stack, Tooltip, Typography, useTheme } from "@mui/material";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vs } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import remarkGfm from "remark-gfm";
 import isColorLight from "../../../../utils/themeUtility.js";
 import { isJSONString } from "../../utils/InterfaceUtils.ts";
 import InterfaceGrid from "../Grid/Grid.tsx";
+import DoneIcon from "@mui/icons-material/Done";
 import "./Message.scss";
+import copy from "copy-to-clipboard";
 
 const Code = ({
   inline,
@@ -21,19 +23,56 @@ const Code = ({
   className?: string;
   children: React.ReactNode;
 }) => {
+  const [tipForCopy, setTipForCopy] = useState(false);
+
+  const handlecopyfunction = (text: string) => {
+    copy(text);
+    setTipForCopy(true);
+    setTimeout(() => {
+      setTipForCopy(false);
+    }, 800);
+  };
   const match = /language-(\w+)/.exec(className || "");
   return !inline && match ? (
-    <SyntaxHighlighter
-      // style={vs}
-      className="bg-transparent outline-none border-0 mt-0"
-      language={match[1]}
-      wrapLongLines={true} // Enable word wrapping
-      codeTagProps={{ style: { whiteSpace: "pre-wrap" } }} // Ensure word wrapping
-      PreTag="div"
-      {...props}
-    >
-      {String(children).replace(/\n$/, "")}
-    </SyntaxHighlighter>
+    <div className="m-0">
+      <p
+        className="m-0 flex-end-center cursor-pointer p-1 pr-2"
+        style={{
+          backgroundColor: "#DCDCDC",
+          borderTopRightRadius: 8,
+          borderTopLeftRadius: 8,
+        }}
+        onClick={() => handlecopyfunction(children)}
+      >
+        {!tipForCopy ? (
+          <>
+            {" "}
+            <ContentCopyIcon
+              fontSize="inherit"
+              sx={{ height: 20 }}
+              className="mr-1"
+            />
+            copy
+          </>
+        ) : (
+          <>
+            <DoneIcon fontSize="inherit" sx={{ height: 20 }} className="mr-1" />
+            copied!
+          </>
+        )}
+      </p>
+      <SyntaxHighlighter
+        // style={vs}
+        className="bg-white outline-none border-0 m-0"
+        language={match[1]}
+        wrapLongLines={true} // Enable word wrapping
+        codeTagProps={{ style: { whiteSpace: "pre-wrap" } }} // Ensure word wrapping
+        PreTag="div"
+        {...props}
+      >
+        {String(children).replace(/\n$/, "")}
+      </SyntaxHighlighter>
+    </div>
   ) : (
     <code className={className} {...props}>
       {children}
