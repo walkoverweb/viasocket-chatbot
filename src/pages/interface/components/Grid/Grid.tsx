@@ -9,7 +9,7 @@ export const GridContext = createContext({});
 
 function Grid({ componentJson, msgId, ...props }) {
   function getValueByPath(path, context) {
-    return path.split(".").reduce((acc, part) => acc && acc[part], context);
+    return path?.split(".")?.reduce((acc, part) => acc && acc[part], context);
   }
 
   function replaceDynamicPaths(obj, context) {
@@ -35,7 +35,7 @@ function Grid({ componentJson, msgId, ...props }) {
     }
 
     if (typeof obj === "object" && obj !== null) {
-      return Object.keys(obj).reduce((acc, key) => {
+      return Object.keys(obj || {}).reduce((acc, key) => {
         acc[key] = replaceDynamicPaths(obj[key], context);
         return acc;
       }, {});

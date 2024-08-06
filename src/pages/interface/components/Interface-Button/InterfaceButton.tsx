@@ -16,6 +16,7 @@ interface InterfaceButtonProps {
 // const urlPattern = /^(?:(?:https?|ftp):\/\/)?(?:www\.)?[^\s/$.?#].[^\s]*$/i
 
 function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
+  delete props?.action;
   // const payload = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.context?.[gridId])
   // const interfaceContextData = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.interfaceData)
   // const ContextData = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.context)
