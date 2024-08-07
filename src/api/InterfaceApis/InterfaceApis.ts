@@ -4,6 +4,7 @@ import { InterFaceDataType } from "../../types/interface/InterfaceReduxType.ts";
 import { UrlDataType } from "../../types/utility.ts";
 
 const URL = process.env.REACT_APP_API_BASE_URL;
+const PYTHON_URL = process.env.REACT_APP_PYTHON_API_BASE_URL;
 let currentController: AbortController | null = null;
 
 export async function getAllInterfaceApi(
@@ -149,7 +150,7 @@ export async function sendDataToAction(
   if (!data.threadId) data.threadId = "";
 
   const response = await axios.post(
-    `${URL}/chatbot/${data.chatBotId}/sendMessage`,
+    `${PYTHON_URL}/chatbot/${data.chatBotId}/sendMessage`,
     {
       ...data,
     }
