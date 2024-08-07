@@ -80,6 +80,14 @@ const Code = ({
   );
 };
 
+const Anchor = ({ href, children, ...props }) => {
+  return (
+    <a href={href} target="_blank" rel="noreferrer" {...props}>
+      {children}
+    </a>
+  );
+};
+
 function Message({ message, dragRef }) {
   const theme = useTheme();
   const backgroundColor = theme.palette.primary.main;
@@ -216,6 +224,7 @@ function Message({ message, dragRef }) {
                         remarkPlugins={[remarkGfm]}
                         components={{
                           code: Code,
+                          a: Anchor,
                         }}
                       >
                         {parsedContent.markdown}
@@ -238,6 +247,7 @@ function Message({ message, dragRef }) {
                       remarkPlugins={[remarkGfm]}
                       components={{
                         code: Code,
+                        a: Anchor,
                       }}
                     >
                       {message?.content}
