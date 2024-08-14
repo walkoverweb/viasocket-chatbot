@@ -182,24 +182,75 @@ function InterfaceChatbot({
       subscribe();
       getallPreviousHistory();
 
+      // const handleMessage = (message: string) => {
+      //   console.log(message,23232)
+      //   const parsedMessage = JSON.parse(message || "{}");
+      //   if (parsedMessage?.status === "connected") {
+      //     return;
+      //   } else if (parsedMessage?.function_call) {
+      //     setMessages((prevMessages) => [
+      //       ...prevMessages.slice(0, -1),
+      //       { role: "assistant", wait: true, content: "Function Calling" },
+      //     ]);
+      //   } else if (
+      //     parsedMessage?.function_call === false &&
+      //     !parsedMessage?.response
+      //   ) {
+      //     setMessages((prevMessages) => [
+      //       ...prevMessages.slice(0, -1),
+      //       { role: "assistant", wait: true, content: "Talking with AI" },
+      //     ]);
+      //   } else if (!parsedMessage?.response && parsedMessage?.error) {
+      //     setMessages((prevMessages) => [
+      //       ...prevMessages.slice(0, -1),
+      //       {
+      //         role: "assistant",
+      //         content: `${parsedMessage?.error || "Error in AI"}`,
+      //       },
+      //     ]);
+      //     setLoading(false);
+      //     clearTimeout(timeoutIdRef.current);
+      //   } else {
+      //     const stringifiedJson =
+      //       parsedMessage?.response?.choices?.[0]?.message;
+      //     setLoading(false);
+      //     setMessages((prevMessages) => [
+      //       ...prevMessages.slice(0, -1),
+      //       stringifiedJson,
+      //     ]);
+      //     clearTimeout(timeoutIdRef.current);
+      //   }
+      // };
+
       const handleMessage = (message: string) => {
+        // Parse the incoming message string into an object
         const parsedMessage = JSON.parse(message || "{}");
+
+        // Check if the status is "connected"
         if (parsedMessage?.status === "connected") {
           return;
-        } else if (parsedMessage?.function_call) {
+        }
+
+        // Check if the function call is present
+        if (
+          parsedMessage?.response?.function_call &&
+          !parsedMessage?.response?.message
+        ) {
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
             { role: "assistant", wait: true, content: "Function Calling" },
           ]);
         } else if (
-          parsedMessage?.function_call === false &&
-          !parsedMessage?.response
+          parsedMessage?.response?.function_call &&
+          parsedMessage?.response?.message
         ) {
+          // Check if the function call is false and no response is provided
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
             { role: "assistant", wait: true, content: "Talking with AI" },
           ]);
-        } else if (!parsedMessage?.response && parsedMessage?.error) {
+        } else if (!parsedMessage?.response?.data && parsedMessage?.error) {
+          // Check if there is an error and no response data
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
             {
@@ -209,15 +260,18 @@ function InterfaceChatbot({
           ]);
           setLoading(false);
           clearTimeout(timeoutIdRef.current);
-        } else {
-          const stringifiedJson =
-            parsedMessage?.response?.choices?.[0]?.message;
+        } else if (parsedMessage?.response?.data) {
+          // Handle the new structure with response data
+          const content = parsedMessage.response.data.content;
           setLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
-            stringifiedJson,
+            { role: "assistant", content },
           ]);
           clearTimeout(timeoutIdRef.current);
+        } else {
+          // Handle any other cases
+          console.error("Unexpected message structure:", parsedMessage);
         }
       };
 
