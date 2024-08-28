@@ -6,6 +6,7 @@ import generateTheme from "./hoc/theme";
 import ChatbotWrapper from "./pages/interface/components/Chatbot-Wrapper/ChatbotWrapper.tsx";
 import InterfaceEmbed from "./pages/interface/pages/InterfaceEmbed/InterfaceEmbed.tsx";
 import "./scss/global.scss";
+import ChatbotPreview from "./pages/interface/components/Chatbot-Preview/ChatbotPreview.tsx";
 
 function App() {
   const [themeColor, setThemeColor] = useState("#000000"); // Default color
@@ -32,6 +33,11 @@ function App() {
           exact
           path="/i"
           element={<InterfaceEmbed onThemeChange={handleThemeChange} />}
+        />
+        <Route
+          exact
+          path="/chatbotpreview"
+          element={<ChatbotPreview onThemeChange={handleThemeChange} />}
         />
       </Routes>
     </ThemeProvider>

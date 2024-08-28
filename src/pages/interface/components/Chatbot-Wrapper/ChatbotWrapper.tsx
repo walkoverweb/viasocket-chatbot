@@ -21,7 +21,12 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
   useEffect(() => {
     (async () => {
       const interfaceToken = intefaceGetLocalStorage("interfaceToken");
-      if (interfaceId && interfaceToken && loadInterface) {
+      if (
+        interfaceId &&
+        interfaceId !== "preview" &&
+        interfaceToken &&
+        loadInterface
+      ) {
         dispatch(getInterfaceDataByIdStart({}));
       }
     })();
