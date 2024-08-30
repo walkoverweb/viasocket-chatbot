@@ -1,10 +1,14 @@
-import React from "react";
 import { Box, Grid, Typography, useTheme } from "@mui/material";
-import "./InterfaceChatbot.scss";
+import React, { useContext } from "react";
+import { ChatbotContext } from "../../../../App";
 import isColorLight from "../../../../utils/themeUtility";
+import "./InterfaceChatbot.scss";
 
-function ChatbotHeader({ title, subtitle }) {
+function ChatbotHeader() {
   const theme = useTheme();
+  const {
+    chatbotConfig: { chatbotTitle, chatbotSubtitle },
+  } = useContext<any>(ChatbotContext);
   const isLightBackground = isColorLight(theme.palette.primary.main);
   const textColor = isLightBackground ? "black" : "white";
 
@@ -21,15 +25,17 @@ function ChatbotHeader({ title, subtitle }) {
           className="interface-chatbot__header__title"
           sx={{ color: textColor }}
         >
-          {title || "ChatBot"}
+          {chatbotTitle || "AI Assistant"}
         </Typography>
-        <Typography
-          variant="overline"
-          className="interface-chatbot__header__subtitle"
-          sx={{ color: textColor }}
-        >
-          {subtitle || "Do you have any questions? Ask us!"}
-        </Typography>
+        {chatbotSubtitle && (
+          <Typography
+            variant="overline"
+            className="interface-chatbot__header__subtitle"
+            sx={{ color: textColor }}
+          >
+            {chatbotSubtitle || "Do you have any questions? Ask us!"}
+          </Typography>
+        )}
       </Box>
     </Grid>
   );

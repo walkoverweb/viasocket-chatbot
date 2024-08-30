@@ -1,5 +1,5 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { createContext, useCallback, useMemo, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import generateTheme from "./hoc/theme";
@@ -7,12 +7,16 @@ import ChatbotWrapper from "./pages/interface/components/Chatbot-Wrapper/Chatbot
 import InterfaceEmbed from "./pages/interface/pages/InterfaceEmbed/InterfaceEmbed.tsx";
 import "./scss/global.scss";
 
+export const ChatbotContext = createContext({});
+
 function App() {
   const [themeColor, setThemeColor] = useState("#000000"); // Default color
+  const [chatbotConfig, setChatbotConfig] = useState({});
   const theme = generateTheme(themeColor);
 
-  const handleThemeChange = useCallback((newColor) => {
-    setThemeColor(newColor);
+  const onConfigChange = useCallback((config) => {
+    setThemeColor(config.themeColor || "#000000");
+    setChatbotConfig(config);
   }, []);
 
   return (
@@ -23,15 +27,22 @@ function App() {
           exact
           path="/i/:interfaceId"
           element={
-            <div id="parent-view-only-grid" className="h-100vh w-100">
-              <ChatbotWrapper />
-            </div>
+            <ChatbotContext.Provider
+              value={useMemo(
+                () => ({ chatbotConfig, themeColor }),
+                [chatbotConfig, themeColor]
+              )}
+            >
+              <div id="parent-view-only-grid" className="h-100vh w-100">
+                <ChatbotWrapper />
+              </div>
+            </ChatbotContext.Provider>
           }
         />
         <Route
           exact
           path="/i"
-          element={<InterfaceEmbed onThemeChange={handleThemeChange} />}
+          element={<InterfaceEmbed onConfigChange={onConfigChange} />}
         />
       </Routes>
     </ThemeProvider>
