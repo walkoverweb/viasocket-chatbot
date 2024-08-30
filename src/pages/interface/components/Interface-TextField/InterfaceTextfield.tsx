@@ -42,13 +42,20 @@ function InterfaceTextfield({
   };
 
   return (
-    <Box className="w-100 h-100 ">
+    <Box className="w-100 h-100">
       <TextField
         fullWidth
         {...props}
         onChange={handleChange}
         onBlur={(e) => addData(e.target.value)}
-        className="mb-1"
+        className="mb-2"
+        variant="outlined"
+        InputLabelProps={{
+          sx: {
+            // Default label color when not focused
+            color: "gray",
+          },
+        }}
       />
     </Box>
   );
