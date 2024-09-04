@@ -13,6 +13,7 @@ import {
   getPreviousMessage,
   sendDataToAction,
 } from "../../../../api/InterfaceApis/InterfaceApis.ts";
+import { errorToast } from "../../../../components/customToast.js";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
@@ -21,7 +22,6 @@ import ChatbotHeader from "./ChatbotHeader.tsx";
 import ChatbotTextField from "./ChatbotTextField.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
-import { errorToast } from "../../../../components/customToast.js";
 
 const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
@@ -77,7 +77,7 @@ function InterfaceChatbot({
   const timeoutIdRef = useRef<any>(null);
   const userId = localStorage.getItem("interfaceUserId");
   const [loading, setLoading] = useState(false);
-  const messageRef = useRef();
+  const messageRef = useRef<any>();
 
   const [messages, setMessages] = useState<MessageType[]>(
     useMemo(
@@ -181,46 +181,6 @@ function InterfaceChatbot({
       client.on("open", subscribe);
       subscribe();
       getallPreviousHistory();
-
-      // const handleMessage = (message: string) => {
-      //   console.log(message,23232)
-      //   const parsedMessage = JSON.parse(message || "{}");
-      //   if (parsedMessage?.status === "connected") {
-      //     return;
-      //   } else if (parsedMessage?.function_call) {
-      //     setMessages((prevMessages) => [
-      //       ...prevMessages.slice(0, -1),
-      //       { role: "assistant", wait: true, content: "Function Calling" },
-      //     ]);
-      //   } else if (
-      //     parsedMessage?.function_call === false &&
-      //     !parsedMessage?.response
-      //   ) {
-      //     setMessages((prevMessages) => [
-      //       ...prevMessages.slice(0, -1),
-      //       { role: "assistant", wait: true, content: "Talking with AI" },
-      //     ]);
-      //   } else if (!parsedMessage?.response && parsedMessage?.error) {
-      //     setMessages((prevMessages) => [
-      //       ...prevMessages.slice(0, -1),
-      //       {
-      //         role: "assistant",
-      //         content: `${parsedMessage?.error || "Error in AI"}`,
-      //       },
-      //     ]);
-      //     setLoading(false);
-      //     clearTimeout(timeoutIdRef.current);
-      //   } else {
-      //     const stringifiedJson =
-      //       parsedMessage?.response?.choices?.[0]?.message;
-      //     setLoading(false);
-      //     setMessages((prevMessages) => [
-      //       ...prevMessages.slice(0, -1),
-      //       stringifiedJson,
-      //     ]);
-      //     clearTimeout(timeoutIdRef.current);
-      //   }
-      // };
 
       const handleMessage = (message: string) => {
         // Parse the incoming message string into an object
@@ -328,7 +288,7 @@ function InterfaceChatbot({
           // backgroundColor: theme.palette.background.default,
         }}
       >
-        <ChatbotHeader title={props?.title} subtitle={props?.subtitle} />
+        <ChatbotHeader />
         {chatsLoading && (
           <LinearProgress
             variant="indeterminate"
