@@ -1,6 +1,6 @@
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { Box, IconButton } from "@mui/material";
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "./InterfaceChatbot.scss";
 import Message from "./Message.tsx";
 import { MessageContext } from "./InterfaceChatbot.tsx";
@@ -9,6 +9,7 @@ function MessageList({ dragRef }) {
   const containerRef = useRef<any>(null);
   const MessagesList: any = useContext(MessageContext);
   const { messages } = MessagesList;
+  const [showScrollButton, setShowScrollButton] = useState(false); // State to control the visibility of the button
 
   const movetoDown = () => {
     containerRef.current?.scrollTo({
@@ -17,9 +18,34 @@ function MessageList({ dragRef }) {
     });
   };
 
+  const handleScroll = () => {
+    const currentContainer = containerRef.current;
+    const scrollPosition = currentContainer.scrollTop;
+    const maxScrollTop =
+      currentContainer.scrollHeight - currentContainer.clientHeight;
+
+    // Show the button if scrolled up
+    if (scrollPosition < maxScrollTop) {
+      setShowScrollButton(true);
+    }
+
+    // Hide the button if scrolled all the way to the bottom
+    if (scrollPosition >= maxScrollTop - 10) {
+      setShowScrollButton(false);
+    }
+  };
+
   useEffect(() => {
-    movetoDown();
+    movetoDown(); // Automatically scroll to bottom when messages update
   }, [messages]);
+
+  useEffect(() => {
+    const currentContainer = containerRef.current;
+    currentContainer?.addEventListener("scroll", handleScroll);
+    return () => {
+      currentContainer?.removeEventListener("scroll", handleScroll); // Clean up scroll listener
+    };
+  }, []);
 
   return (
     <Box
@@ -38,11 +64,17 @@ function MessageList({ dragRef }) {
           <Message key={index} message={message} dragRef={dragRef} />
         ))}
       </Box>
-      {messages?.length > 10 && (
+      {showScrollButton && messages?.length > 5 && (
         <IconButton
           onClick={movetoDown}
           className="move-to-down-button"
-          sx={{ backgroundColor: "#333", color: "white" }}
+          sx={{
+            backgroundColor: "#333",
+            color: "white",
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+          }}
           disableRipple
         >
           <KeyboardDoubleArrowDownIcon color="inherit" />
