@@ -50,7 +50,7 @@ function ChatbotTextField({
       <TextField
         inputRef={messageRef}
         className="input-field"
-        // multiline
+        multiline // Todo: need to un comment this code
         maxRows={8}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
