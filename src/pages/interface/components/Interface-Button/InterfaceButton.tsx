@@ -75,7 +75,12 @@ function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
       {...props}
       onClick={handleOnClick}
     >
-      {props?.label || props?.children || ""}
+      {props?.label ||
+        props?.children ||
+        props?.text ||
+        props?.title ||
+        props?.name ||
+        "Button"}
     </Button>
   );
 }
