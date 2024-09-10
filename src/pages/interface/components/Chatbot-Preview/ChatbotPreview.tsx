@@ -1,6 +1,6 @@
 import { Box, Grid, useTheme } from "@mui/material";
 import React, { useEffect } from "react";
-import ChatbotHeader from "../Interface-Chatbot/ChatbotHeader.tsx";
+import { ChatbotHeaderPreview } from "../Interface-Chatbot/ChatbotHeader.tsx";
 import ChatbotTextField from "../Interface-Chatbot/ChatbotTextField.tsx";
 import MessageList from "../Interface-Chatbot/MessageList.tsx";
 
@@ -31,7 +31,10 @@ function ChatbotPreview({ onThemeChange }) {
         // backgroundColor: theme.palette.background.default,
       }}
     >
-      <ChatbotHeader title="Chatbot Header" subtitle="Chatbot Subtitle" />
+      <ChatbotHeaderPreview
+        title="Chatbot Header"
+        subtitle="Chatbot Subtitle"
+      />
       <Grid
         item
         xs
