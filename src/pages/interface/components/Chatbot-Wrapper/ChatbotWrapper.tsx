@@ -11,7 +11,6 @@ import { intefaceGetLocalStorage } from "../../utils/InterfaceUtils.ts";
 import InterfaceChatbot from "../Interface-Chatbot/InterfaceChatbot.tsx";
 
 function ChatbotWrapper({ interfaceId, loadInterface = true }) {
-  console.log("chatbotwrapper");
   const dispatch = useDispatch();
 
   useEffect(() => {

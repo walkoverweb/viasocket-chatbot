@@ -7,20 +7,21 @@ import InterfaceErrorPage from "../../components/InterfaceErrorPage/InterfaceErr
 import { intefaceSetLocalStorage } from "../../utils/InterfaceUtils.ts";
 
 interface InterfaceEmbedProps {
-  onThemeChange: (string) => void;
+  onConfigChange: (string) => void;
 }
-export default function InterfaceEmbed({ onThemeChange }: InterfaceEmbedProps) {
-  console.log("interfaceembed");
+export default function InterfaceEmbed({
+  onConfigChange,
+}: InterfaceEmbedProps) {
   const { search } = useLocation();
   const navigate = useNavigate();
   const { chatbot_id, userId, token, config } = JSON.parse(
     new URLSearchParams(search).get("interfaceDetails") || "{}"
   );
   useEffect(() => {
-    if (config?.themeColor) {
-      onThemeChange(config.themeColor || "#000000"); // Update the theme color when the component mounts
+    if (config) {
+      onConfigChange(config); // update the chatbot configuration
     }
-  }, [config?.themeColor]);
+  }, [config]);
 
   const [verifiedState, setVerifiedState] = useState(
     EmbedVerificationStatus.VERIFYING
