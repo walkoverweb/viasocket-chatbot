@@ -243,7 +243,7 @@ function InterfaceChatbot({
         client.removeListener("message", handleMessage);
       };
     }
-  }, [threadId, interfaceId, userId, bridgeName]);
+  }, [threadId, interfaceId, userId]);
 
   const sendMessage = async (
     message: string,
