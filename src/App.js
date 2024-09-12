@@ -3,6 +3,7 @@ import React, { createContext, useCallback, useMemo, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import generateTheme from "./hoc/theme";
+import ChatbotPreview from "./pages/interface/components/Chatbot-Preview/ChatbotPreview.tsx";
 import ChatbotWrapper from "./pages/interface/components/Chatbot-Wrapper/ChatbotWrapper.tsx";
 import InterfaceEmbed from "./pages/interface/pages/InterfaceEmbed/InterfaceEmbed.tsx";
 import "./scss/global.scss";
@@ -17,6 +18,10 @@ function App() {
   const onConfigChange = useCallback((config) => {
     setThemeColor(config.themeColor || "#000000");
     setChatbotConfig(config);
+  }, []);
+
+  const handleThemeChange = useCallback((color) => {
+    setThemeColor(color);
   }, []);
 
   return (
@@ -43,6 +48,11 @@ function App() {
           exact
           path="/i"
           element={<InterfaceEmbed onConfigChange={onConfigChange} />}
+        />
+        <Route
+          exact
+          path="/chatbotpreview"
+          element={<ChatbotPreview onThemeChange={handleThemeChange} />}
         />
       </Routes>
     </ThemeProvider>
