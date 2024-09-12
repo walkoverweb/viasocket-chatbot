@@ -63,7 +63,6 @@ export function ChatbotHeaderPreview() {
         >
           AI Assistant
         </Typography>
-        {/* {chatbotSubtitle && ( */}
         <Typography
           variant="overline"
           className="interface-chatbot__header__subtitle"
@@ -71,7 +70,6 @@ export function ChatbotHeaderPreview() {
         >
           Do you have any questions? Ask us!
         </Typography>
-        {/* )} */}
       </Box>
     </Grid>
   );
