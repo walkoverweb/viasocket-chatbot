@@ -220,13 +220,19 @@ function InterfaceChatbot({
           ]);
           setLoading(false);
           clearTimeout(timeoutIdRef.current);
+        } else if (parsedMessage?.response?.data?.role === "reset") {
+          // all previous message and new object inserted
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { role: "reset", content: "Resetting the chat" },
+          ]);
         } else if (parsedMessage?.response?.data) {
           // Handle the new structure with response data
           const content = parsedMessage.response.data.content;
           setLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
-            { role: "assistant", content },
+            { role: parsedMessage.response.role || "assistant", content },
           ]);
           clearTimeout(timeoutIdRef.current);
         } else {
@@ -251,7 +257,7 @@ function InterfaceChatbot({
     thread = "",
     bridge = ""
   ) => {
-    await sendDataToAction({
+    const response = await sendDataToAction({
       message,
       userId,
       interfaceContextData: { ...interfaceContextData, ...variables } || {},
@@ -259,6 +265,10 @@ function InterfaceChatbot({
       slugName: bridge || bridgeName,
       chatBotId: interfaceId,
     });
+    if (!response?.success) {
+      setMessages((prevMessages) => prevMessages.slice(0, -1));
+      setLoading(false);
+    }
   };
 
   const onSend = (msg?: string, apiCall: boolean = true) => {
@@ -288,11 +298,11 @@ function InterfaceChatbot({
           // backgroundColor: theme.palette.background.default,
         }}
       >
-        <ChatbotHeader />
+        <ChatbotHeader setChatsLoading={setChatsLoading} />
         {chatsLoading && (
           <LinearProgress
             variant="indeterminate"
-            color="primary"
+            color="secondary"
             sx={{ height: 4 }}
           />
         )}
@@ -302,7 +312,7 @@ function InterfaceChatbot({
           className="second-grid"
           sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
         >
-          <MessageList dragRef={dragRef} />
+          <MessageList />
           {/* <DefaultQuestions
             defaultQuestion={defaultQuestion}
             messageRef={messageRef}

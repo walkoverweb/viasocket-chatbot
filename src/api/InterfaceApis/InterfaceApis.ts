@@ -144,18 +144,48 @@ export async function getPreviousMessage(
   }
 }
 
-export async function sendDataToAction(
+export async function sendDataToAction(data: any): Promise<any> {
+  try {
+    if (!data.threadId) data.threadId = "";
+
+    const response = await axios.post(
+      `${PYTHON_URL}/chatbot/${data.chatBotId}/sendMessage`,
+      {
+        ...data,
+      }
+    );
+    return { success: true, data: response?.data?.data };
+  } catch (error) {
+    errorToast(
+      error?.response?.data?.detail?.error ||
+        error?.response?.data?.detail ||
+        "Something went wrong!"
+    );
+    return { success: false };
+  }
+}
+
+export async function resetChatsAction(
   data: any
 ): Promise<{ [key: string]: any }[]> {
-  if (!data.threadId) data.threadId = "";
+  try {
+    if (!data.threadId) data.threadId = "";
 
-  const response = await axios.post(
-    `${PYTHON_URL}/chatbot/${data.chatBotId}/sendMessage`,
-    {
-      ...data,
-    }
-  );
-  return response?.data?.data;
+    const response = await axios.post(
+      `${PYTHON_URL}/chatbot/${data.chatBotId}/resetchat`,
+      {
+        ...data,
+      }
+    );
+    return response?.data?.data;
+  } catch (error) {
+    errorToast(
+      error?.response?.data?.detail?.error ||
+        error?.response?.data?.detail ||
+        "Something went wrong!"
+    );
+    return error;
+  }
 }
 
 export async function loginUser(data: any): Promise<{ [key: string]: any }[]> {
