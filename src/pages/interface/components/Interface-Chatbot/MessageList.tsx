@@ -5,7 +5,7 @@ import "./InterfaceChatbot.scss";
 import Message from "./Message.tsx";
 import { MessageContext } from "./InterfaceChatbot.tsx";
 
-function MessageList({ dragRef }) {
+function MessageList() {
   const containerRef = useRef<any>(null);
   const MessagesList: any = useContext(MessageContext);
   const { messages } = MessagesList;
@@ -35,7 +35,7 @@ function MessageList({ dragRef }) {
     >
       <Box sx={{ flex: "1 1 auto", minHeight: 0 }}>
         {messages?.map((message, index) => (
-          <Message key={index} message={message} dragRef={dragRef} />
+          <Message key={index} message={message} />
         ))}
       </Box>
       {messages?.length > 10 && (
