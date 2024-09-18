@@ -144,9 +144,7 @@ export async function getPreviousMessage(
   }
 }
 
-export async function sendDataToAction(
-  data: any
-): Promise<{ [key: string]: any }[]> {
+export async function sendDataToAction(data: any): Promise<any> {
   try {
     if (!data.threadId) data.threadId = "";
 
@@ -158,8 +156,12 @@ export async function sendDataToAction(
     );
     return response?.data?.data;
   } catch (error) {
-    errorToast(error?.response?.data?.detail?.error || "Something went wrong!");
-    return error;
+    errorToast(
+      error?.response?.data?.detail?.error ||
+        error?.response?.data?.detail ||
+        "Something went wrong!"
+    );
+    return { success: false };
   }
 }
 
@@ -177,7 +179,11 @@ export async function resetChatsAction(
     );
     return response?.data?.data;
   } catch (error) {
-    errorToast(error?.response?.data?.detail || "Something went wrong!");
+    errorToast(
+      error?.response?.data?.detail?.error ||
+        error?.response?.data?.detail ||
+        "Something went wrong!"
+    );
     return error;
   }
 }
