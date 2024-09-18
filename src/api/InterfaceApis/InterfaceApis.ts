@@ -147,15 +147,20 @@ export async function getPreviousMessage(
 export async function sendDataToAction(
   data: any
 ): Promise<{ [key: string]: any }[]> {
-  if (!data.threadId) data.threadId = "";
+  try {
+    if (!data.threadId) data.threadId = "";
 
-  const response = await axios.post(
-    `${PYTHON_URL}/chatbot/${data.chatBotId}/sendMessage`,
-    {
-      ...data,
-    }
-  );
-  return response?.data?.data;
+    const response = await axios.post(
+      `${PYTHON_URL}/chatbot/${data.chatBotId}/sendMessage`,
+      {
+        ...data,
+      }
+    );
+    return response?.data?.data;
+  } catch (error) {
+    errorToast(error?.response?.data?.detail?.error || "Something went wrong!");
+    return error;
+  }
 }
 
 export async function resetChatsAction(
