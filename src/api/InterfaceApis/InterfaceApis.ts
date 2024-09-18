@@ -154,7 +154,7 @@ export async function sendDataToAction(data: any): Promise<any> {
         ...data,
       }
     );
-    return response?.data?.data;
+    return { success: true, data: response?.data?.data };
   } catch (error) {
     errorToast(
       error?.response?.data?.detail?.error ||
