@@ -228,9 +228,15 @@ const AssistantMessageCard = React.memo(
               <Box>
                 {(() => {
                   const parsedContent = isJSONString(
-                    isError ? message?.error : message?.content
+                    isError
+                      ? message?.error
+                      : message?.chatbot_message || message?.content
                   )
-                    ? JSON.parse(isError ? message.error : message.content)
+                    ? JSON.parse(
+                        isError
+                          ? message.error
+                          : message?.chatbot_message || message?.content
+                      )
                     : null;
                   if (parsedContent && "isMarkdown" in parsedContent) {
                     return parsedContent.isMarkdown ? (
@@ -263,7 +269,9 @@ const AssistantMessageCard = React.memo(
                         a: Anchor,
                       }}
                     >
-                      {!isError ? message.content : message.error}
+                      {!isError
+                        ? message?.chatbot_message || message?.content
+                        : message.error}
                     </ReactMarkdown>
                   );
                 })()}
