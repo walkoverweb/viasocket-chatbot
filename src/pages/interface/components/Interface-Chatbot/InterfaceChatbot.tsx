@@ -257,7 +257,7 @@ function InterfaceChatbot({
     thread = "",
     bridge = ""
   ) => {
-    await sendDataToAction({
+    const response = await sendDataToAction({
       message,
       userId,
       interfaceContextData: { ...interfaceContextData, ...variables } || {},
@@ -265,6 +265,10 @@ function InterfaceChatbot({
       slugName: bridge || bridgeName,
       chatBotId: interfaceId,
     });
+    if (!response?.success) {
+      setMessages((prevMessages) => prevMessages.slice(0, -1));
+      setLoading(false);
+    }
   };
 
   const onSend = (msg?: string, apiCall: boolean = true) => {
