@@ -151,7 +151,7 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
 const AssistantMessageCard = React.memo(
   ({ message, theme, isError = false, textColor }: any) => {
     return (
-      <>
+      <Box className="assistant_message_card">
         <Stack
           sx={{
             alignItems: "flex-end",
@@ -238,7 +238,11 @@ const AssistantMessageCard = React.memo(
                           : message?.chatbot_message || message?.content
                       )
                     : null;
-                  if (parsedContent && "isMarkdown" in parsedContent) {
+                  if (
+                    parsedContent &&
+                    ("isMarkdown" in parsedContent ||
+                      "components" in parsedContent)
+                  ) {
                     return parsedContent.isMarkdown ? (
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
@@ -251,10 +255,9 @@ const AssistantMessageCard = React.memo(
                       </ReactMarkdown>
                     ) : (
                       <InterfaceGrid
-                        style={{ height: window.innerHeight }}
                         inpreview={false}
                         ingrid={false}
-                        gridId={parsedContent.responseId || "default"}
+                        gridId={parsedContent?.responseId || "default"}
                         loadInterface={false}
                         componentJson={parsedContent}
                         msgId={message?.createdAt}
@@ -280,7 +283,7 @@ const AssistantMessageCard = React.memo(
           </Box>
         </Stack>
         {message?.is_reset && <ResetHistoryLine />}
-      </>
+      </Box>
     );
   }
 );

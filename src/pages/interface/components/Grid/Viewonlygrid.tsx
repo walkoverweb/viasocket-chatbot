@@ -6,12 +6,6 @@ import ComponentRenderer from "../ComponentRenderer.tsx";
 import { GridContext } from "./Grid.tsx";
 
 function Viewonlygrid({ dragRef }) {
-  // const { components } = useCustomSelector((state: $ReduxCoreType) => ({
-  //   components:
-  //     state?.Interface?.interfaceData?.[interfaceId]?.responseTypes?.[gridId]
-  //       ?.components || {},
-  // }));
-
   const responseTypeJson: any = useContext(GridContext);
   const components = responseTypeJson?.components || responseTypeJson;
 
@@ -23,24 +17,11 @@ function Viewonlygrid({ dragRef }) {
             <ComponentRenderer
               componentId={componentKey}
               dragRef={dragRef}
-              // gridId={gridId}
               inpreview
             />
           </div>
         );
       })}
-      {/* {Object.values(components || {}).map((componentJson: any) => {
-        return (
-          <div key={componentJson?.key} className="grid-item column not_drag">
-            <ComponentRenderer
-              componentId={componentJson?.key}
-              dragRef={dragRef}
-              // gridId={gridId}
-              inpreview
-            />
-          </div>
-        );
-      })} */}
     </Box>
   );
 }

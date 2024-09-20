@@ -7,6 +7,7 @@ import { GridContext } from "./Grid/Grid.tsx";
 import InterfaceAccordion from "./Interface-Accordion/InterfaceAccordion.tsx";
 import InterfaceBox from "./Interface-Box/InterfaceBox.tsx";
 import InterfaceButton from "./Interface-Button/InterfaceButton.tsx";
+import InterfaceMarkdown from "./Interface-Chatbot/Interface-Markdown/InterfaceMarkdown.tsx";
 import InterfaceChatbot from "./Interface-Chatbot/InterfaceChatbot.tsx";
 import InterfaceCheckbox from "./Interface-Checkbox/InterfaceCheckbox.tsx";
 import InterfaceDivider from "./Interface-Divider/InterfaceDivider.tsx";
@@ -53,6 +54,7 @@ const componentMap: any = {
   Icon: (data: any) => <InterfaceIcon {...data} />,
   Accordion: (data: any) => <InterfaceAccordion {...data} />,
   Table: (data: any) => <InterfaceTable {...data} />,
+  Markdown: (data: any) => <InterfaceMarkdown {...data} />,
 };
 
 function ComponentRenderer({
@@ -60,32 +62,25 @@ function ComponentRenderer({
   componentId,
   dragRef,
   inpreview = false,
-  interfaceId,
 }: ComponentRendererProps) {
   const responseTypeJson: any = useContext(GridContext);
   // const { type, props, key, action } = componentData;
-  const type = responseTypeJson?.components?.[componentId]?.type || responseTypeJson?.[componentId]?.type;
-  const props = responseTypeJson?.components?.[componentId]?.props || responseTypeJson?.[componentId]?.props;
-  const action = responseTypeJson?.components?.[componentId]?.action || responseTypeJson?.[componentId]?.action ;
+  const type =
+    responseTypeJson?.components?.[componentId]?.type ||
+    responseTypeJson?.[componentId]?.type;
+  const props =
+    responseTypeJson?.components?.[componentId]?.props ||
+    responseTypeJson?.[componentId]?.props;
+  const action =
+    responseTypeJson?.components?.[componentId]?.action ||
+    responseTypeJson?.[componentId]?.action;
 
-  // const componentData = useCustomSelector(
-  //   (state: $ReduxCoreType) =>
-  //     state.Interface?.interfaceData?.[interfaceId]?.responseTypes?.[gridId]
-  //       ?.components?.[componentId]
-  // );
-  // const { type, props, key, action } = componentData;
-  // const commonProps = {
-  //   ...(responseTypeJson?.[componentId]?.props || { ...props }),
-  //   key,
-  // };
   const component = componentMap[type] || null;
 
   if ((component && type === "Button") || type === "ChatBot") {
     return component({
       props,
-      // gridId,
       componentId,
-      // action,
       inpreview,
       action,
     });
@@ -94,9 +89,7 @@ function ComponentRenderer({
   return component
     ? component({
         props,
-        // gridId,
         componentId,
-        // action,
         inpreview,
         dragRef,
         action,
