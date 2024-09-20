@@ -1,92 +1,14 @@
 /* eslint-disable */
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import DoneIcon from "@mui/icons-material/Done";
 import { Box, Chip, Divider, Stack, Typography, useTheme } from "@mui/material";
-import copy from "copy-to-clipboard";
-import React, { useState } from "react";
+import React from "react";
 import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import remarkGfm from "remark-gfm";
 import isColorLight from "../../../../utils/themeUtility.js";
 import { isJSONString } from "../../utils/InterfaceUtils.ts";
 import InterfaceGrid from "../Grid/Grid.tsx";
+import { Anchor, Code } from "./Interface-Markdown/MarkdownUtitily.tsx";
 import "./Message.scss";
-
-const Code = ({
-  inline,
-  className,
-  children,
-  ...props
-}: {
-  inline?: boolean;
-  className?: string;
-  children: React.ReactNode;
-}) => {
-  const [tipForCopy, setTipForCopy] = useState(false);
-
-  const handlecopyfunction = (text: any) => {
-    copy(text);
-    setTipForCopy(true);
-    setTimeout(() => {
-      setTipForCopy(false);
-    }, 800);
-  };
-  const match = /language-(\w+)/.exec(className || "");
-  return !inline && match ? (
-    <div className="m-0">
-      <p
-        className="m-0 flex-end-center cursor-pointer p-1 pr-2"
-        style={{
-          backgroundColor: "#DCDCDC",
-          borderTopRightRadius: 8,
-          borderTopLeftRadius: 8,
-        }}
-        onClick={() => handlecopyfunction(children)}
-      >
-        {!tipForCopy ? (
-          <>
-            {" "}
-            <ContentCopyIcon
-              fontSize="inherit"
-              sx={{ height: 20 }}
-              className="mr-1"
-            />
-            copy
-          </>
-        ) : (
-          <>
-            <DoneIcon fontSize="inherit" sx={{ height: 20 }} className="mr-1" />
-            copied!
-          </>
-        )}
-      </p>
-      <SyntaxHighlighter
-        // style={vs}
-        className="bg-white outline-none border-0 m-0"
-        language={match[1]}
-        wrapLongLines={true} // Enable word wrapping
-        codeTagProps={{ style: { whiteSpace: "pre-wrap" } }} // Ensure word wrapping
-        PreTag="div"
-        {...props}
-      >
-        {String(children).replace(/\n$/, "")}
-      </SyntaxHighlighter>
-    </div>
-  ) : (
-    <code className={className} {...props}>
-      {children}
-    </code>
-  );
-};
-
-const Anchor = ({ href, children, ...props }) => {
-  return (
-    <a href={href} target="_blank" rel="noreferrer" {...props}>
-      {children}
-    </a>
-  );
-};
 
 const ResetHistoryLine = () => {
   return (
@@ -151,7 +73,7 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
 const AssistantMessageCard = React.memo(
   ({ message, theme, isError = false, textColor }: any) => {
     return (
-      <>
+      <Box className="assistant_message_card">
         <Stack
           sx={{
             alignItems: "flex-end",
@@ -238,7 +160,11 @@ const AssistantMessageCard = React.memo(
                           : message?.chatbot_message || message?.content
                       )
                     : null;
-                  if (parsedContent && "isMarkdown" in parsedContent) {
+                  if (
+                    parsedContent &&
+                    ("isMarkdown" in parsedContent ||
+                      "components" in parsedContent)
+                  ) {
                     return parsedContent.isMarkdown ? (
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
@@ -251,10 +177,9 @@ const AssistantMessageCard = React.memo(
                       </ReactMarkdown>
                     ) : (
                       <InterfaceGrid
-                        style={{ height: window.innerHeight }}
                         inpreview={false}
                         ingrid={false}
-                        gridId={parsedContent.responseId || "default"}
+                        gridId={parsedContent?.responseId || "default"}
                         loadInterface={false}
                         componentJson={parsedContent}
                         msgId={message?.createdAt}
@@ -280,7 +205,7 @@ const AssistantMessageCard = React.memo(
           </Box>
         </Stack>
         {message?.is_reset && <ResetHistoryLine />}
-      </>
+      </Box>
     );
   }
 );

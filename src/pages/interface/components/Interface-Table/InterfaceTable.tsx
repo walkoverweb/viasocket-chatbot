@@ -32,24 +32,26 @@ function InterfaceTable({ props }: InterfaceTableProps) {
   const columns = generateColumns(props?.data?.[0]);
   const rows = generateRows(props?.data);
   return (
-    <DataGrid
-      rows={rows || []}
-      columns={columns || []}
-      hideFooterPagination={!props?.pagination || false}
-      initialState={{
-        pagination: props?.pagination
-          ? {
-              paginationModel: { page: 0, pageSize: 10 },
-            }
-          : {
-              pageSize: props?.pagination ? 5 : undefined, // Sets initial page size if pagination is true
-            },
-      }}
-      pageSizeOptions={props.pagination ? [5, 10] : []}
-      disableRowSelectionOnClick
-      checkboxSelection={props?.checkbox || false}
-      className="bg-white"
-    />
+    <div style={{ width: "100%" }}>
+      <DataGrid
+        rows={rows || []}
+        columns={columns || []}
+        // hideFooterPagination={!props?.pagination || false}
+        initialState={{
+          pagination: props?.pagination
+            ? {
+                paginationModel: { page: 0, pageSize: 10 },
+              }
+            : {
+                pageSize: props?.pagination ? 5 : undefined, // Sets initial page size if pagination is true
+              },
+        }}
+        // pageSizeOptions={props.pagination ? [5, 10] : []}
+        disableRowSelectionOnClick
+        checkboxSelection={props?.checkbox || false}
+        className="bg-white"
+      />
+    </div>
   );
 }
 
