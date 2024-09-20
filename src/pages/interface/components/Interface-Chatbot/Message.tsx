@@ -1,7 +1,7 @@
 /* eslint-disable */
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Box, Chip, Divider, Stack, Typography, useTheme } from "@mui/material";
-import React from "react";
+import React from 'react';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import isColorLight from "../../../../utils/themeUtility.js";
