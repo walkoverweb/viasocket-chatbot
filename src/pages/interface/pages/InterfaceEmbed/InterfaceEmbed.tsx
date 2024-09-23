@@ -34,7 +34,7 @@ export default function InterfaceEmbed({
 
   useEffect(() => {
     if (verifiedState === EmbedVerificationStatus.VERIFIED) {
-      navigate(`/i/${details.chatbot_id}`);
+      navigate(`/i/${details.chatbot_id}`, { replace: true });
     }
   }, [verifiedState, details.chatbot_id, navigate]);
 
