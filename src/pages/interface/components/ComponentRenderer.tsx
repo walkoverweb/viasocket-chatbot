@@ -20,6 +20,7 @@ import InterfaceText from "./Interface-Text/InterfaceText.tsx";
 import InterfaceTextfield from "./Interface-TextField/InterfaceTextfield.tsx";
 import Interfacedatepicker from "./InterfaceDatepicker/Interfacedatepicker.tsx";
 import InterfaceRadio from "./InterfaceRadio/InterfaceRadio.tsx";
+import InterfaceCard from "./Interface-Card/InterfaceCard.tsx";
 
 interface ComponentRendererProps {
   gridId?: string;
@@ -55,6 +56,7 @@ const componentMap: any = {
   Accordion: (data: any) => <InterfaceAccordion {...data} />,
   Table: (data: any) => <InterfaceTable {...data} />,
   Markdown: (data: any) => <InterfaceMarkdown {...data} />,
+  Card: (data: any) => <InterfaceCard {...data} />,
 };
 
 function ComponentRenderer({
