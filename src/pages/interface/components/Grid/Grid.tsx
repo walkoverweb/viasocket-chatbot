@@ -9,12 +9,15 @@ export const GridContext = createContext({});
 
 function Grid({ componentJson, msgId, ...props }) {
   function getValueByPath(path, context) {
-    return path?.split(".")?.reduce((acc, part) => acc && acc[part], context);
+    return path
+      ?.replace(/\[(\w+)\]/g, ".$1")
+      ?.split(".")
+      ?.reduce((acc, part) => acc && acc[part], context);
   }
 
   function replaceDynamicPaths(obj, context) {
     if (typeof obj === "string") {
-      const dynamicPathRegex = /variables\.[a-zA-Z0-9_.]+/g;
+      const dynamicPathRegex = /variables\.[a-zA-Z0-9_.[\]]+/g;
       if (
         obj.match(dynamicPathRegex) &&
         obj.match(dynamicPathRegex).length === 1 &&
