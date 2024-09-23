@@ -63,9 +63,9 @@ function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
     // if (!inpreview) return
     // if (actionId) sendDataToAction(actionId, { payload: payload, interfaceContextData: interfaceContextData, threadId: threadId })
     // if (frontEndActions) handleFrontEndActions()
-    if (action?.actionId) {
-      perFormAction(action);
-    }
+    // if (action?.actionId) {
+    perFormAction(action);
+    // }
   };
 
   return (
