@@ -17,52 +17,12 @@ interface InterfaceButtonProps {
 
 function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
   delete props?.action;
-  // const payload = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.context?.[gridId])
-  // const interfaceContextData = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.interfaceData)
-  // const ContextData = useCustomSelector((state: $ReduxCoreType) => state.Interface?.interfaceContext?.[interfaceId]?.context)
-  // const { actionId, frontEndActions, threadId } = useCustomSelector((state: $ReduxCoreType) => ({
-  //   actionId: state.Interface?.interfaceData?.[interfaceId]?.actions?.[gridId]?.[componentId]?.actionId,
-  //   frontEndActions: state.Interface?.interfaceData?.[interfaceId]?.frontendActions?.[gridId]?.[componentId],
-  //   threadId: state.Interface?.threadId
-  // }))
-
-  // const handleFrontEndActions = () => {
-  // const actions: any = Object.values(frontEndActions || {})
-  // actions?.forEach((action: any) => {
-  //   if (action?.type === 'sendDataToFrontend') {
-  //     Object?.entries(ContextData)?.forEach(([responseKey, responseData]) => {
-  //       if (responseKey?.includes(responseJson?.msgId)) {
-  //         const data = {
-  //           message: responseData,
-  //           type: 'ChatbotResponse'
-  //         }
-  //         window?.parent?.postMessage(data, '*')
-  //       }
-  //     })
-  //   }
-  //   if (action?.type === 'navigate') {
-  //     let url = action?.url
-  //     if (urlPattern.test(url)) {
-  //       if (!url.startsWith('http://') && !url.startsWith('https://')) {
-  //         url = `https://${url}`
-  //       }
-  //       if (action?.openInNewTab) {
-  //         window.open(url, '_blank')
-  //       } else {
-  //         window.open(url, '_self')
-  //       }
-  //     }
-  //   }
-  //   if (action?.type === 'alert') {
-  //     infoToast(action?.message || '')
-  //   }
-  // })
-  // };
-
+  const validColors = ["default", "inherit", "primary", "secondary"];
+  // If the color is valid, use it; otherwise, default to 'default'
+  if (props.color) {
+    props.color = validColors.includes(props?.color) ? props?.color : "default";
+  }
   const handleOnClick = () => {
-    // if (!inpreview) return
-    // if (actionId) sendDataToAction(actionId, { payload: payload, interfaceContextData: interfaceContextData, threadId: threadId })
-    // if (frontEndActions) handleFrontEndActions()
     // if (action?.actionId) {
     perFormAction(action);
     // }
