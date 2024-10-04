@@ -121,16 +121,17 @@ export async function deleteComponentOrGridApi(
 
 export async function getPreviousMessage(
   threadId: string | null,
-  bridgeName: string | null
+  bridgeName: string | null,
+  pageNo: number | null,
+  limit = 40
 ): Promise<{ [key: string]: any }[]> {
   if (currentController) {
     currentController.abort();
   }
   currentController = new AbortController();
-
   try {
     const response = await axios.get(
-      `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridgeName}`,
+      `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridgeName}?pageNo=${pageNo}&limit=${limit}`,
       { signal: currentController.signal }
     );
     return response?.data?.data;

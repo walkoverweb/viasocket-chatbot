@@ -50,6 +50,8 @@ interface MessageType {
 export const MessageContext = createContext<{
   messages: MessageType[] | [];
   addMessage?: (message: string) => void;
+  fetchMoreData?: () => void;
+  hasMoreMessages?: boolean;
 }>({
   messages: [],
 });
@@ -78,6 +80,9 @@ function InterfaceChatbot({
   const userId = localStorage.getItem("interfaceUserId");
   const [loading, setLoading] = useState(false);
   const messageRef = useRef<any>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
 
   const [messages, setMessages] = useState<MessageType[]>(
     useMemo(
@@ -96,6 +101,36 @@ function InterfaceChatbot({
       [inpreview]
     )
   );
+
+  const fetchMoreData = async () => {
+    if (isFetching || !hasMoreMessages) return;
+
+    setIsFetching(true);
+    try {
+      const nextPage = currentPage + 1;
+      const previousChats = await getPreviousMessage(
+        threadId,
+        bridgeName,
+        nextPage
+      );
+
+      if (Array.isArray(previousChats) && previousChats.length > 0) {
+        setMessages((prevMessages) => [...previousChats, ...prevMessages]); // Prepend older messages
+        setCurrentPage(nextPage);
+
+        if (previousChats.length === 0) {
+          setHasMoreMessages(false);
+        }
+      } else {
+        setHasMoreMessages(false); // No more messages to load
+      }
+    } catch (error) {
+      console.error("Error fetching more messages:", error);
+      errorToast("Failed to load more messages.");
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
   const addMessage = (message: string) => {
     onSend(message);
@@ -157,16 +192,22 @@ function InterfaceChatbot({
     if (threadId && interfaceId) {
       setChatsLoading(true);
       try {
-        const previousChats = await getPreviousMessage(threadId, bridgeName);
+        const previousChats = await getPreviousMessage(threadId, bridgeName, 1);
         if (Array.isArray(previousChats)) {
           setMessages(previousChats.length === 0 ? [] : [...previousChats]);
+
+          // Reset pagination states
+          setCurrentPage(1);
+          setHasMoreMessages(previousChats.length > 0);
         } else {
           setMessages([]);
+          setHasMoreMessages(false);
           console.error("previousChats is not an array");
         }
       } catch (error) {
         console.error("Error fetching previous chats:", error);
         setMessages([]);
+        setHasMoreMessages(false);
       } finally {
         setChatsLoading(false);
       }
@@ -286,7 +327,14 @@ function InterfaceChatbot({
   };
 
   return (
-    <MessageContext.Provider value={{ messages: messages, addMessage }}>
+    <MessageContext.Provider
+      value={{
+        messages,
+        addMessage,
+        fetchMoreData,
+        hasMoreMessages,
+      }}
+    >
       <Box
         sx={{
           display: "flex",
@@ -295,7 +343,6 @@ function InterfaceChatbot({
           height: "100vh",
           overflow: "hidden",
           position: "relative",
-          // backgroundColor: theme.palette.background.default,
         }}
       >
         <ChatbotHeader setChatsLoading={setChatsLoading} />
@@ -329,7 +376,6 @@ function InterfaceChatbot({
             display: "flex",
             alignItems: "end",
             marginBottom: theme.spacing(2),
-            // borderTop:"2px black solid"
           }}
         >
           <ChatbotTextField
