@@ -118,7 +118,7 @@ function InterfaceChatbot({
         setMessages((prevMessages) => [...previousChats, ...prevMessages]); // Prepend older messages
         setCurrentPage(nextPage);
 
-        if (previousChats.length === 0) {
+        if (previousChats.length < 40) {
           setHasMoreMessages(false);
         }
       } else {

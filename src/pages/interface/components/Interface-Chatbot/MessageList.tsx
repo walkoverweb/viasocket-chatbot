@@ -17,7 +17,7 @@ function MessageList() {
 
   const movetoDown = () => {
     containerRef.current?.scrollTo({
-      top: 0, // Since flexDirection is column-reverse, top is the latest message
+      top: 0,
       behavior: "smooth",
     });
   };
@@ -27,10 +27,7 @@ function MessageList() {
     if (!currentContainer) return;
 
     const scrollTop = currentContainer.scrollTop;
-    console.log("Scroll Top:", scrollTop); // Debugging scroll value
 
-    // Since flexDirection is column-reverse, scrollTop works differently.
-    // Show the button if the user has scrolled up more than 100px from the top
     if (scrollTop < -100) {
       setShowScrollButton(true);
     } else {
@@ -42,15 +39,11 @@ function MessageList() {
     const currentContainer = containerRef.current;
 
     if (currentContainer) {
-      // When messages are updated, adjust the scroll position
       const newScrollHeight = currentContainer.scrollHeight;
 
       if (previousScrollHeight !== null) {
-        // Keep the scroll position stable
         currentContainer.scrollTop += newScrollHeight - previousScrollHeight;
       }
-
-      // Update previousScrollHeight for the next effect
       setPreviousScrollHeight(newScrollHeight);
     }
   }, [messages]);
@@ -77,7 +70,7 @@ function MessageList() {
           <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
             <LinearProgress
               color="secondary"
-              sx={{ height: 4, width: "50%" }}
+              sx={{ height: 4, width: "70%" }}
             />
           </Box>
         }
@@ -102,7 +95,7 @@ function MessageList() {
             position: "fixed",
             bottom: "20px",
             right: "20px",
-            zIndex: 1000, // Increased value to ensure visibility
+            zIndex: 1000,
           }}
           disableRipple
         >
