@@ -188,6 +188,26 @@ export async function resetChatsAction(
   }
 }
 
+export async function sendFeedbackAction(data: {
+  messageId: string;
+  feedbackStatus: number;
+}): Promise<{ [key: string]: any }[]> {
+  try {
+    const response = await axios.put(
+      `${URL}/api/v1/config/status/${data?.feedbackStatus}`,
+      { message_id: data?.messageId }
+    );
+    return response?.data?.data;
+  } catch (error) {
+    errorToast(
+      error?.response?.data?.detail?.error ||
+        error?.response?.data?.detail ||
+        "Something went wrong!"
+    );
+    return error;
+  }
+}
+
 export async function loginUser(data: any): Promise<{ [key: string]: any }[]> {
   const response = await axios.post(`${URL}/chatbot/login`, {
     ...data,

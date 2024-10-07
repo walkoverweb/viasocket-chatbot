@@ -1,14 +1,33 @@
 /* eslint-disable */
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { Box, Chip, Divider, Stack, Typography, useTheme } from "@mui/material";
-import React from 'react';
+import {
+  Box,
+  Chip,
+  Divider,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import React from "react";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import FileDownloadDoneIcon from "@mui/icons-material/FileDownloadDone";
+import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutlined";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import isColorLight from "../../../../utils/themeUtility.js";
 import { isJSONString } from "../../utils/InterfaceUtils.ts";
 import InterfaceGrid from "../Grid/Grid.tsx";
-import { Anchor, Code } from "./Interface-Markdown/MarkdownUtitily.tsx";
+import {
+  Anchor,
+  Code,
+  li_tag,
+  PTag,
+} from "./Interface-Markdown/MarkdownUtitily.tsx";
 import "./Message.scss";
+import copy from "copy-to-clipboard";
+import { sendFeedbackAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 
 const ResetHistoryLine = () => {
   return (
@@ -72,6 +91,21 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
 
 const AssistantMessageCard = React.memo(
   ({ message, theme, isError = false, textColor }: any) => {
+    const [isCopied, setIsCopied] = React.useState(false);
+    const handleCopy = () => {
+      copy(message?.chatbot_message || message?.content);
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 1500);
+    };
+
+    const handleFeedback = async (messageId, feedbackStatus) => {
+      if (messageId) {
+        await sendFeedbackAction({ messageId, feedbackStatus });
+      }
+    };
+
     return (
       <Box className="assistant_message_card">
         <Stack
@@ -117,55 +151,76 @@ const AssistantMessageCard = React.memo(
             </svg>
           </Stack>
 
-          <Box
-            sx={{
-              backgroundColor: theme.palette.background.default,
-              padding: "2px 10px",
-              boxSizing: "border-box",
-              height: "fit-content",
-              minWidth: "150px",
-              borderRadius: "10px 10px 10px 1px",
-              boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
-              wordBreak: "break-word",
-              overflowWrap: "break-word",
-              maxWidth: "100%",
-              color: "black",
-              // textAlign: "justify",
-              // overflow: "hidden",
-              whiteSpace: "pre-wrap",
-            }}
-          >
-            {message?.wait ? (
-              <Box className="flex-start-center w-100 gap-2 p-3">
-                <div className="loader" />
-                <Typography variant="body1">{message?.content}</Typography>
-              </Box>
-            ) : message?.timeOut ? (
-              <Box className="flex-start-center w-100 gap-5 p-1">
-                <Typography variant="body1">
-                  Timeout reached. Please try again later.
-                </Typography>
-              </Box>
-            ) : (
-              <Box>
-                {(() => {
-                  const parsedContent = isJSONString(
-                    isError
-                      ? message?.error
-                      : message?.chatbot_message || message?.content
-                  )
-                    ? JSON.parse(
-                        isError
-                          ? message.error
-                          : message?.chatbot_message || message?.content
-                      )
-                    : null;
-                  if (
-                    parsedContent &&
-                    ("isMarkdown" in parsedContent ||
-                      "components" in parsedContent)
-                  ) {
-                    return parsedContent.isMarkdown ? (
+          <Box>
+            <Box
+              sx={{
+                position: "relative",
+                backgroundColor: theme.palette.background.default,
+                padding: "2px 10px",
+                boxSizing: "border-box",
+                height: "fit-content",
+                minWidth: "150px",
+                borderRadius: "10px 10px 10px 1px",
+                boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
+                wordBreak: "break-word",
+                overflowWrap: "break-word",
+                maxWidth: "100%",
+                color: "black",
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              {message?.wait ? (
+                <Box className="flex-start-center w-100 gap-2 p-3">
+                  <div className="loader" />
+                  <Typography variant="body1">{message?.content}</Typography>
+                </Box>
+              ) : message?.timeOut ? (
+                <Box className="flex-start-center w-100 gap-5 p-1">
+                  <Typography variant="body1">
+                    Timeout reached. Please try again later.
+                  </Typography>
+                </Box>
+              ) : (
+                <Box>
+                  {(() => {
+                    const parsedContent = isJSONString(
+                      isError
+                        ? message?.error
+                        : message?.chatbot_message || message?.content
+                    )
+                      ? JSON.parse(
+                          isError
+                            ? message.error
+                            : message?.chatbot_message || message?.content
+                        )
+                      : null;
+                    if (
+                      parsedContent &&
+                      ("isMarkdown" in parsedContent ||
+                        "components" in parsedContent)
+                    ) {
+                      return parsedContent.isMarkdown ? (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            code: Code,
+                            a: Anchor,
+                          }}
+                        >
+                          {parsedContent.markdown}
+                        </ReactMarkdown>
+                      ) : (
+                        <InterfaceGrid
+                          inpreview={false}
+                          ingrid={false}
+                          gridId={parsedContent?.responseId || "default"}
+                          loadInterface={false}
+                          componentJson={parsedContent}
+                          msgId={message?.createdAt}
+                        />
+                      );
+                    }
+                    return (
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
@@ -173,33 +228,52 @@ const AssistantMessageCard = React.memo(
                           a: Anchor,
                         }}
                       >
-                        {parsedContent.markdown}
+                        {!isError
+                          ? message?.chatbot_message || message?.content
+                          : message.error}
                       </ReactMarkdown>
-                    ) : (
-                      <InterfaceGrid
-                        inpreview={false}
-                        ingrid={false}
-                        gridId={parsedContent?.responseId || "default"}
-                        loadInterface={false}
-                        componentJson={parsedContent}
-                        msgId={message?.createdAt}
-                      />
                     );
-                  }
-                  return (
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        code: Code,
-                        a: Anchor,
-                      }}
-                    >
-                      {!isError
-                        ? message?.chatbot_message || message?.content
-                        : message.error}
-                    </ReactMarkdown>
-                  );
-                })()}
+                  })()}
+                </Box>
+              )}
+            </Box>
+
+            {/* Icon box that will show on hover of the message card */}
+            {!message?.wait && !message?.timeOut && !message?.error && (
+              <Box className="icon-box flex flex-row ml-2 mt-2 gap-1">
+                <Tooltip title="Copy">
+                  {!isCopied ? (
+                    <ContentCopyIcon
+                      fontSize="inherit"
+                      sx={{ fontSize: "16px" }}
+                      onClick={handleCopy}
+                      className="cursor-pointer"
+                    />
+                  ) : (
+                    <FileDownloadDoneIcon
+                      fontSize="inherit"
+                      sx={{ fontSize: "16px" }}
+                      color="success"
+                      className="cursor-pointer"
+                    />
+                  )}
+                </Tooltip>
+                <Tooltip title="Good response">
+                  <ThumbUpAltOutlinedIcon
+                    fontSize="inherit"
+                    sx={{ "&:hover": { color: "green" }, fontSize: "16px" }}
+                    onClick={() => handleFeedback(message?.message_id, 1)}
+                    className="cursor-pointer"
+                  />
+                </Tooltip>
+                <Tooltip title="Bad response">
+                  <ThumbDownOffAltOutlinedIcon
+                    fontSize="inherit"
+                    sx={{ "&:hover": { color: "red" }, fontSize: "16px" }}
+                    onClick={() => handleFeedback(message?.message_id, 1)}
+                    className="cursor-pointer"
+                  />
+                </Tooltip>
               </Box>
             )}
           </Box>
