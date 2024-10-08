@@ -1,7 +1,22 @@
 /* eslint-disable */
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { Box, Chip, Divider, Stack, Typography, useTheme } from "@mui/material";
-import React from 'react';
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import FileDownloadDoneIcon from "@mui/icons-material/FileDownloadDone";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutlined";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import {
+  Box,
+  Chip,
+  Divider,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import copy from "copy-to-clipboard";
+import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import isColorLight from "../../../../utils/themeUtility.js";
@@ -71,7 +86,22 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
 });
 
 const AssistantMessageCard = React.memo(
-  ({ message, theme, isError = false, textColor }: any) => {
+  ({ message, theme, isError = false, handleFeedback = () => {} }: any) => {
+    const [isCopied, setIsCopied] = React.useState(false);
+    const handleCopy = () => {
+      copy(message?.chatbot_message || message?.content);
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 1500);
+    };
+
+    // const handleFeedback = async (messageId: string, feedbackStatus: number) => {
+    //   if (messageId && feedbackStatus) {
+    //     await sendFeedbackAction({ messageId, feedbackStatus });
+    //   }
+    // };
+
     return (
       <Box className="assistant_message_card">
         <Stack
@@ -119,6 +149,7 @@ const AssistantMessageCard = React.memo(
 
           <Box
             sx={{
+              // position: "relative",
               backgroundColor: theme.palette.background.default,
               padding: "2px 10px",
               boxSizing: "border-box",
@@ -130,8 +161,6 @@ const AssistantMessageCard = React.memo(
               overflowWrap: "break-word",
               maxWidth: "100%",
               color: "black",
-              // textAlign: "justify",
-              // overflow: "hidden",
               whiteSpace: "pre-wrap",
             }}
           >
@@ -204,13 +233,89 @@ const AssistantMessageCard = React.memo(
             )}
           </Box>
         </Stack>
+        <Box className="flex flex-row">
+          <Box
+            sx={{
+              alignItems: "center",
+              width: "30px",
+              justifyContent: "flex-end",
+              "@media(max-width:479px)": { width: "30px" },
+            }}
+          ></Box>
+          {/* Icon box that will show on hover of the message card */}
+          {!message?.wait && !message?.timeOut && !message?.error && (
+            <Box className="icon-box flex flex-row ml-2 gap-1">
+              <Tooltip title="Copy">
+                {!isCopied ? (
+                  <ContentCopyIcon
+                    fontSize="inherit"
+                    sx={{ fontSize: "16px" }}
+                    onClick={handleCopy}
+                    className="cursor-pointer"
+                  />
+                ) : (
+                  <FileDownloadDoneIcon
+                    fontSize="inherit"
+                    sx={{ fontSize: "16px" }}
+                    color="success"
+                    className="cursor-pointer"
+                  />
+                )}
+              </Tooltip>
+              <Tooltip title="Good response">
+                {message?.user_feedback === 1 ? (
+                  <ThumbUpIcon
+                    fontSize="inherit"
+                    sx={{
+                      fontSize: "16px",
+                      color: "green",
+                    }}
+                    onClick={() => handleFeedback(message?.message_id, 1)}
+                    className="cursor-pointer"
+                  />
+                ) : (
+                  <ThumbUpAltOutlinedIcon
+                    fontSize="inherit"
+                    sx={{
+                      "&:hover": { color: "green" },
+                      fontSize: "16px",
+                      color: "inherit",
+                    }}
+                    onClick={() => handleFeedback(message?.message_id, 1)}
+                    className="cursor-pointer"
+                  />
+                )}
+              </Tooltip>
+              <Tooltip title="Bad response">
+                {message?.user_feedback === 2 ? (
+                  <ThumbDownIcon
+                    fontSize="inherit"
+                    sx={{
+                      color: "red",
+                      fontSize: "16px",
+                    }}
+                    onClick={() => handleFeedback(message?.message_id, 2)}
+                    className="cursor-pointer"
+                  />
+                ) : (
+                  <ThumbDownOffAltOutlinedIcon
+                    fontSize="inherit"
+                    sx={{ "&:hover": { color: "red" }, fontSize: "16px" }}
+                    onClick={() => handleFeedback(message?.message_id, 2)}
+                    className="cursor-pointer"
+                  />
+                )}
+              </Tooltip>
+            </Box>
+          )}
+        </Box>
         {message?.is_reset && <ResetHistoryLine />}
       </Box>
     );
   }
 );
 
-function Message({ message }) {
+function Message({ message, handleFeedback }: any) {
   const theme = useTheme();
   const backgroundColor = theme.palette.primary.main;
   const textColor = isColorLight(backgroundColor) ? "black" : "white";
@@ -230,6 +335,7 @@ function Message({ message }) {
               isError={true}
               theme={theme}
               textColor={textColor}
+              handleFeedback={handleFeedback}
             />
           )}
         </>
@@ -238,6 +344,7 @@ function Message({ message }) {
           message={message}
           theme={theme}
           textColor={textColor}
+          handleFeedback={handleFeedback}
         />
       ) : message?.role === "tools_call" && Object.keys(message?.function) ? (
         <Box className="flex gap-2 mb-2">
