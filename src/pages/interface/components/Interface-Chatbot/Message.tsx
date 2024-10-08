@@ -1,5 +1,11 @@
 /* eslint-disable */
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import FileDownloadDoneIcon from "@mui/icons-material/FileDownloadDone";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutlined";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import {
   Box,
   Chip,
@@ -9,25 +15,15 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import copy from "copy-to-clipboard";
 import React from "react";
-import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import FileDownloadDoneIcon from "@mui/icons-material/FileDownloadDone";
-import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutlined";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import isColorLight from "../../../../utils/themeUtility.js";
 import { isJSONString } from "../../utils/InterfaceUtils.ts";
 import InterfaceGrid from "../Grid/Grid.tsx";
-import {
-  Anchor,
-  Code,
-  li_tag,
-  PTag,
-} from "./Interface-Markdown/MarkdownUtitily.tsx";
+import { Anchor, Code } from "./Interface-Markdown/MarkdownUtitily.tsx";
 import "./Message.scss";
-import copy from "copy-to-clipboard";
-import { sendFeedbackAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 
 const ResetHistoryLine = () => {
   return (
@@ -90,7 +86,7 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
 });
 
 const AssistantMessageCard = React.memo(
-  ({ message, theme, isError = false, textColor }: any) => {
+  ({ message, theme, isError = false, handleFeedback = () => {} }: any) => {
     const [isCopied, setIsCopied] = React.useState(false);
     const handleCopy = () => {
       copy(message?.chatbot_message || message?.content);
@@ -100,11 +96,11 @@ const AssistantMessageCard = React.memo(
       }, 1500);
     };
 
-    const handleFeedback = async (messageId, feedbackStatus) => {
-      if (messageId) {
-        await sendFeedbackAction({ messageId, feedbackStatus });
-      }
-    };
+    // const handleFeedback = async (messageId: string, feedbackStatus: number) => {
+    //   if (messageId && feedbackStatus) {
+    //     await sendFeedbackAction({ messageId, feedbackStatus });
+    //   }
+    // };
 
     return (
       <Box className="assistant_message_card">
@@ -151,76 +147,54 @@ const AssistantMessageCard = React.memo(
             </svg>
           </Stack>
 
-          <Box>
-            <Box
-              sx={{
-                position: "relative",
-                backgroundColor: theme.palette.background.default,
-                padding: "2px 10px",
-                boxSizing: "border-box",
-                height: "fit-content",
-                minWidth: "150px",
-                borderRadius: "10px 10px 10px 1px",
-                boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
-                wordBreak: "break-word",
-                overflowWrap: "break-word",
-                maxWidth: "100%",
-                color: "black",
-                whiteSpace: "pre-wrap",
-              }}
-            >
-              {message?.wait ? (
-                <Box className="flex-start-center w-100 gap-2 p-3">
-                  <div className="loader" />
-                  <Typography variant="body1">{message?.content}</Typography>
-                </Box>
-              ) : message?.timeOut ? (
-                <Box className="flex-start-center w-100 gap-5 p-1">
-                  <Typography variant="body1">
-                    Timeout reached. Please try again later.
-                  </Typography>
-                </Box>
-              ) : (
-                <Box>
-                  {(() => {
-                    const parsedContent = isJSONString(
-                      isError
-                        ? message?.error
-                        : message?.chatbot_message || message?.content
-                    )
-                      ? JSON.parse(
-                          isError
-                            ? message.error
-                            : message?.chatbot_message || message?.content
-                        )
-                      : null;
-                    if (
-                      parsedContent &&
-                      ("isMarkdown" in parsedContent ||
-                        "components" in parsedContent)
-                    ) {
-                      return parsedContent.isMarkdown ? (
-                        <ReactMarkdown
-                          remarkPlugins={[remarkGfm]}
-                          components={{
-                            code: Code,
-                            a: Anchor,
-                          }}
-                        >
-                          {parsedContent.markdown}
-                        </ReactMarkdown>
-                      ) : (
-                        <InterfaceGrid
-                          inpreview={false}
-                          ingrid={false}
-                          gridId={parsedContent?.responseId || "default"}
-                          loadInterface={false}
-                          componentJson={parsedContent}
-                          msgId={message?.createdAt}
-                        />
-                      );
-                    }
-                    return (
+          <Box
+            sx={{
+              // position: "relative",
+              backgroundColor: theme.palette.background.default,
+              padding: "2px 10px",
+              boxSizing: "border-box",
+              height: "fit-content",
+              minWidth: "150px",
+              borderRadius: "10px 10px 10px 1px",
+              boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
+              maxWidth: "100%",
+              color: "black",
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {message?.wait ? (
+              <Box className="flex-start-center w-100 gap-2 p-3">
+                <div className="loader" />
+                <Typography variant="body1">{message?.content}</Typography>
+              </Box>
+            ) : message?.timeOut ? (
+              <Box className="flex-start-center w-100 gap-5 p-1">
+                <Typography variant="body1">
+                  Timeout reached. Please try again later.
+                </Typography>
+              </Box>
+            ) : (
+              <Box>
+                {(() => {
+                  const parsedContent = isJSONString(
+                    isError
+                      ? message?.error
+                      : message?.chatbot_message || message?.content
+                  )
+                    ? JSON.parse(
+                        isError
+                          ? message.error
+                          : message?.chatbot_message || message?.content
+                      )
+                    : null;
+                  if (
+                    parsedContent &&
+                    ("isMarkdown" in parsedContent ||
+                      "components" in parsedContent)
+                  ) {
+                    return parsedContent.isMarkdown ? (
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
@@ -228,63 +202,120 @@ const AssistantMessageCard = React.memo(
                           a: Anchor,
                         }}
                       >
-                        {!isError
-                          ? message?.chatbot_message || message?.content
-                          : message.error}
+                        {parsedContent.markdown}
                       </ReactMarkdown>
+                    ) : (
+                      <InterfaceGrid
+                        inpreview={false}
+                        ingrid={false}
+                        gridId={parsedContent?.responseId || "default"}
+                        loadInterface={false}
+                        componentJson={parsedContent}
+                        msgId={message?.createdAt}
+                      />
                     );
-                  })()}
-                </Box>
-              )}
-            </Box>
-
-            {/* Icon box that will show on hover of the message card */}
-            {!message?.wait && !message?.timeOut && !message?.error && (
-              <Box className="icon-box flex flex-row ml-2 mt-2 gap-1">
-                <Tooltip title="Copy">
-                  {!isCopied ? (
-                    <ContentCopyIcon
-                      fontSize="inherit"
-                      sx={{ fontSize: "16px" }}
-                      onClick={handleCopy}
-                      className="cursor-pointer"
-                    />
-                  ) : (
-                    <FileDownloadDoneIcon
-                      fontSize="inherit"
-                      sx={{ fontSize: "16px" }}
-                      color="success"
-                      className="cursor-pointer"
-                    />
-                  )}
-                </Tooltip>
-                <Tooltip title="Good response">
-                  <ThumbUpAltOutlinedIcon
-                    fontSize="inherit"
-                    sx={{ "&:hover": { color: "green" }, fontSize: "16px" }}
-                    onClick={() => handleFeedback(message?.message_id, 1)}
-                    className="cursor-pointer"
-                  />
-                </Tooltip>
-                <Tooltip title="Bad response">
-                  <ThumbDownOffAltOutlinedIcon
-                    fontSize="inherit"
-                    sx={{ "&:hover": { color: "red" }, fontSize: "16px" }}
-                    onClick={() => handleFeedback(message?.message_id, 1)}
-                    className="cursor-pointer"
-                  />
-                </Tooltip>
+                  }
+                  return (
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        code: Code,
+                        a: Anchor,
+                      }}
+                    >
+                      {!isError
+                        ? message?.chatbot_message || message?.content
+                        : message.error}
+                    </ReactMarkdown>
+                  );
+                })()}
               </Box>
             )}
           </Box>
         </Stack>
+        <Box className="flex flex-row">
+          <Box
+            sx={{
+              alignItems: "center",
+              width: "30px",
+              justifyContent: "flex-end",
+              "@media(max-width:479px)": { width: "30px" },
+            }}
+          ></Box>
+          {/* Icon box that will show on hover of the message card */}
+          {!message?.wait && !message?.timeOut && !message?.error && (
+            <Box className="icon-box flex flex-row ml-2 gap-1">
+              <Tooltip title="Copy">
+                {!isCopied ? (
+                  <ContentCopyIcon
+                    fontSize="inherit"
+                    sx={{ fontSize: "16px" }}
+                    onClick={handleCopy}
+                    className="cursor-pointer"
+                  />
+                ) : (
+                  <FileDownloadDoneIcon
+                    fontSize="inherit"
+                    sx={{ fontSize: "16px" }}
+                    color="success"
+                    className="cursor-pointer"
+                  />
+                )}
+              </Tooltip>
+              <Tooltip title="Good response">
+                {message?.user_feedback === 1 ? (
+                  <ThumbUpIcon
+                    fontSize="inherit"
+                    sx={{
+                      fontSize: "16px",
+                      color: "green",
+                    }}
+                    onClick={() => handleFeedback(message?.message_id, 1)}
+                    className="cursor-pointer"
+                  />
+                ) : (
+                  <ThumbUpAltOutlinedIcon
+                    fontSize="inherit"
+                    sx={{
+                      "&:hover": { color: "green" },
+                      fontSize: "16px",
+                      color: "inherit",
+                    }}
+                    onClick={() => handleFeedback(message?.message_id, 1)}
+                    className="cursor-pointer"
+                  />
+                )}
+              </Tooltip>
+              <Tooltip title="Bad response">
+                {message?.user_feedback === 2 ? (
+                  <ThumbDownIcon
+                    fontSize="inherit"
+                    sx={{
+                      color: "red",
+                      fontSize: "16px",
+                    }}
+                    onClick={() => handleFeedback(message?.message_id, 2)}
+                    className="cursor-pointer"
+                  />
+                ) : (
+                  <ThumbDownOffAltOutlinedIcon
+                    fontSize="inherit"
+                    sx={{ "&:hover": { color: "red" }, fontSize: "16px" }}
+                    onClick={() => handleFeedback(message?.message_id, 2)}
+                    className="cursor-pointer"
+                  />
+                )}
+              </Tooltip>
+            </Box>
+          )}
+        </Box>
         {message?.is_reset && <ResetHistoryLine />}
       </Box>
     );
   }
 );
 
-function Message({ message }) {
+function Message({ message, handleFeedback }: any) {
   const theme = useTheme();
   const backgroundColor = theme.palette.primary.main;
   const textColor = isColorLight(backgroundColor) ? "black" : "white";
@@ -304,6 +335,7 @@ function Message({ message }) {
               isError={true}
               theme={theme}
               textColor={textColor}
+              handleFeedback={handleFeedback}
             />
           )}
         </>
@@ -312,6 +344,7 @@ function Message({ message }) {
           message={message}
           theme={theme}
           textColor={textColor}
+          handleFeedback={handleFeedback}
         />
       ) : message?.role === "tools_call" && Object.keys(message?.function) ? (
         <Box className="flex gap-2 mb-2">

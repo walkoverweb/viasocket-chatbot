@@ -197,7 +197,7 @@ export async function sendFeedbackAction(data: {
       `${URL}/api/v1/config/status/${data?.feedbackStatus}`,
       { message_id: data?.messageId }
     );
-    return response?.data?.data;
+    return response?.data;
   } catch (error) {
     errorToast(
       error?.response?.data?.detail?.error ||
