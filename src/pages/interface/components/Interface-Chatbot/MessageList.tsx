@@ -4,12 +4,41 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import "./InterfaceChatbot.scss";
 import Message from "./Message.tsx";
 import { MessageContext } from "./InterfaceChatbot.tsx";
+import { sendFeedbackAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 
 function MessageList() {
   const containerRef = useRef<any>(null);
   const MessagesList: any = useContext(MessageContext);
-  const { messages } = MessagesList;
+  const { messages, setMessages } = MessagesList;
   const [showScrollButton, setShowScrollButton] = useState(false); // State to control the visibility of the button
+
+  const handleFeedback = async (
+    messageId: string,
+    feedbackStatus: number,
+    currentStatus: number
+  ) => {
+    if (messageId && feedbackStatus && currentStatus !== feedbackStatus) {
+      const response: any = await sendFeedbackAction({
+        messageId,
+        feedbackStatus,
+      });
+      if (response?.success) {
+        const messageId = response?.result?.[0]?.message_id;
+        // iterate over messages and update the feedback status of the message whosse rolw is assistant
+        for (let i = messages?.length - 1; i >= 0; i--) {
+          const message = messages[i];
+          if (
+            message?.role === "assistant" &&
+            message?.message_id === messageId
+          ) {
+            message.user_feedback = feedbackStatus;
+            break; // Assuming only one message needs to be updated
+          }
+        }
+        setMessages([...messages]);
+      }
+    }
+  };
 
   const movetoDown = () => {
     containerRef.current?.scrollTo({
@@ -61,7 +90,11 @@ function MessageList() {
     >
       <Box sx={{ flex: "1 1 auto", minHeight: 0 }}>
         {messages?.map((message, index) => (
-          <Message key={index} message={message} />
+          <Message
+            key={index}
+            message={message}
+            handleFeedback={handleFeedback}
+          />
         ))}
       </Box>
       {showScrollButton && messages?.length > 5 && (
