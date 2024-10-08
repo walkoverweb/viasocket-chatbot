@@ -3,11 +3,18 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SyncIcon from "@mui/icons-material/Sync";
 import {
   Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Grid,
   ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
+  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -108,6 +115,7 @@ const ResetChatOption = React.memo(
       preview = false,
       interfaceId,
     }) => {
+      const [modalOpen, setModalOpen] = React.useState(false);
       const { threadId, bridgeName } = useCustomSelector(
         (state: $ReduxCoreType) => ({
           threadId: state.Interface?.threadId || "",
@@ -165,16 +173,55 @@ const ResetChatOption = React.memo(
               </ListItemIcon>
               <ListItemText>Reset Chat</ListItemText>
             </MenuItem>
-            <MenuItem onClick={resetHistory} disabled>
+            <MenuItem onClick={() => setModalOpen(true)}>
               <ListItemIcon>
                 <ChatIcon fontSize="small" />
               </ListItemIcon>
               <ListItemText>Send feedback</ListItemText>
             </MenuItem>
           </Menu>
+          <ChatbotFeedbackForm open={modalOpen} setOpen={setModalOpen} />
         </Box>
       );
     },
     [ParamsEnums.interfaceId]
   )
 );
+
+interface ChatbotFeedbackFormProps {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const ChatbotFeedbackForm = React.memo(function ChatbotFeedbackForm({
+  open,
+  setOpen,
+}: ChatbotFeedbackFormProps) {
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">Submit Chatbot Feedback</DialogTitle>
+      <DialogContent>
+        <DialogContentText color="black" className="mb-2">
+          We value your feedback on our chatbot! Please share your thoughts to
+          help us improve your experience.
+        </DialogContentText>
+        <TextField multiline fullWidth minRows={10} maxRows={10} />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleClose} autoFocus>
+          Submit
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+});
