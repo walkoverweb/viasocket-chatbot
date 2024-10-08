@@ -50,6 +50,7 @@ interface MessageType {
 export const MessageContext = createContext<{
   messages: MessageType[] | [];
   addMessage?: (message: string) => void;
+  setMessages?: (message: MessageType[]) => void;
 }>({
   messages: [],
 });
@@ -228,11 +229,14 @@ function InterfaceChatbot({
           ]);
         } else if (parsedMessage?.response?.data) {
           // Handle the new structure with response data
-          const content = parsedMessage.response.data.content;
+          // const content = parsedMessage.response.data.content;
           setLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
-            { role: parsedMessage.response.role || "assistant", content },
+            {
+              role: parsedMessage.response?.data?.role || "assistant",
+              ...(parsedMessage.response.data || {}),
+            },
           ]);
           clearTimeout(timeoutIdRef.current);
         } else {
@@ -286,7 +290,9 @@ function InterfaceChatbot({
   };
 
   return (
-    <MessageContext.Provider value={{ messages: messages, addMessage }}>
+    <MessageContext.Provider
+      value={{ messages: messages, addMessage, setMessages }}
+    >
       <Box
         sx={{
           display: "flex",
