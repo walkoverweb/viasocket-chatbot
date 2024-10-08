@@ -255,50 +255,78 @@ const AssistantMessageCard = React.memo(
                   />
                 )}
               </Tooltip>
-              <Tooltip title="Good response">
-                {message?.user_feedback === 1 ? (
-                  <ThumbUpIcon
-                    fontSize="inherit"
-                    sx={{
-                      fontSize: "16px",
-                      color: "green",
-                    }}
-                    onClick={() => handleFeedback(message?.message_id, 1)}
-                    className="cursor-pointer"
-                  />
-                ) : (
-                  <ThumbUpAltOutlinedIcon
-                    fontSize="inherit"
-                    sx={{
-                      "&:hover": { color: "green" },
-                      fontSize: "16px",
-                      color: "inherit",
-                    }}
-                    onClick={() => handleFeedback(message?.message_id, 1)}
-                    className="cursor-pointer"
-                  />
-                )}
-              </Tooltip>
-              <Tooltip title="Bad response">
-                {message?.user_feedback === 2 ? (
-                  <ThumbDownIcon
-                    fontSize="inherit"
-                    sx={{
-                      color: "red",
-                      fontSize: "16px",
-                    }}
-                    onClick={() => handleFeedback(message?.message_id, 2)}
-                    className="cursor-pointer"
-                  />
-                ) : (
-                  <ThumbDownOffAltOutlinedIcon
-                    fontSize="inherit"
-                    sx={{ "&:hover": { color: "red" }, fontSize: "16px" }}
-                    onClick={() => handleFeedback(message?.message_id, 2)}
-                    className="cursor-pointer"
-                  />
-                )}
-              </Tooltip>
+              {message?.message_id && (
+                <>
+                  <Tooltip title="Good response">
+                    {message?.user_feedback === 1 ? (
+                      <ThumbUpIcon
+                        fontSize="inherit"
+                        sx={{
+                          fontSize: "16px",
+                          color: "green",
+                        }}
+                        onClick={() =>
+                          handleFeedback(
+                            message?.message_id,
+                            1,
+                            message?.user_feedback
+                          )
+                        }
+                        className="cursor-pointer"
+                      />
+                    ) : (
+                      <ThumbUpAltOutlinedIcon
+                        fontSize="inherit"
+                        sx={{
+                          "&:hover": { color: "green" },
+                          fontSize: "16px",
+                          color: "inherit",
+                        }}
+                        onClick={() =>
+                          handleFeedback(
+                            message?.message_id,
+                            1,
+                            message?.user_feedback
+                          )
+                        }
+                        className="cursor-pointer"
+                      />
+                    )}
+                  </Tooltip>
+                  <Tooltip title="Bad response">
+                    {message?.user_feedback === 2 ? (
+                      <ThumbDownIcon
+                        fontSize="inherit"
+                        sx={{
+                          color: "red",
+                          fontSize: "16px",
+                        }}
+                        onClick={() =>
+                          handleFeedback(
+                            message?.message_id,
+                            2,
+                            message?.user_feedback
+                          )
+                        }
+                        className="cursor-pointer"
+                      />
+                    ) : (
+                      <ThumbDownOffAltOutlinedIcon
+                        fontSize="inherit"
+                        sx={{ "&:hover": { color: "red" }, fontSize: "16px" }}
+                        onClick={() =>
+                          handleFeedback(
+                            message?.message_id,
+                            2,
+                            message?.user_feedback
+                          )
+                        }
+                        className="cursor-pointer"
+                      />
+                    )}
+                  </Tooltip>
+                </>
+              )}
             </Box>
           )}
         </Box>
