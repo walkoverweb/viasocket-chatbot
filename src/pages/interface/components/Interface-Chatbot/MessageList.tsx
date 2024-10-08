@@ -11,6 +11,7 @@ function MessageList() {
   const MessagesList: any = useContext(MessageContext);
   const { messages, setMessages } = MessagesList;
   const [showScrollButton, setShowScrollButton] = useState(false); // State to control the visibility of the button
+  const [shouldScroll, setShouldScroll] = useState(true);
 
   const handleFeedback = async (
     messageId: string,
@@ -18,6 +19,7 @@ function MessageList() {
     currentStatus: number
   ) => {
     if (messageId && feedbackStatus && currentStatus !== feedbackStatus) {
+      setShouldScroll(false);
       const response: any = await sendFeedbackAction({
         messageId,
         feedbackStatus,
@@ -65,7 +67,11 @@ function MessageList() {
   };
 
   useEffect(() => {
-    movetoDown(); // Automatically scroll to bottom when messages update
+    if (shouldScroll) {
+      movetoDown();
+    }
+    // Re-enable scrolling after the effect runs
+    setShouldScroll(true);
   }, [messages]);
 
   useEffect(() => {
