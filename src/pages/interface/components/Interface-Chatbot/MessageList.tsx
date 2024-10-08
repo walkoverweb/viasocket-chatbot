@@ -12,8 +12,12 @@ function MessageList() {
   const { messages, setMessages } = MessagesList;
   const [showScrollButton, setShowScrollButton] = useState(false); // State to control the visibility of the button
 
-  const handleFeedback = async (messageId: string, feedbackStatus: number) => {
-    if (messageId && feedbackStatus) {
+  const handleFeedback = async (
+    messageId: string,
+    feedbackStatus: number,
+    currentStatus: number
+  ) => {
+    if (messageId && feedbackStatus && currentStatus !== feedbackStatus) {
       const response: any = await sendFeedbackAction({
         messageId,
         feedbackStatus,
