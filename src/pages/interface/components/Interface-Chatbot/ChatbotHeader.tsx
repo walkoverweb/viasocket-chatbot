@@ -3,17 +3,26 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SyncIcon from "@mui/icons-material/Sync";
 import {
   Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Grid,
   ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
+  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
+import axios from "axios";
 import React, { useContext } from "react";
 import { resetChatsAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 import { ChatbotContext } from "../../../../App";
+import { successToast } from "../../../../components/customToast";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
@@ -108,6 +117,7 @@ const ResetChatOption = React.memo(
       preview = false,
       interfaceId,
     }) => {
+      const [modalOpen, setModalOpen] = React.useState(false);
       const { threadId, bridgeName } = useCustomSelector(
         (state: $ReduxCoreType) => ({
           threadId: state.Interface?.threadId || "",
@@ -165,16 +175,77 @@ const ResetChatOption = React.memo(
               </ListItemIcon>
               <ListItemText>Reset Chat</ListItemText>
             </MenuItem>
-            <MenuItem onClick={resetHistory} disabled>
+            <MenuItem onClick={() => setModalOpen(true)}>
               <ListItemIcon>
                 <ChatIcon fontSize="small" />
               </ListItemIcon>
               <ListItemText>Send feedback</ListItemText>
             </MenuItem>
           </Menu>
+          {modalOpen && (
+            <ChatbotFeedbackForm open={modalOpen} setOpen={setModalOpen} />
+          )}
         </Box>
       );
     },
     [ParamsEnums.interfaceId]
   )
 );
+
+interface ChatbotFeedbackFormProps {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const ChatbotFeedbackForm = React.memo(function ChatbotFeedbackForm({
+  open,
+  setOpen,
+}: ChatbotFeedbackFormProps) {
+  const userId = localStorage.getItem("interfaceUserId");
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const [feedback, setFeedback] = React.useState("");
+
+  const sendFeedback = async () => {
+    const feedbackUrl = process.env.REACT_APP_CHATBOT_FEEDBACK_URL;
+    if (feedbackUrl) {
+      // Send feedback to the backend
+      await axios.post(feedbackUrl, { message: feedback, userId });
+      successToast("Feedback submitted successfully!");
+      setFeedback("");
+      handleClose();
+    }
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">Submit Chatbot Feedback</DialogTitle>
+      <DialogContent>
+        <DialogContentText color="black" className="mb-2">
+          We value your feedback on our chatbot! Please share your thoughts to
+          help us improve your experience.
+        </DialogContentText>
+        <TextField
+          multiline
+          fullWidth
+          minRows={10}
+          maxRows={10}
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value || "")}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={sendFeedback} autoFocus>
+          Submit
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+});
