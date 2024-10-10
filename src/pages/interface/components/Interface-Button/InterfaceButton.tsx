@@ -20,7 +20,7 @@ function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
   const validColors = ["default", "inherit", "primary", "secondary"];
   // If the color is valid, use it; otherwise, default to 'default'
   if (props.color) {
-    props.color = validColors.includes(props?.color) ? props?.color : "default";
+    props.color = validColors.includes(props?.color) ? props?.color : "primary";
   }
   const handleOnClick = () => {
     // if (action?.actionId) {
