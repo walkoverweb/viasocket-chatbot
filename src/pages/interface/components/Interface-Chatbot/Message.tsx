@@ -28,7 +28,7 @@ import "./Message.scss";
 const ResetHistoryLine = () => {
   return (
     <Divider className="mb-2">
-      <Chip label="History cleard" size="small" color="error" />
+      <Chip label="History cleared" size="small" color="error" />
     </Divider>
   );
 };
