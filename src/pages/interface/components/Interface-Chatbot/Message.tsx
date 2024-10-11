@@ -24,6 +24,7 @@ import { isJSONString } from "../../utils/InterfaceUtils.ts";
 import InterfaceGrid from "../Grid/Grid.tsx";
 import { Anchor, Code } from "./Interface-Markdown/MarkdownUtitily.tsx";
 import "./Message.scss";
+import { AiIcon } from "../../../../assests/assestsIndex.ts";
 
 const ResetHistoryLine = () => {
   return (
@@ -126,7 +127,7 @@ const AssistantMessageCard = React.memo(
             }}
             spacing="5px"
           >
-            <svg
+            {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               width="28"
               height="28"
@@ -144,7 +145,14 @@ const AssistantMessageCard = React.memo(
               <path d="M20 14h2" />
               <path d="M15 13v2" />
               <path d="M9 13v2" />
-            </svg>
+            </svg> */}
+            <img
+              src={AiIcon}
+              width="28"
+              height="28"
+              alt="AI"
+              style={{ color: "red" }}
+            />
           </Stack>
 
           <Box
