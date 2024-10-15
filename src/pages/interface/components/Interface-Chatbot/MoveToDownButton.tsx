@@ -1,6 +1,7 @@
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { IconButton } from "@mui/material";
 import React from "react";
+import "./InterfaceChatbot.scss";
 
 function MoveToDownButton({ movetoDown, showScrollButton }: any) {
   if (!showScrollButton) return null;
