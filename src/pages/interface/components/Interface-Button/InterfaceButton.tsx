@@ -31,7 +31,7 @@ function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
   return (
     <Button
       variant="contained"
-      className="w-100 h-100"
+      className="w-100 h-100 mb-1"
       {...props}
       onClick={handleOnClick}
     >

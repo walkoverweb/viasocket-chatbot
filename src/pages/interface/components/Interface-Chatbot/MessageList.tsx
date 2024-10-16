@@ -16,7 +16,7 @@ import MoveToDownButton from "./MoveToDownButton.tsx";
 function MessageList() {
   const containerRef = useRef<any>(null);
   const MessagesList: any = useContext(MessageContext);
-  const { messages, setMessages } = MessagesList;
+  const { messages, setMessages, addMessage } = MessagesList;
   const [showScrollButton, setShowScrollButton] = useState(false); // State to control the visibility of the button
   const [shouldScroll, setShouldScroll] = useState(true);
 
@@ -97,9 +97,10 @@ function MessageList() {
         key={message.message_id || index} // Use a unique identifier if available
         message={message}
         handleFeedback={handleFeedback}
+        addMessage={addMessage}
       />
     ));
-  }, [messages, handleFeedback]); // Include handleFeedback in dependencies
+  }, [messages, handleFeedback, addMessage]); // Include handleFeedback in dependencies
 
   return (
     <Box
