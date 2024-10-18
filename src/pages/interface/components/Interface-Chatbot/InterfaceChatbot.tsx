@@ -98,6 +98,9 @@ function InterfaceChatbot({
     )
   );
 
+  // New state to hold pending message
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null);
+
   const addMessage = (message: string) => {
     onSend(message);
   };
@@ -254,7 +257,7 @@ function InterfaceChatbot({
         client.removeListener("message", handleMessage);
       };
     }
-  }, [threadId, interfaceId, userId]);
+  }, [threadId, interfaceId, userId, bridgeName]);
 
   const sendMessage = async (
     message: string,
@@ -279,6 +282,13 @@ function InterfaceChatbot({
   const onSend = (msg?: string, apiCall: boolean = true) => {
     const textMessage = msg || messageRef.current.value;
     if (!textMessage) return;
+
+    // Check if chats are still loading
+    if (chatsLoading) {
+      setPendingMessage(textMessage);
+      return;
+    }
+
     startTimeoutTimer();
     apiCall && sendMessage(textMessage);
     setLoading(true);
@@ -290,6 +300,15 @@ function InterfaceChatbot({
     ]);
     messageRef.current.value = "";
   };
+
+  // useEffect to send pending message after chats have loaded
+  useEffect(() => {
+    if (!chatsLoading && pendingMessage) {
+      const messageToSend = pendingMessage;
+      setPendingMessage(null);
+      onSend(messageToSend);
+    }
+  }, [chatsLoading, pendingMessage]);
 
   return (
     <MessageContext.Provider
@@ -303,7 +322,6 @@ function InterfaceChatbot({
           height: "100vh",
           overflow: "hidden",
           position: "relative",
-          // backgroundColor: theme.palette.background.default,
         }}
       >
         <ChatbotHeader setChatsLoading={setChatsLoading} />
@@ -321,23 +339,16 @@ function InterfaceChatbot({
           sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
         >
           <MessageList />
-          {/* <DefaultQuestions
-            defaultQuestion={defaultQuestion}
-            messageRef={messageRef}
-            onSend={onSend}
-          /> */}
         </Grid>
         <Grid
           item
           xs={12}
           className="third-grid"
           sx={{
-            // backgroundColor: theme.palette.background.paper,
             paddingX: theme.spacing(3),
             display: "flex",
             alignItems: "end",
             marginBottom: theme.spacing(2),
-            // borderTop:"2px black solid"
           }}
         >
           <ChatbotTextField
@@ -347,6 +358,7 @@ function InterfaceChatbot({
               onSend();
             }}
             messageRef={messageRef}
+            disabled={chatsLoading || loading} // Disable input while loading
           />
         </Grid>
       </Box>

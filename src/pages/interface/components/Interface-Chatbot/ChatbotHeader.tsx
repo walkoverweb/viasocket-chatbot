@@ -43,7 +43,15 @@ function ChatbotHeader({ setChatsLoading }) {
       item
       xs={12}
       className="first-grid"
-      sx={{ paddingX: 2, paddingY: 1, background: theme.palette.primary.main }}
+      sx={{
+        paddingX: 2,
+        paddingY: 1,
+        background: "rgba(255, 255, 255, 0.9)", // Increase opacity for a more glassy look
+        position: "absolute",
+        backdropFilter: "blur(1px)", // Increase blur for a stronger glass effect
+        top: 0,
+        width: "100%",
+      }}
     >
       <Box className="flex-col-start-start">
         <Box className="flex-center-center">

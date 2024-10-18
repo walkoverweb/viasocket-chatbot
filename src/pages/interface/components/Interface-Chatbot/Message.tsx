@@ -27,65 +27,56 @@ import { Anchor, Code } from "./Interface-Markdown/MarkdownUtitily.tsx";
 import "./Message.scss";
 import { AiIcon } from "../../../../assests/assestsIndex.ts";
 
-const ResetHistoryLine = () => {
-  return (
-    <Divider className="mb-2">
-      <Chip label="History cleared" size="small" color="error" />
-    </Divider>
-  );
-};
+const ResetHistoryLine = () => (
+  <Divider className="mb-2">
+    <Chip label="History cleared" size="small" color="error" />
+  </Divider>
+);
 
-const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
-  return (
-    <>
-      <Stack
+const UserMessageCard = React.memo(({ message, theme, textColor }: any) => (
+  <>
+    <Stack
+      sx={{
+        alignItems: "flex-end",
+        gap: "0px",
+        width: "100%",
+        justifyContent: "flex-end",
+        "@media(max-width:479px)": {
+          height: "fit-content",
+          columnGap: "5px",
+        },
+        marginBottom: "10px",
+      }}
+      direction="row"
+    >
+      <Box
         sx={{
-          alignItems: "flex-end",
-          gap: "0px",
-          width: "100%",
-          justifyContent: "flex-end",
-          "@media(max-width:479px)": {
-            height: "fit-content",
-            columnGap: "5px",
-          },
-          marginBottom: "10px",
+          backgroundColor: theme.palette.primary.main,
+          padding: "10px",
+          boxSizing: "border-box",
+          height: "fit-content",
+          minWidth: "150px",
+          borderRadius: "10px 10px 1px 10px",
+          wordBreak: "break-word",
+          whiteSpace: "normal",
+          overflowWrap: "break-word",
+          maxWidth: "80%",
         }}
-        direction="row"
       >
-        <Box
+        <Typography
+          variant="body1"
           sx={{
-            backgroundColor: theme.palette.primary.main,
-            padding: "10px",
-            boxSizing: "border-box",
-            height: "fit-content",
-            minWidth: "150px",
-            borderRadius: "10px 10px 1px 10px",
-            wordBreak: "break-word",
-            whiteSpace: "normal",
-            overflowWrap: "break-word",
-            maxWidth: "80%",
-            //  boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
+            color: textColor,
+            whiteSpace: "pre-wrap",
           }}
         >
-          <Typography
-            variant="body1"
-            sx={{
-              // fontFamily: "var(--theme-font-family)",
-              color: textColor,
-              whiteSpace: "pre-wrap",
-              // fontSize: "15px",
-              // "@media(max-width:991px)": { fontSize: "14px" },
-              // "@media(max-width:479px)": { fontSize: "12px" },
-            }}
-          >
-            {message?.content}
-          </Typography>
-        </Box>
-      </Stack>
-      {message?.is_reset && <ResetHistoryLine />}
-    </>
-  );
-});
+          {message?.content}
+        </Typography>
+      </Box>
+    </Stack>
+    {message?.is_reset && <ResetHistoryLine />}
+  </>
+));
 
 const AssistantMessageCard = React.memo(
   ({
@@ -96,6 +87,7 @@ const AssistantMessageCard = React.memo(
     addMessage = () => {},
   }: any) => {
     const [isCopied, setIsCopied] = React.useState(false);
+
     const handleCopy = () => {
       copy(message?.chatbot_message || message?.content);
       setIsCopied(true);
@@ -108,45 +100,22 @@ const AssistantMessageCard = React.memo(
       <Box className="assistant_message_card">
         <Stack
           sx={{
-            alignItems: "flex-end",
+            alignItems: "flex-start",
             gap: "10px",
             maxWidth: "90%",
             "@media(max-width:479px)": {
               height: "fit-content",
               columnGap: "5px",
             },
-            marginBottom: "10px",
           }}
           direction="row"
         >
-          <Stack
+          <Box
             sx={{
-              alignItems: "center",
               width: "30px",
-              justifyContent: "flex-end",
-              "@media(max-width:479px)": { width: "30px" },
+              marginTop: "20px",
             }}
-            spacing="5px"
           >
-            {/* <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-bot"
-            >
-              <path d="M12 8V4H8" />
-              <rect width="16" height="12" x="4" y="8" rx="2" />
-              <path d="M2 14h2" />
-              <path d="M20 14h2" />
-              <path d="M15 13v2" />
-              <path d="M9 13v2" />
-            </svg> */}
             <img
               src={AiIcon}
               width="28"
@@ -154,17 +123,13 @@ const AssistantMessageCard = React.memo(
               alt="AI"
               style={{ color: "red" }}
             />
-          </Stack>
+          </Box>
 
           <Box
             sx={{
-              backgroundColor: theme.palette.background.default,
-              padding: "2px 10px",
               boxSizing: "border-box",
               height: "fit-content",
               minWidth: "150px",
-              borderRadius: "10px 10px 10px 1px",
-              boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
               wordBreak: "break-word",
               overflowWrap: "break-word",
               maxWidth: "100%",
@@ -173,7 +138,7 @@ const AssistantMessageCard = React.memo(
             }}
           >
             {message?.wait ? (
-              <Box className="flex-start-center w-100 gap-2 p-3">
+              <Box className="flex-start-center w-100 gap-2 ">
                 <div className="loader" />
                 <Typography variant="body1">{message?.content}</Typography>
               </Box>
@@ -197,7 +162,7 @@ const AssistantMessageCard = React.memo(
                           : message?.chatbot_message || message?.content
                       )
                     : null;
-                  // console.log(parsedContent)
+
                   if (
                     parsedContent &&
                     ("isMarkdown" in parsedContent ||
@@ -271,9 +236,8 @@ const AssistantMessageCard = React.memo(
               "@media(max-width:479px)": { width: "30px" },
             }}
           ></Box>
-          {/* Icon box that will show on hover of the message card */}
           {!message?.wait && !message?.timeOut && !message?.error && (
-            <Box className="icon-box flex flex-row ml-2 gap-1">
+            <Box className="icon-box flex flex-row ml-2 gap-1 hover-and-see">
               <Tooltip title="Copy">
                 {!isCopied ? (
                   <ContentCopyIcon

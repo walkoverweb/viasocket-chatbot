@@ -4,7 +4,10 @@ const generateTheme = (colorHex) => {
   return createTheme({
     palette: {
       primary: {
-        main: colorHex,
+        main: "#f7f7f7",
+      },
+      light: {
+        main: "#f7f7f7",
       },
       secondary: {
         main: colorHex,

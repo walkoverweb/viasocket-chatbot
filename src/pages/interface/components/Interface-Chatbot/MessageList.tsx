@@ -110,6 +110,7 @@ function MessageList() {
         display: "flex",
         flexDirection: "column",
         padding: 2,
+        paddingTop: "60px",
       }}
       ref={containerRef}
     >
