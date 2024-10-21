@@ -254,7 +254,7 @@ function InterfaceChatbot({
         client.removeListener("message", handleMessage);
       };
     }
-  }, [threadId, interfaceId, userId]);
+  }, [threadId, interfaceId, userId, bridgeName]);
 
   const sendMessage = async (
     message: string,
@@ -303,7 +303,6 @@ function InterfaceChatbot({
           height: "100vh",
           overflow: "hidden",
           position: "relative",
-          // backgroundColor: theme.palette.background.default,
         }}
       >
         <ChatbotHeader setChatsLoading={setChatsLoading} />
