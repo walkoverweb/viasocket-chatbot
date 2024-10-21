@@ -8,6 +8,7 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import {
   Box,
+  Button,
   Chip,
   Divider,
   Stack,
@@ -87,7 +88,13 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
 });
 
 const AssistantMessageCard = React.memo(
-  ({ message, theme, isError = false, handleFeedback = () => {} }: any) => {
+  ({
+    message,
+    theme,
+    isError = false,
+    handleFeedback = () => {},
+    addMessage = () => {},
+  }: any) => {
     const [isCopied, setIsCopied] = React.useState(false);
     const handleCopy = () => {
       copy(message?.chatbot_message || message?.content);
@@ -96,12 +103,6 @@ const AssistantMessageCard = React.memo(
         setIsCopied(false);
       }, 1500);
     };
-
-    // const handleFeedback = async (messageId: string, feedbackStatus: number) => {
-    //   if (messageId && feedbackStatus) {
-    //     await sendFeedbackAction({ messageId, feedbackStatus });
-    //   }
-    // };
 
     return (
       <Box className="assistant_message_card">
@@ -197,21 +198,42 @@ const AssistantMessageCard = React.memo(
                           : message?.chatbot_message || message?.content
                       )
                     : null;
+                  // console.log(parsedContent)
                   if (
                     parsedContent &&
                     ("isMarkdown" in parsedContent ||
+                      "response" in parsedContent ||
                       "components" in parsedContent)
                   ) {
-                    return parsedContent.isMarkdown ? (
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          code: Code,
-                          a: Anchor,
-                        }}
-                      >
-                        {parsedContent.markdown}
-                      </ReactMarkdown>
+                    return parsedContent.isMarkdown ||
+                      parsedContent?.response ? (
+                      <>
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            code: Code,
+                            a: Anchor,
+                          }}
+                        >
+                          {parsedContent?.markdown || parsedContent?.response}
+                        </ReactMarkdown>
+                        {parsedContent?.options && (
+                          <Box className="flex flex-col gap-1">
+                            {parsedContent.options.map(
+                              (option: any, index: number) => (
+                                <Button
+                                  key={index}
+                                  className="option-button mr-2 cursor-pointer"
+                                  variant="outlined"
+                                  onClick={() => addMessage(option)}
+                                >
+                                  {option}
+                                </Button>
+                              )
+                            )}
+                          </Box>
+                        )}
+                      </>
                     ) : (
                       <InterfaceGrid
                         inpreview={false}
@@ -351,7 +373,7 @@ const AssistantMessageCard = React.memo(
   }
 );
 
-function Message({ message, handleFeedback }: any) {
+function Message({ message, handleFeedback, addMessage }: any) {
   const theme = useTheme();
   const backgroundColor = theme.palette.primary.main;
   const textColor = isColorLight(backgroundColor) ? "black" : "white";
@@ -372,6 +394,7 @@ function Message({ message, handleFeedback }: any) {
               theme={theme}
               textColor={textColor}
               handleFeedback={handleFeedback}
+              addMessage={addMessage}
             />
           )}
         </>
@@ -381,6 +404,7 @@ function Message({ message, handleFeedback }: any) {
           theme={theme}
           textColor={textColor}
           handleFeedback={handleFeedback}
+          addMessage={addMessage}
         />
       ) : message?.role === "tools_call" && Object.keys(message?.function) ? (
         <Box className="flex gap-2 mb-2">
@@ -405,4 +429,4 @@ function Message({ message, handleFeedback }: any) {
   );
 }
 
-export default Message;
+export default React.memo(Message);

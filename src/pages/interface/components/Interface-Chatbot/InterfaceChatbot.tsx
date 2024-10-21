@@ -79,7 +79,7 @@ function InterfaceChatbot({
   const userId = localStorage.getItem("interfaceUserId");
   const [loading, setLoading] = useState(false);
   const messageRef = useRef<any>();
-
+  const [options, setOptions] = useState<any>([]);
   const [messages, setMessages] = useState<MessageType[]>(
     useMemo(
       () =>
@@ -238,6 +238,7 @@ function InterfaceChatbot({
               ...(parsedMessage.response.data || {}),
             },
           ]);
+          setOptions(parsedMessage.response?.options || []);
           clearTimeout(timeoutIdRef.current);
         } else {
           // Handle any other cases
@@ -281,6 +282,7 @@ function InterfaceChatbot({
     startTimeoutTimer();
     apiCall && sendMessage(textMessage);
     setLoading(true);
+    setOptions([]);
     setMessages((prevMessages) => [
       ...prevMessages,
       { role: "user", content: textMessage },
@@ -330,7 +332,7 @@ function InterfaceChatbot({
           xs={12}
           className="third-grid"
           sx={{
-            backgroundColor: theme.palette.background.paper,
+            // backgroundColor: theme.palette.background.paper,
             paddingX: theme.spacing(3),
             display: "flex",
             alignItems: "end",
@@ -340,6 +342,7 @@ function InterfaceChatbot({
         >
           <ChatbotTextField
             loading={loading}
+            options={options}
             onSend={() => {
               onSend();
             }}
