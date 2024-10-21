@@ -76,3 +76,14 @@
     background-position: 0% 50%, 50% 50%, 100% 100%;
   }
 }
+
+.hover-and-see {
+  opacity: 0;
+}
+.assistant_message_card {
+  &:hover {
+    .hover-and-see {
+      opacity: 1 !important;
+    }
+  }
+}
