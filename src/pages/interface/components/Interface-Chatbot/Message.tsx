@@ -158,7 +158,6 @@ const AssistantMessageCard = React.memo(
 
           <Box
             sx={{
-              // position: "relative",
               backgroundColor: theme.palette.background.default,
               padding: "2px 10px",
               boxSizing: "border-box",
