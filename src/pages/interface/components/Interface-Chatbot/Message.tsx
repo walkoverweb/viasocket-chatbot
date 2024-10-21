@@ -273,7 +273,7 @@ const AssistantMessageCard = React.memo(
           ></Box>
           {/* Icon box that will show on hover of the message card */}
           {!message?.wait && !message?.timeOut && !message?.error && (
-            <Box className="icon-box flex flex-row ml-2 gap-1">
+            <Box className="icon-box flex flex-row ml-2 gap-1 hover-and-see">
               <Tooltip title="Copy">
                 {!isCopied ? (
                   <ContentCopyIcon
