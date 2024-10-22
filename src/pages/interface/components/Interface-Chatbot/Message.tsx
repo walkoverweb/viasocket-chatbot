@@ -39,6 +39,7 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
   return (
     <>
       <Stack
+        className="user-message-slide"
         sx={{
           alignItems: "flex-end",
           gap: "0px",
@@ -53,6 +54,7 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
         direction="row"
       >
         <Box
+          // className="user-message-slide"
           sx={{
             backgroundColor: theme.palette.primary.main,
             padding: "10px",
@@ -107,6 +109,7 @@ const AssistantMessageCard = React.memo(
     return (
       <Box className="assistant_message_card">
         <Stack
+          className="assistant-message-slide"
           sx={{
             alignItems: "flex-end",
             gap: "10px",
@@ -157,6 +160,7 @@ const AssistantMessageCard = React.memo(
           </Stack>
 
           <Box
+            className="assistant-message-slide"
             sx={{
               backgroundColor: theme.palette.background.default,
               padding: "2px 10px",
@@ -184,7 +188,7 @@ const AssistantMessageCard = React.memo(
                 </Typography>
               </Box>
             ) : (
-              <Box>
+              <Box className="assistant-message-slide">
                 {(() => {
                   const parsedContent = isJSONString(
                     isError
