@@ -21,6 +21,7 @@ import InterfaceTextfield from "./Interface-TextField/InterfaceTextfield.tsx";
 import Interfacedatepicker from "./InterfaceDatepicker/Interfacedatepicker.tsx";
 import InterfaceRadio from "./InterfaceRadio/InterfaceRadio.tsx";
 import InterfaceCard from "./Interface-Card/InterfaceCard.tsx";
+import InterfaceBarGraph from "./Interface-BarGraph/InterfaceBarGraph.tsx";
 
 interface ComponentRendererProps {
   gridId?: string;
@@ -57,6 +58,7 @@ const componentMap: any = {
   Table: (data: any) => <InterfaceTable {...data} />,
   Markdown: (data: any) => <InterfaceMarkdown {...data} />,
   Card: (data: any) => <InterfaceCard {...data} />,
+  BarGraph: (data: any) => <InterfaceBarGraph {...data} />,
 };
 
 function ComponentRenderer({

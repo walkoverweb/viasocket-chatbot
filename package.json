@@ -11,6 +11,8 @@
     "@mui/system": "^5.15.2",
     "@mui/x-data-grid": "^6.19.3",
     "@mui/x-data-grid-generator": "^6.19.4",
+    "@nivo/bar": "^0.88.0",
+    "@nivo/pie": "^0.88.0",
     "@reduxjs/toolkit": "^1.9.0-rc.1",
     "axios": "^1.2.2",
     "axios-cache-interceptor": "^1.5.1",
