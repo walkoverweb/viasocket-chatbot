@@ -4,7 +4,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import { Typography } from "@mui/material";
 import copy from "copy-to-clipboard";
 import React, { useState } from "react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { CodeBlock } from "./CodeBlock.tsx";
 
 export const Code = ({
   inline,
@@ -58,17 +58,9 @@ export const Code = ({
           </>
         )}
       </p>
-      <SyntaxHighlighter
-        // style={vs}
-        className="bg-white outline-none border-0 m-0"
-        language={match[1]}
-        wrapLongLines={true} // Enable word wrapping
-        codeTagProps={{ style: { whiteSpace: "pre-wrap" } }} // Ensure word wrapping
-        PreTag="div"
-        {...props}
-      >
-        {String(children).replace(/\n$/, "")}
-      </SyntaxHighlighter>
+      <CodeBlock inline={inline} className={className} {...props}>
+        {children}
+      </CodeBlock>
     </div>
   ) : (
     <code className={className} {...props}>
