@@ -59,6 +59,41 @@
   animation: l6 1s infinite linear;
 }
 
+@keyframes slideIn {
+  0% {
+    transform: translateX(5%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInMessage {
+  0% {
+    transform: translateX(-5%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.user-message-slide {
+  animation: slideIn 0.2s ease-in-out;
+}
+.assistant-message-slide {
+  animation: slideInMessage 0.2s ease-in-out;
+}
+
 @keyframes l6 {
   20% {
     background-position: 0% 0%, 50% 50%, 100% 50%;
