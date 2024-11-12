@@ -7,7 +7,7 @@ import {
   getInterfaceDataByIdStart,
   setThreadId,
 } from "../../../../store/interface/interfaceSlice.ts";
-import { intefaceGetLocalStorage } from "../../utils/InterfaceUtils.ts";
+import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
 import InterfaceChatbot from "../Interface-Chatbot/InterfaceChatbot.tsx";
 
 function ChatbotWrapper({ interfaceId, loadInterface = true }) {
@@ -19,7 +19,8 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
 
   useEffect(() => {
     (async () => {
-      const interfaceToken = intefaceGetLocalStorage("interfaceToken");
+      // const interfaceToken = intefaceGetLocalStorage("interfaceToken");
+      const interfaceToken = GetSessionStorageData("interfaceToken");
       if (
         interfaceId &&
         interfaceId !== "preview" &&

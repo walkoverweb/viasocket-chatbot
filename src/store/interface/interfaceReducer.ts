@@ -409,8 +409,9 @@ export const reducers: ValidateSliceCaseReducers<
   setThreadId(state, action: actionType<any>) {
     const data = action.payload;
     const tempData = {};
-    Object.keys(data || {})?.map((element) => {
+    Object.keys(data || {})?.forEach((element) => {
       tempData[element] = data[element];
+      sessionStorage.setItem(element, data[element]);
     });
     return { ...state, ...tempData };
   },

@@ -22,6 +22,7 @@ import ChatbotHeader from "./ChatbotHeader.tsx";
 import ChatbotTextField from "./ChatbotTextField.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
+import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
 
 const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
@@ -63,20 +64,35 @@ function InterfaceChatbot({
 }: InterfaceChatbotProps) {
   const theme = useTheme(); // Hook to access the theme
 
-  const { interfaceContextData, threadId, bridgeName } = useCustomSelector(
-    (state: $ReduxCoreType) => ({
+  const { interfaceContextData, reduxThreadId, reduxBridgeName } =
+    useCustomSelector((state: $ReduxCoreType) => ({
       interfaceContextData:
         state.Interface?.interfaceContext?.[interfaceId]?.[
           state.Interface?.bridgeName || "root"
         ]?.interfaceData,
-      threadId: state.Interface?.threadId || "",
-      bridgeName: state.Interface?.bridgeName || "root",
-    })
+      reduxThreadId: state.Interface?.threadId || "",
+      reduxBridgeName: state.Interface?.bridgeName || "root",
+    }));
+
+  const [threadId, setThreadId] = useState(
+    GetSessionStorageData("threadId") || reduxThreadId
   );
+  const [bridgeName, setBridgeName] = useState(
+    GetSessionStorageData("bridgeName") || reduxBridgeName
+  );
+
+  useEffect(() => {
+    setThreadId(GetSessionStorageData("threadId"));
+  }, [reduxThreadId]);
+
+  useEffect(() => {
+    setBridgeName(GetSessionStorageData("bridgeName"));
+  }, [reduxBridgeName]);
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
-  const userId = localStorage.getItem("interfaceUserId");
+  // const userId = localStorage.getItem("interfaceUserId");
+  const userId = GetSessionStorageData("interfaceUserId");
   const [loading, setLoading] = useState(false);
   const messageRef = useRef<any>();
   const [options, setOptions] = useState<any>([]);
@@ -249,9 +265,9 @@ function InterfaceChatbot({
       client.on("message", handleMessage);
 
       return () => {
-        clearTimeout(timeoutIdRef.current);
         client.unsubscribe(interfaceId + (threadId || userId));
         client.removeListener("message", handleMessage);
+        clearTimeout(timeoutIdRef.current);
       };
     }
   }, [threadId, interfaceId, userId, bridgeName]);
