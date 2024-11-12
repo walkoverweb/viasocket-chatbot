@@ -598,6 +598,22 @@ export const intefaceGetLocalStorage = (key: string) => {
   return localStorage.getItem(key);
 };
 
+export const SetSessionStorage = (key: string, value: string) => {
+  sessionStorage.setItem(key, value);
+};
+
+export const GetSessionStorageData = (key: string): string | null => {
+  try {
+    return sessionStorage.getItem(key);
+  } catch (error) {
+    console.error(
+      `Error retrieving session storage data for key "${key}":`,
+      error
+    );
+    return null;
+  }
+};
+
 export const isJSONString = (str: string) => {
   try {
     JSON.parse(str);

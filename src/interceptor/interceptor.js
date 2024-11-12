@@ -15,7 +15,8 @@ const axios = setupCache(instance, {
 
 axios.interceptors.request.use(
   async (config) => {
-    config.headers["Authorization"] = localStorage.getItem("interfaceToken");
+    // config.headers["Authorization"] = localStorage.getItem("interfaceToken");
+    config.headers["Authorization"] = sessionStorage.getItem("interfaceToken");
     return config;
   },
   (error) => {
