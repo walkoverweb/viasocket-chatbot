@@ -1,10 +1,10 @@
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
 import { EmbedVerificationStatus } from "../../../../enums";
 import InterfaceErrorPage from "../../components/InterfaceErrorPage/InterfaceErrorPage.tsx";
-import { intefaceSetLocalStorage } from "../../utils/InterfaceUtils.ts";
+import { SetSessionStorage } from "../../utils/InterfaceUtils.ts";
 
 interface InterfaceEmbedProps {
   onConfigChange: (string) => void;
@@ -39,10 +39,12 @@ export default function InterfaceEmbed({
   }, [verifiedState, details.chatbot_id, navigate]);
 
   const authorizeUserAndSetDetails = () => {
-    intefaceSetLocalStorage("interfaceToken", token);
+    // intefaceSetLocalStorage("interfaceToken", token);
+    SetSessionStorage("interfaceToken", token);
     setVerifiedState(EmbedVerificationStatus.VERIFIED);
     setDetails({ chatbot_id });
-    localStorage.setItem("interfaceUserId", userId);
+    // localStorage.setItem("interfaceUserId", userId);
+    SetSessionStorage("interfaceUserId", userId);
   };
 
   return (
