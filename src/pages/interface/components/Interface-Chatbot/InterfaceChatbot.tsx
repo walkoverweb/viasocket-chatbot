@@ -163,64 +163,6 @@ function InterfaceChatbot({
       window.removeEventListener("message", handleMessage);
     };
   }, [handleMessage]);
-  useEffect(() => {
-    if (jwt) {
-      const socketUrl = "https://chat.phone91.com/";
-
-      // Initialize the socket connection
-      const socketInstance = io(socketUrl, {
-        auth: { token: jwt }, // Pass the JWT token for authentication
-        transports: ["websocket"], // Prefer WebSocket transport
-        reconnection: true, // Enable reconnection
-        timeout: 20000, // 20-second timeout for the connection
-        autoConnect: true, // Auto connect when the component mounts
-      });
-      // Once socket is connected and subscribed, you can start interacting with the channel
-      if (socketInstance && channelId) {
-        console.log("huhiuhihi");
-
-        socketInstance.on("connect", () => {
-          console.log("Connected to WebSocket server");
-          // socketInstance.emit('subscribe', { channel: [channelId] });
-          const channels = [channelId];
-          event_channels.map((event_channel: string | string[]) => {
-            if (!event_channel.includes("-chat-typing"))
-              channels.push(event_channel);
-          });
-          socketInstance.emit("subscribe", { channel: [channels] }, (data) => {
-            console.log("data", data);
-          });
-        });
-        // Listen for messages from the server (or any custom event you are emitting)
-        socketInstance.on("message", (data) => {
-          console.log("New message in channel:", data);
-        });
-        socketInstance.on("NewPublish", (data) => {
-          console.log("New NewPublish in channel:", data);
-          const response = data.response?.message?.content?.text;
-          const chat_id = data.response?.message?.chat_id;
-          const from_name = data.response?.message?.from_name;
-          const sender_id = data.response?.message?.sender_id;
-          if (response !== undefined && response !== null && !chat_id) {
-            setLoading(false);
-            clearTimeout(timeoutIdRef.current);
-            setMessages((prevMessages) => [
-              ...prevMessages.slice(0, -1),
-              {
-                role: `${sender_id ? "Human" : "Bot"}`,
-                from_name,
-                content: response,
-              },
-            ]);
-          }
-        });
-        // Cleanup event listeners on component unmount
-        return () => {
-          socketInstance.off("message"); // Clean up event listeners to prevent memory leaks
-        };
-      }
-    }
-  }, []); // Re-run when socket or channelId changes
 
   // useEffect(() => {
   //   if (jwt) {
