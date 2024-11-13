@@ -12,6 +12,7 @@ import React, {
 import { useDispatch } from "react-redux";
 import WebSocketClient from "rtlayer-client";
 import {
+  getHelloChatsApi,
   getPreviousMessage,
   sendDataToAction,
 } from "../../../../api/InterfaceApis/InterfaceApis.ts";
@@ -172,7 +173,7 @@ function InterfaceChatbot({
       const { message } = response || {};
       const { content, chat_id, from_name, sender_id } = message || {};
       const text = content?.text;
-
+      console.log("New message in channel:", data, !chat_id);
       if (text && !chat_id) {
         setLoading(false);
         clearTimeout(timeoutIdRef.current);
@@ -187,7 +188,7 @@ function InterfaceChatbot({
       }
     });
     socket.on("message", (data) => {
-      console.log("New message in channel:", data);
+      console.log("New message in channel message", data);
     });
 
     return () => {
@@ -219,6 +220,33 @@ function InterfaceChatbot({
         } else {
           setMessages([]);
           console.error("previousChats is not an array");
+        }
+        if (uuid) {
+          const helloChats = (await getHelloChatsApi({ channelId: channelId }))
+            ?.data?.data;
+          let filterChats = helloChats.map((chat) => {
+            let role;
+
+            if (chat?.message?.from_name) {
+              role = "Human";
+            } else if (
+              !chat?.message?.from_name &&
+              chat?.message?.sender_id === "bot"
+            ) {
+              role = "Bot";
+            } else {
+              role = "user";
+            }
+
+            return {
+              role: role,
+              from_name: chat?.message?.from_name,
+              content: chat?.message?.content?.text,
+            };
+          });
+          setMessages((prevMessages) => [...prevMessages, ...filterChats]);
+        } else {
+          console.error("helloChats is not an array or empty");
         }
       } catch (error) {
         console.error("Error fetching previous chats:", error);

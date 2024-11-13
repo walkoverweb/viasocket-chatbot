@@ -1,3 +1,4 @@
+import axiosInstance from "axios";
 import { errorToast } from "../../components/customToast";
 import axios from "../../interceptor/interceptor";
 import { InterFaceDataType } from "../../types/interface/InterfaceReduxType.ts";
@@ -233,6 +234,38 @@ export async function getHelloDetailsApi({
     return null;
   }
 }
+
+export async function getHelloChatsApi({
+  channelId,
+}: {
+  channelId: string;
+}): Promise<any> {
+  try {
+    const response = await axiosInstance.post(
+      "https://api.phone91.com/get-history/",
+      {
+        channel: channelId,
+        origin: "chat",
+        page_size: 30,
+        start_from: 1,
+        user_data: {},
+        is_anon: false,
+      },
+      {
+        headers: {
+          authorization: localStorage.getItem("HelloAgentAuth"),
+          "content-type": "application/json",
+        },
+      }
+    );
+    console.log(response.data, "response");
+    return response?.data;
+  } catch (error) {
+    console.error("Error getting hello details:", error);
+    return null;
+  }
+}
+
 export const createScripts = async (data: any, type = "flow") => {
   try {
     data.type = type;

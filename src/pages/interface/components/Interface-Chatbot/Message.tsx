@@ -27,10 +27,10 @@ import { Anchor, Code } from "./Interface-Markdown/MarkdownUtitily.tsx";
 import "./Message.scss";
 import { AiIcon, HumanIcon } from "../../../../assests/assestsIndex.ts";
 
-const ResetHistoryLine = () => {
+const ResetHistoryLine = ({ text = "" }) => {
   return (
     <Divider className="mb-2">
-      <Chip label="History cleared" size="small" color="error" />
+      <Chip label={text || "History cleared"} size="small" color="error" />
     </Divider>
   );
 };
@@ -371,6 +371,7 @@ const AssistantMessageCard = React.memo(
           )}
         </Box>
         {message?.is_reset && <ResetHistoryLine />}
+        {message?.mode === 1 && <ResetHistoryLine text="Talk to human" />}
       </Box>
     );
   }
@@ -419,13 +420,15 @@ const HumanOrBotMessageCard = React.memo(
             }}
             spacing="5px"
           >
-            <img
-              src={HumanIcon}
-              width="28"
-              height="28"
-              alt="AI"
-              style={{ color: "red" }}
-            />
+            {isBot ? (
+              <img
+                src={HumanIcon}
+                width="28"
+                height="28"
+                alt="AI"
+                style={{ color: "red" }}
+              />
+            ) : null}
           </Stack>
 
           <Box
