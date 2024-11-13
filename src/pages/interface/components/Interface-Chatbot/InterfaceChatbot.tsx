@@ -27,6 +27,7 @@ import ChatbotHeader from "./ChatbotHeader.tsx";
 import ChatbotTextField from "./ChatbotTextField.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
+import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
 
 const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
@@ -71,8 +72,8 @@ function InterfaceChatbot({
 
   const {
     interfaceContextData,
-    threadId,
-    bridgeName,
+    reduxThreadId,
+    reduxBridgeName,
     IsHuman,
     uuid,
     unique_id,
@@ -85,8 +86,8 @@ function InterfaceChatbot({
       state.Interface?.interfaceContext?.[interfaceId]?.[
         state.Interface?.bridgeName || "root"
       ]?.interfaceData,
-    threadId: state.Interface?.threadId || "",
-    bridgeName: state.Interface?.bridgeName || "root",
+    reduxThreadId: state.Interface?.threadId || "",
+    reduxBridgeName: state.Interface?.bridgeName || "root",
     IsHuman: state.Hello.isHuman || false,
     uuid: state.Hello.ChannelList?.uuid,
     unique_id: state.Hello.ChannelList?.unique_id,
@@ -98,24 +99,40 @@ function InterfaceChatbot({
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
-  const userId = localStorage.getItem("interfaceUserId");
+  // const userId = localStorage.getItem("interfaceUserId");
+  const userId = GetSessionStorageData("interfaceUserId");
   const [loading, setLoading] = useState(false);
   const messageRef = useRef<any>();
   const [options, setOptions] = useState<any>([]);
   const socket = useSocket();
+  const [threadId, setThreadId] = useState(
+    GetSessionStorageData("threadId") || reduxThreadId
+  );
+  const [bridgeName, setBridgeName] = useState(
+    GetSessionStorageData("bridgeName") || reduxBridgeName
+  );
+
+  useEffect(() => {
+    setThreadId(GetSessionStorageData("threadId"));
+  }, [reduxThreadId]);
+
+  useEffect(() => {
+    setBridgeName(GetSessionStorageData("bridgeName"));
+  }, [reduxBridgeName]);
+
   const [messages, setMessages] = useState<MessageType[]>(
     useMemo(
       () =>
         !inpreview
           ? [
-              { content: "hello how are you ", role: "user" },
-              {
-                responseId: "Response24131",
-                content:
-                  '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
-                role: "assistant",
-              },
-            ]
+            { content: "hello how are you ", role: "user" },
+            {
+              responseId: "Response24131",
+              content:
+                '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
+              role: "assistant",
+            },
+          ]
           : [],
       [inpreview]
     )
@@ -332,9 +349,9 @@ function InterfaceChatbot({
       client.on("message", handleMessage);
 
       return () => {
-        clearTimeout(timeoutIdRef.current);
         client.unsubscribe(interfaceId + (threadId || userId));
         client.removeListener("message", handleMessage);
+        clearTimeout(timeoutIdRef.current);
       };
     }
   }, [threadId, interfaceId, userId, bridgeName]);

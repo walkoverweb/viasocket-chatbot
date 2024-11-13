@@ -33,6 +33,7 @@ import isColorLight from "../../../../utils/themeUtility";
 
 import "./InterfaceChatbot.scss";
 import { getHelloDetailsStart } from "../../../../store/hello/helloSlice.ts";
+import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
 
 function ChatbotHeader({ setChatsLoading }) {
   const theme = useTheme();
@@ -130,7 +131,7 @@ const ResetChatOption = React.memo(
         })
       );
       const dispatch = useDispatch();
-      const userId = localStorage.getItem("interfaceUserId");
+      const userId = GetSessionStorageData("interfaceUserId");
       const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
       const open = Boolean(anchorEl);
 
@@ -285,7 +286,8 @@ const ChatbotFeedbackForm = React.memo(function ChatbotFeedbackForm({
   open,
   setOpen,
 }: ChatbotFeedbackFormProps) {
-  const userId = localStorage.getItem("interfaceUserId");
+  // const userId = localStorage.getItem("interfaceUserId");
+  const userId = GetSessionStorageData("interfaceUserId");
   const handleClose = () => {
     setOpen(false);
   };
