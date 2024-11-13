@@ -376,98 +376,11 @@ const AssistantMessageCard = React.memo(
   }
 );
 
-const HumanMessageCard = React.memo(
+const HumanOrBotMessageCard = React.memo(
   ({
     message,
     theme,
-    isError = false,
-    handleFeedback = () => {},
-    addMessage = () => {},
-  }: any) => {
-    const [isCopied, setIsCopied] = React.useState(false);
-    const handleCopy = () => {
-      copy(message?.chatbot_message || message?.content);
-      setIsCopied(true);
-      setTimeout(() => {
-        setIsCopied(false);
-      }, 1500);
-    };
-
-    return (
-      <Box className="assistant_message_card">
-        <Stack
-          className="assistant-message-slide"
-          sx={{
-            alignItems: "flex-end",
-            gap: "10px",
-            maxWidth: "90%",
-            "@media(max-width:479px)": {
-              height: "fit-content",
-              columnGap: "5px",
-            },
-            marginBottom: "10px",
-          }}
-          direction="row"
-        >
-          <Stack
-            sx={{
-              alignItems: "center",
-              width: "30px",
-              justifyContent: "flex-end",
-              "@media(max-width:479px)": { width: "30px" },
-            }}
-            spacing="5px"
-          >
-            <img
-              src={HumanIcon}
-              width="28"
-              height="28"
-              alt="AI"
-              style={{ color: "red" }}
-            />
-          </Stack>
-
-          <Box
-            className="assistant-message-slide"
-            sx={{
-              backgroundColor: theme.palette.background.default,
-              padding: "2px 10px",
-              boxSizing: "border-box",
-              height: "fit-content",
-              minWidth: "150px",
-              borderRadius: "10px 10px 10px 1px",
-              boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
-              wordBreak: "break-word",
-              overflowWrap: "break-word",
-              maxWidth: "100%",
-              color: "black",
-              whiteSpace: "pre-wrap",
-            }}
-          >
-            <Box className="assistant-message-slide">
-              <div dangerouslySetInnerHTML={{ __html: message?.content }}></div>
-            </Box>
-          </Box>
-        </Stack>
-        <Box className="flex flex-row">
-          <Box
-            sx={{
-              alignItems: "center",
-              width: "30px",
-              justifyContent: "flex-end",
-              "@media(max-width:479px)": { width: "30px" },
-            }}
-          ></Box>
-        </Box>
-        {message?.is_reset && <ResetHistoryLine />}
-      </Box>
-    );
-  }
-);
-const BotMessageCard = React.memo(
-  ({
-    message,
-    theme,
+    isBot = false,
     isError = false,
     handleFeedback = () => {},
     addMessage = () => {},
@@ -586,7 +499,7 @@ function Message({ message, handleFeedback, addMessage }: any) {
           addMessage={addMessage}
         />
       ) : message?.role === "Human" ? (
-        <HumanMessageCard
+        <HumanOrBotMessageCard
           message={message}
           theme={theme}
           textColor={textColor}
@@ -594,9 +507,10 @@ function Message({ message, handleFeedback, addMessage }: any) {
           addMessage={addMessage}
         />
       ) : message?.role === "Bot" ? (
-        <BotMessageCard
+        <HumanOrBotMessageCard
           message={message}
           theme={theme}
+          isBot={true}
           textColor={textColor}
           handleFeedback={handleFeedback}
           addMessage={addMessage}

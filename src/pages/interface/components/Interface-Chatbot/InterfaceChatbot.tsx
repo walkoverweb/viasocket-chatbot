@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { Box, Grid, LinearProgress, useTheme } from "@mui/material";
+import axios from "axios";
 import React, {
   createContext,
   useCallback,
@@ -8,8 +9,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import axios from "axios";
+import { useDispatch } from "react-redux";
 import WebSocketClient from "rtlayer-client";
+import { io } from "socket.io-client";
 import {
   getPreviousMessage,
   sendDataToAction,
@@ -17,16 +19,14 @@ import {
 import { errorToast } from "../../../../components/customToast.js";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
+import { setChannel } from "../../../../store/hello/helloSlice.ts";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector.js";
+import useSocket from "../../hooks/socket.js";
 import ChatbotHeader from "./ChatbotHeader.tsx";
 import ChatbotTextField from "./ChatbotTextField.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
-import useSocket from "../../hooks/socket.js";
-import { useDispatch } from "react-redux";
-import { setChannel } from "../../../../store/hello/helloSlice.ts";
-import { io } from "socket.io-client";
 
 const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
@@ -77,10 +77,8 @@ function InterfaceChatbot({
     unique_id,
     presence_channel,
     team_id,
-    jwt,
     chat_id,
     channelId,
-    event_channels,
   } = useCustomSelector((state: $ReduxCoreType) => ({
     interfaceContextData:
       state.Interface?.interfaceContext?.[interfaceId]?.[
@@ -93,10 +91,8 @@ function InterfaceChatbot({
     unique_id: state.Hello.ChannelList?.unique_id,
     presence_channel: state.Hello.ChannelList?.presence_channel,
     team_id: state.Hello.widgetInfo.team?.[0]?.id,
-    jwt: state.Hello.socketJwt.jwt,
     chat_id: state.Hello.Channel?.id,
     channelId: state.Hello.Channel?.channel || null,
-    event_channels: state.Hello.widgetInfo.event_channels || [],
   }));
 
   const [chatsLoading, setChatsLoading] = useState(false);
@@ -105,6 +101,7 @@ function InterfaceChatbot({
   const [loading, setLoading] = useState(false);
   const messageRef = useRef<any>();
   const [options, setOptions] = useState<any>([]);
+  const socket = useSocket();
   const [messages, setMessages] = useState<MessageType[]>(
     useMemo(
       () =>
@@ -224,6 +221,96 @@ function InterfaceChatbot({
       }
     }
   }, []); // Re-run when socket or channelId changes
+
+  // useEffect(() => {
+  //   if (jwt) {
+  //     const socketUrl = "https://chat.phone91.com/";
+
+  //     // Initialize the socket connection
+  //     const socketInstance = io(socketUrl, {
+  //       auth: { token: jwt },
+  //       transports: ["websocket"],
+  //       reconnection: true,
+  //       timeout: 20000,
+  //       autoConnect: true,
+  //     });
+
+  //     if (socketInstance) {
+  //       socketInstance.on("connect", () => {
+  //         const channels = [channelId];
+  //         event_channels.forEach((event_channel: string | string[]) => {
+  //           if (!event_channel.includes("-chat-typing")) {
+  //             channels.push(event_channel);
+  //           }
+  //         });
+  //         socketInstance.emit("subscribe", { channel: channels }, (data) => {
+  //           console.log("Subscribed channels data:", data);
+  //         });
+  //       });
+
+  //       socketInstance.on("message", (data) => {
+  //         console.log("New message in channel:", data);
+  //       });
+
+  //       socketInstance.on("NewPublish", (data) => {
+  //         const { response } = data;
+  //         const { message } = response || {};
+  //         const { content, chat_id, from_name, sender_id } = message || {};
+  //         const text = content?.text;
+
+  //         if (text && !chat_id) {
+  //           setLoading(false);
+  //           clearTimeout(timeoutIdRef.current);
+  //           setMessages((prevMessages) => [
+  //             ...prevMessages.slice(0, -1),
+  //             {
+  //               role: sender_id ? "Human" : "Bot",
+  //               from_name,
+  //               content: text,
+  //             },
+  //           ]);
+  //         }
+  //       });
+
+  //       // Cleanup event listeners on component unmount
+  //       return () => {
+  //         socketInstance.off("message");
+  //       };
+  //     }
+  //   }
+  // }, []); // Add dependencies to re-run when they change
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("NewPublish", (data) => {
+      const { response } = data;
+      const { message } = response || {};
+      const { content, chat_id, from_name, sender_id } = message || {};
+      const text = content?.text;
+
+      if (text && !chat_id) {
+        setLoading(false);
+        clearTimeout(timeoutIdRef.current);
+        setMessages((prevMessages) => [
+          ...prevMessages.slice(0, -1),
+          {
+            role: sender_id ? "Human" : "Bot",
+            from_name,
+            content: text,
+          },
+        ]);
+      }
+    });
+    socket.on("message", (data) => {
+      console.log("New message in channel:", data);
+    });
+
+    return () => {
+      socket.off("NewPublish");
+      socket.off("message");
+    };
+  }, [socket]);
 
   const startTimeoutTimer = () => {
     timeoutIdRef.current = setTimeout(() => {

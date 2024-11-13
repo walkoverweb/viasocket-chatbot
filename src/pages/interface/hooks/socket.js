@@ -1,29 +1,42 @@
-// hooks/useSocket.js
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+// import/no-extraneous-dependencies
 import io from "socket.io-client";
+import { useCustomSelector } from "../../../utils/deepCheckSelector";
 
-const useSocket = (jwtToken, channelId) => {
-  // const [socket, setSocket] = useState(null);
+const useSocket = () => {
+  const socketRef = useRef(null);
+
+  const { jwtToken, channelId, eventChannels } = useCustomSelector((state) => ({
+    jwtToken: state.Hello.socketJwt.jwt,
+    channelId: state.Hello.Channel?.channel || null,
+    eventChannels: state.Hello.widgetInfo.event_channels || [],
+  }));
 
   useEffect(() => {
-    // Ensure a valid JWT token is provided before creating the socket
     if (!jwtToken) return;
 
-    const socketUrl =
-      "wss://chat.phone91.com/socket.io/?EIO=4&transport=websocket";
-
-    // Initialize the socket connection
+    const socketUrl = "https://chat.phone91.com/";
     const socketInstance = io(socketUrl, {
-      auth: { token: jwtToken }, // Pass the JWT token for authentication
-      transports: ["websocket"], // Prefer WebSocket transport
-      reconnection: true, // Enable reconnection
-      timeout: 20000, // 20-second timeout for the connection
-      autoConnect: true, // Auto connect when the component mounts
+      auth: { token: jwtToken },
+      transports: ["websocket"],
+      reconnection: true,
+      timeout: 20000,
+      autoConnect: true,
     });
 
-    // Update socket state once connected
     socketInstance.on("connect", () => {
       console.log("Connected to WebSocket server");
+      if (channelId) {
+        const channels = [channelId];
+        eventChannels.forEach((event_channel) => {
+          if (!event_channel.includes("-chat-typing")) {
+            channels.push(event_channel);
+          }
+        });
+        socketInstance.emit("subscribe", { channel: channels }, (data) => {
+          console.log("Subscribed channels data:", data);
+        });
+      }
     });
 
     socketInstance.on("disconnect", () => {
@@ -33,9 +46,16 @@ const useSocket = (jwtToken, channelId) => {
     socketInstance.on("connect_error", (err) => {
       console.error("Connection Error:", err);
     });
-  }, [jwtToken, channelId]); // Re-run when JWT or channelId changes
 
-  // return socket;
+    socketRef.current = socketInstance;
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      socketInstance.disconnect();
+    };
+  }, [jwtToken, channelId, eventChannels]);
+
+  return socketRef.current;
 };
 
 export default useSocket;
