@@ -12,13 +12,12 @@ const useSocket = () => {
     eventChannels: state.Hello.widgetInfo.event_channels || [],
   }));
 
-  console.log(channelId, eventChannels, 2323123);
   useEffect(() => {
     if (!jwtToken) return;
 
     const socketUrl = "https://chat.phone91.com/";
     const socketInstance = io(socketUrl, {
-      auth: { token: jwtToken },
+      auth: { token: jwtToken.jwt_token },
       transports: ["websocket"],
       reconnection: true,
       timeout: 20000,
@@ -52,6 +51,7 @@ const useSocket = () => {
 
     // eslint-disable-next-line consistent-return
     return () => {
+      console.log("hello");
       socketInstance.disconnect();
     };
   }, [jwtToken, channelId, eventChannels]);
