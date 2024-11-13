@@ -62,5 +62,13 @@ module.exports = {
     "no-unsafe-optional-chaining": 0,
     "import/no-cycle": 0,
     "react/no-array-index-key": 0,
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        devDependencies: false, // Allow dependencies to be installed for dev use
+        optionalDependencies: false,
+        peerDependencies: false,
+      },
+    ],
   },
 };

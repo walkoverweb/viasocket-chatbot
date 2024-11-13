@@ -23,27 +23,10 @@ import {
   PluginResponseType,
 } from "./Plugin.ts";
 import { $InterfaceReduxType } from "./interface/InterfaceReduxType.ts";
+import { $HelloReduxType } from "./hello/HelloReduxType.ts";
 
 export interface $ReduxCoreType {
-  user: $UserInfoReduxType; // current use info
-  orgs: $OrgReduxType; // list of all orgs
-  projects: $ProjectReduxType; // list of all projects
-  scripts: $ScriptReduxType; // list of all scripts
-  flowJson: $FlowJsonReduxType; // DEPRICATE
-  flowJsonV2: $FlowJsonReduxType; // selected and updated state of flow json
-  appInfo: AppInfoReduxType; // app info like current selected ids
-  invocationV2: $InvocationReduxType; // latest invocation state
-  stepsDataV3: $StepsReduxTypeV3;
-  allChip: $AllChipType; // list of all plugins from aur table
-  // allPlugins: $AllPluginsType // list of all plugins from aur table // depricated by new plugin team
-  // allTriggers: $AllPluginsType // list of all triggers from aur table
-  currentSelectedPlugin: $CurrentSelectedPluginType; // SELECTED (CREATE OF UPDATE) Plugin info is stored here
-  // DTPlugin: $DTPluginReduxType // developers took state
-  DHPlugin: $DHPluginReduxType;
-  DHAuthentication: $DHAuthenticationType;
-  DHAction: $DHActionReduxType;
-  DHActionVersion: $DHActionVersionReduxType;
-  draft: any;
+  Hello: $HelloReduxType;
   Interface: $InterfaceReduxType;
 }
 export interface $UserInfoReduxType {

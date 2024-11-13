@@ -1,6 +1,7 @@
 import ChatIcon from "@mui/icons-material/Chat";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SyncIcon from "@mui/icons-material/Sync";
+import Person2Icon from "@mui/icons-material/Person2";
 import {
   Box,
   Button,
@@ -20,6 +21,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useContext } from "react";
+import { useDispatch } from "react-redux";
 import { resetChatsAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 import { ChatbotContext } from "../../../../App";
 import { successToast } from "../../../../components/customToast";
@@ -28,6 +30,8 @@ import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector";
 import isColorLight from "../../../../utils/themeUtility";
+import { setAllInfo } from "../../../../store/hello/helloSlice.ts";
+
 import "./InterfaceChatbot.scss";
 
 function ChatbotHeader({ setChatsLoading }) {
@@ -118,13 +122,14 @@ const ResetChatOption = React.memo(
       interfaceId,
     }) => {
       const [modalOpen, setModalOpen] = React.useState(false);
-      const { threadId, bridgeName } = useCustomSelector(
+      const { threadId, bridgeName, IsHuman } = useCustomSelector(
         (state: $ReduxCoreType) => ({
           threadId: state.Interface?.threadId || "",
           bridgeName: state.Interface?.bridgeName || "root",
+          IsHuman: state.Hello?.isHuman,
         })
       );
-
+      const dispatch = useDispatch();
       const userId = localStorage.getItem("interfaceUserId");
       const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
       const open = Boolean(anchorEl);
@@ -150,6 +155,73 @@ const ResetChatOption = React.memo(
         setChatsLoading(false);
       };
 
+      const EnableHumanAgent = async () => {
+        const widgetInfo = (
+          await axios.post(
+            "https://api.phone91.com/widget-info/",
+            {
+              user_data: {},
+              is_anon: false,
+            },
+            {
+              headers: {
+                authorization: process.env.REACT_APP_HELLO_ID,
+              },
+            }
+          )
+        )?.data;
+        const anonymousClientId = (
+          await axios.post(
+            "https://api.phone91.com/anonymous-client-details/",
+            "",
+            {
+              headers: {
+                authorization: process.env.REACT_APP_HELLO_ID,
+              },
+            }
+          )
+        )?.data?.data;
+        const socketJwt = (
+          await axios.get("https://api.phone91.com/jwt-token/", {
+            params: {
+              is_anon: "true",
+            },
+            headers: {
+              authorization: `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`,
+            },
+          })
+        )?.data?.data?.jwt_token;
+        const ChannelList = (
+          await axios.post(
+            "https://api.phone91.com/v2/pubnub-channels/list/",
+            {
+              uuid: anonymousClientId?.uuid,
+              anonymous_client_uuid: "",
+              user_data: {},
+              is_anon: true,
+            },
+            {
+              headers: {
+                accept: "application/json",
+                authorization: `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`,
+              },
+            }
+          )
+        )?.data;
+        console.log(widgetInfo, anonymousClientId, socketJwt, ChannelList);
+        dispatch(
+          setAllInfo({
+            widgetInfo,
+            anonymousClientId,
+            Jwt: socketJwt,
+            ChannelList,
+          })
+        );
+        localStorage.setItem(
+          "HelloAgentAuth",
+          `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`
+        );
+      };
       return (
         <Box className="ml-2 flex-center-center">
           <KeyboardArrowDownIcon
@@ -169,6 +241,15 @@ const ResetChatOption = React.memo(
               "aria-labelledby": "basic-button",
             }}
           >
+            <MenuItem
+              onClick={IsHuman ? undefined : EnableHumanAgent}
+              disabled={IsHuman}
+            >
+              <ListItemIcon>
+                <Person2Icon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Enable Human-agent</ListItemText>
+            </MenuItem>
             <MenuItem onClick={resetHistory}>
               <ListItemIcon>
                 <SyncIcon fontSize="small" />

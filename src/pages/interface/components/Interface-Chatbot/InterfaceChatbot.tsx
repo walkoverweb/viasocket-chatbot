@@ -8,6 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import axios from "axios";
 import WebSocketClient from "rtlayer-client";
 import {
   getPreviousMessage,
@@ -22,6 +23,10 @@ import ChatbotHeader from "./ChatbotHeader.tsx";
 import ChatbotTextField from "./ChatbotTextField.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
+import useSocket from "../../hooks/socket.js";
+import { useDispatch } from "react-redux";
+import { setChannel } from "../../../../store/hello/helloSlice.ts";
+import { io } from "socket.io-client";
 
 const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
@@ -63,16 +68,36 @@ function InterfaceChatbot({
 }: InterfaceChatbotProps) {
   const theme = useTheme(); // Hook to access the theme
 
-  const { interfaceContextData, threadId, bridgeName } = useCustomSelector(
-    (state: $ReduxCoreType) => ({
-      interfaceContextData:
-        state.Interface?.interfaceContext?.[interfaceId]?.[
-          state.Interface?.bridgeName || "root"
-        ]?.interfaceData,
-      threadId: state.Interface?.threadId || "",
-      bridgeName: state.Interface?.bridgeName || "root",
-    })
-  );
+  const {
+    interfaceContextData,
+    threadId,
+    bridgeName,
+    IsHuman,
+    uuid,
+    unique_id,
+    presence_channel,
+    team_id,
+    jwt,
+    chat_id,
+    channelId,
+    event_channels,
+  } = useCustomSelector((state: $ReduxCoreType) => ({
+    interfaceContextData:
+      state.Interface?.interfaceContext?.[interfaceId]?.[
+        state.Interface?.bridgeName || "root"
+      ]?.interfaceData,
+    threadId: state.Interface?.threadId || "",
+    bridgeName: state.Interface?.bridgeName || "root",
+    IsHuman: state.Hello.isHuman || false,
+    uuid: state.Hello.ChannelList?.uuid,
+    unique_id: state.Hello.ChannelList?.unique_id,
+    presence_channel: state.Hello.ChannelList?.presence_channel,
+    team_id: state.Hello.widgetInfo.team?.[0]?.id,
+    jwt: state.Hello.socketJwt.jwt,
+    chat_id: state.Hello.Channel?.id,
+    channelId: state.Hello.Channel?.channel || null,
+    event_channels: state.Hello.widgetInfo.event_channels || [],
+  }));
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
@@ -97,6 +122,7 @@ function InterfaceChatbot({
       [inpreview]
     )
   );
+  const dispatch = useDispatch();
 
   const addMessage = (message: string) => {
     onSend(message);
@@ -140,6 +166,64 @@ function InterfaceChatbot({
       window.removeEventListener("message", handleMessage);
     };
   }, [handleMessage]);
+  useEffect(() => {
+    if (jwt) {
+      const socketUrl = "https://chat.phone91.com/";
+
+      // Initialize the socket connection
+      const socketInstance = io(socketUrl, {
+        auth: { token: jwt }, // Pass the JWT token for authentication
+        transports: ["websocket"], // Prefer WebSocket transport
+        reconnection: true, // Enable reconnection
+        timeout: 20000, // 20-second timeout for the connection
+        autoConnect: true, // Auto connect when the component mounts
+      });
+      // Once socket is connected and subscribed, you can start interacting with the channel
+      if (socketInstance && channelId) {
+        console.log("huhiuhihi");
+
+        socketInstance.on("connect", () => {
+          console.log("Connected to WebSocket server");
+          // socketInstance.emit('subscribe', { channel: [channelId] });
+          const channels = [channelId];
+          event_channels.map((event_channel: string | string[]) => {
+            if (!event_channel.includes("-chat-typing"))
+              channels.push(event_channel);
+          });
+          socketInstance.emit("subscribe", { channel: [channels] }, (data) => {
+            console.log("data", data);
+          });
+        });
+        // Listen for messages from the server (or any custom event you are emitting)
+        socketInstance.on("message", (data) => {
+          console.log("New message in channel:", data);
+        });
+        socketInstance.on("NewPublish", (data) => {
+          console.log("New NewPublish in channel:", data);
+          const response = data.response?.message?.content?.text;
+          const chat_id = data.response?.message?.chat_id;
+          const from_name = data.response?.message?.from_name;
+          const sender_id = data.response?.message?.sender_id;
+          if (response !== undefined && response !== null && !chat_id) {
+            setLoading(false);
+            clearTimeout(timeoutIdRef.current);
+            setMessages((prevMessages) => [
+              ...prevMessages.slice(0, -1),
+              {
+                role: `${sender_id ? "Human" : "Bot"}`,
+                from_name,
+                content: response,
+              },
+            ]);
+          }
+        });
+        // Cleanup event listeners on component unmount
+        return () => {
+          socketInstance.off("message"); // Clean up event listeners to prevent memory leaks
+        };
+      }
+    }
+  }, []); // Re-run when socket or channelId changes
 
   const startTimeoutTimer = () => {
     timeoutIdRef.current = setTimeout(() => {
@@ -291,6 +375,65 @@ function InterfaceChatbot({
     messageRef.current.value = "";
   };
 
+  const sendMessageToHello = async (message: string) => {
+    const channelDetail = {
+      call_enabled: null,
+      uuid: uuid,
+      country: null,
+      pseudo_name: null,
+      unique_id: unique_id,
+      presence_channel: presence_channel,
+      country_iso2: null,
+      chatInputSubmitted: false,
+      is_blocked: null,
+      customer_name: null,
+      customer_number: null,
+      customer_mail: null,
+      team_id: team_id,
+      new: true,
+    };
+
+    const response = (
+      await axios.post(
+        "https://api.phone91.com/v2/send/",
+        {
+          type: "widget",
+          message_type: "text",
+          content: {
+            text: message,
+            attachment: [],
+          },
+          ...(!channelId ? { channelDetail: channelDetail } : {}),
+          chat_id: !channelId ? null : chat_id,
+          session_id: null,
+          user_data: {},
+          is_anon: true,
+        },
+        {
+          headers: {
+            accept: "application/json",
+            authorization: localStorage.getItem("HelloAgentAuth"),
+          },
+        }
+      )
+    )?.data?.data;
+    if (!channelId) dispatch(setChannel({ Channel: response }));
+  };
+
+  const onSendHello = (msg?: string, apiCall: boolean = true) => {
+    const textMessage = msg || messageRef.current.value;
+    if (!textMessage) return;
+    apiCall && sendMessageToHello(textMessage);
+    setLoading(true);
+    setOptions([]);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { role: "user", content: textMessage },
+      { role: "assistant", content: "React you soon..." },
+    ]);
+    messageRef.current.value = "";
+  };
+
   return (
     <MessageContext.Provider
       value={{ messages: messages, addMessage, setMessages }}
@@ -343,7 +486,7 @@ function InterfaceChatbot({
             loading={loading}
             options={options}
             onSend={() => {
-              onSend();
+              IsHuman ? onSendHello() : onSend();
             }}
             messageRef={messageRef}
           />
