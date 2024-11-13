@@ -11,6 +11,7 @@ import {
   Button,
   Chip,
   Divider,
+  lighten,
   Stack,
   Tooltip,
   Typography,
@@ -106,6 +107,10 @@ const AssistantMessageCard = React.memo(
       }, 1500);
     };
 
+    const themePalette = {
+      "--primary-main": lighten(theme.palette.secondary.main, 0.4),
+    };
+
     return (
       <Box className="assistant_message_card">
         <Stack
@@ -158,113 +163,119 @@ const AssistantMessageCard = React.memo(
               style={{ color: "red" }}
             />
           </Stack>
-
-          <Box
-            className="assistant-message-slide"
-            sx={{
-              backgroundColor: theme.palette.background.default,
-              padding: "2px 10px",
-              boxSizing: "border-box",
-              height: "fit-content",
-              minWidth: "150px",
-              borderRadius: "10px 10px 10px 1px",
-              boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
-              wordBreak: "break-word",
-              overflowWrap: "break-word",
-              maxWidth: "100%",
-              color: "black",
-              whiteSpace: "pre-wrap",
-            }}
-          >
-            {message?.wait ? (
-              <Box className="flex-start-center w-100 gap-2 p-3">
-                <div className="loader" />
-                <Typography variant="body1">{message?.content}</Typography>
-              </Box>
-            ) : message?.timeOut ? (
-              <Box className="flex-start-center w-100 gap-5 p-1">
-                <Typography variant="body1">
-                  Timeout reached. Please try again later.
-                </Typography>
-              </Box>
-            ) : (
-              <Box className="assistant-message-slide">
-                {(() => {
-                  const parsedContent = isJSONString(
-                    isError
-                      ? message?.error
-                      : message?.chatbot_message || message?.content
-                  )
-                    ? JSON.parse(
-                        isError
-                          ? message.error
-                          : message?.chatbot_message || message?.content
-                      )
-                    : null;
-                  // console.log(parsedContent)
-                  if (
-                    parsedContent &&
-                    ("isMarkdown" in parsedContent ||
-                      "response" in parsedContent ||
-                      "components" in parsedContent)
-                  ) {
-                    return parsedContent.isMarkdown ||
-                      parsedContent?.response ? (
-                      <>
-                        <ReactMarkdown
-                          remarkPlugins={[remarkGfm]}
-                          components={{
-                            code: Code,
-                            a: Anchor,
-                          }}
-                        >
-                          {parsedContent?.markdown || parsedContent?.response}
-                        </ReactMarkdown>
-                        {parsedContent?.options && (
-                          <Box className="flex flex-col gap-1">
-                            {parsedContent.options.map(
-                              (option: any, index: number) => (
-                                <Button
-                                  key={index}
-                                  className="option-button mr-2 cursor-pointer"
-                                  variant="outlined"
-                                  onClick={() => addMessage(option)}
-                                >
-                                  {option}
-                                </Button>
-                              )
-                            )}
-                          </Box>
-                        )}
-                      </>
-                    ) : (
-                      <InterfaceGrid
-                        inpreview={false}
-                        ingrid={false}
-                        gridId={parsedContent?.responseId || "default"}
-                        loadInterface={false}
-                        componentJson={parsedContent}
-                        msgId={message?.createdAt}
-                      />
+          {message?.wait && (
+            <div className="w-100">
+              <Typography variant="subtitle2">{message?.content}</Typography>
+              <div className="loading-indicator" style={themePalette}>
+                <div className="loading-bar"></div>
+                <div className="loading-bar"></div>
+                <div className="loading-bar"></div>
+              </div>
+            </div>
+          )}
+          {!message?.wait && (
+            <Box
+              className="assistant-message-slide"
+              sx={{
+                backgroundColor: theme.palette.background.default,
+                padding: "2px 10px",
+                boxSizing: "border-box",
+                height: "fit-content",
+                minWidth: "150px",
+                borderRadius: "10px 10px 10px 1px",
+                boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
+                wordBreak: "break-word",
+                overflowWrap: "break-word",
+                maxWidth: "100%",
+                color: "black",
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              {message?.timeOut ? (
+                <Box className="flex-start-center w-100 gap-5 p-1">
+                  <Typography variant="body1">
+                    Timeout reached. Please try again later.
+                  </Typography>
+                </Box>
+              ) : (
+                <Box className="assistant-message-slide">
+                  {(() => {
+                    const parsedContent = isJSONString(
+                      isError
+                        ? message?.error
+                        : message?.chatbot_message || message?.content
+                    )
+                      ? JSON.parse(
+                          isError
+                            ? message.error
+                            : message?.chatbot_message || message?.content
+                        )
+                      : null;
+                    // console.log(parsedContent)
+                    if (
+                      parsedContent &&
+                      ("isMarkdown" in parsedContent ||
+                        "response" in parsedContent ||
+                        "components" in parsedContent)
+                    ) {
+                      return parsedContent.isMarkdown ||
+                        parsedContent?.response ? (
+                        <>
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              code: Code,
+                              a: Anchor,
+                            }}
+                          >
+                            {parsedContent?.markdown || parsedContent?.response}
+                          </ReactMarkdown>
+                          {parsedContent?.options && (
+                            <Box className="flex flex-col gap-1">
+                              {parsedContent.options.map(
+                                (option: any, index: number) => (
+                                  <Button
+                                    key={index}
+                                    className="option-button mr-2 cursor-pointer"
+                                    variant="outlined"
+                                    onClick={() => addMessage(option)}
+                                  >
+                                    {option}
+                                  </Button>
+                                )
+                              )}
+                            </Box>
+                          )}
+                        </>
+                      ) : (
+                        <InterfaceGrid
+                          inpreview={false}
+                          ingrid={false}
+                          gridId={parsedContent?.responseId || "default"}
+                          loadInterface={false}
+                          componentJson={parsedContent}
+                          msgId={message?.createdAt}
+                        />
+                      );
+                    }
+                    return (
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          code: Code,
+                          a: Anchor,
+                        }}
+                      >
+                        {!isError
+                          ? message?.chatbot_message || message?.content
+                          : message.error}
+                      </ReactMarkdown>
                     );
-                  }
-                  return (
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        code: Code,
-                        a: Anchor,
-                      }}
-                    >
-                      {!isError
-                        ? message?.chatbot_message || message?.content
-                        : message.error}
-                    </ReactMarkdown>
-                  );
-                })()}
-              </Box>
-            )}
-          </Box>
+                  })()}
+                </Box>
+              )}
+            </Box>
+          )}
         </Stack>
         <Box className="flex flex-row">
           <Box
