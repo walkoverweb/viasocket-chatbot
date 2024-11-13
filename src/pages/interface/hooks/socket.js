@@ -12,6 +12,7 @@ const useSocket = () => {
     eventChannels: state.Hello.widgetInfo.event_channels || [],
   }));
 
+  console.log(channelId, eventChannels, 2323123);
   useEffect(() => {
     if (!jwtToken) return;
 

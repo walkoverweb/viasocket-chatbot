@@ -1,8 +1,5 @@
-/* eslint-disable */
 import { SliceCaseReducers, ValidateSliceCaseReducers } from "@reduxjs/toolkit";
-// import { successToast } from '../../components/customToast'
 import { $HelloReduxType } from "../../types/hello/HelloReduxType.ts";
-import actionType from "../../types/utility.ts";
 
 export const initialState: $HelloReduxType = {
   isHuman: false,
@@ -10,6 +7,7 @@ export const initialState: $HelloReduxType = {
   ChannelList: {},
   anonymousClientId: {},
   socketJwt: {},
+  isLoading: false,
 };
 
 export const reducers: ValidateSliceCaseReducers<
@@ -22,6 +20,18 @@ export const reducers: ValidateSliceCaseReducers<
     state.socketJwt = { jwt: action.payload.Jwt };
     state.ChannelList = action.payload.ChannelList;
     state.isHuman = true;
+  },
+  getHelloDetailsStart(state) {
+    return { ...state, isLoading: true };
+  },
+  getHelloDetailsSuccess(state, action) {
+    const { widgetInfo, ChannelList, Jwt, anonymousClientId } = action.payload;
+    state.widgetInfo = widgetInfo;
+    state.anonymousClientId = anonymousClientId;
+    state.socketJwt = { jwt: Jwt };
+    state.ChannelList = ChannelList;
+    state.isHuman = true;
+    state.isLoading = false;
   },
   setChannel(state, action) {
     state.Channel = action.payload.Channel;

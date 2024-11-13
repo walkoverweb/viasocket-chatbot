@@ -7,5 +7,10 @@ const interfaceSlice = createSlice({
   reducers,
 });
 
-export const { setAllInfo, setChannel } = interfaceSlice.actions;
+export const {
+  setAllInfo,
+  setChannel,
+  getHelloDetailsStart,
+  getHelloDetailsSuccess,
+} = interfaceSlice.actions;
 export default interfaceSlice.reducer;

@@ -11,7 +11,6 @@ import React, {
 } from "react";
 import { useDispatch } from "react-redux";
 import WebSocketClient from "rtlayer-client";
-import { io } from "socket.io-client";
 import {
   getPreviousMessage,
   sendDataToAction,
@@ -56,6 +55,8 @@ export const MessageContext = createContext<{
   messages: MessageType[] | [];
   addMessage?: (message: string) => void;
   setMessages?: (message: MessageType[]) => void;
+  threadId?: string;
+  bridgeName?: string;
 }>({
   messages: [],
 });
@@ -64,7 +65,6 @@ function InterfaceChatbot({
   props,
   inpreview = true,
   interfaceId,
-  dragRef,
 }: InterfaceChatbotProps) {
   const theme = useTheme(); // Hook to access the theme
 
@@ -163,64 +163,6 @@ function InterfaceChatbot({
       window.removeEventListener("message", handleMessage);
     };
   }, [handleMessage]);
-
-  // useEffect(() => {
-  //   if (jwt) {
-  //     const socketUrl = "https://chat.phone91.com/";
-
-  //     // Initialize the socket connection
-  //     const socketInstance = io(socketUrl, {
-  //       auth: { token: jwt },
-  //       transports: ["websocket"],
-  //       reconnection: true,
-  //       timeout: 20000,
-  //       autoConnect: true,
-  //     });
-
-  //     if (socketInstance) {
-  //       socketInstance.on("connect", () => {
-  //         const channels = [channelId];
-  //         event_channels.forEach((event_channel: string | string[]) => {
-  //           if (!event_channel.includes("-chat-typing")) {
-  //             channels.push(event_channel);
-  //           }
-  //         });
-  //         socketInstance.emit("subscribe", { channel: channels }, (data) => {
-  //           console.log("Subscribed channels data:", data);
-  //         });
-  //       });
-
-  //       socketInstance.on("message", (data) => {
-  //         console.log("New message in channel:", data);
-  //       });
-
-  //       socketInstance.on("NewPublish", (data) => {
-  //         const { response } = data;
-  //         const { message } = response || {};
-  //         const { content, chat_id, from_name, sender_id } = message || {};
-  //         const text = content?.text;
-
-  //         if (text && !chat_id) {
-  //           setLoading(false);
-  //           clearTimeout(timeoutIdRef.current);
-  //           setMessages((prevMessages) => [
-  //             ...prevMessages.slice(0, -1),
-  //             {
-  //               role: sender_id ? "Human" : "Bot",
-  //               from_name,
-  //               content: text,
-  //             },
-  //           ]);
-  //         }
-  //       });
-
-  //       // Cleanup event listeners on component unmount
-  //       return () => {
-  //         socketInstance.off("message");
-  //       };
-  //     }
-  //   }
-  // }, []); // Add dependencies to re-run when they change
 
   useEffect(() => {
     if (!socket) return;
@@ -465,7 +407,13 @@ function InterfaceChatbot({
 
   return (
     <MessageContext.Provider
-      value={{ messages: messages, addMessage, setMessages }}
+      value={{
+        messages: messages,
+        addMessage,
+        setMessages,
+        threadId,
+        bridgeName,
+      }}
     >
       <Box
         sx={{

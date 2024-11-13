@@ -1,7 +1,7 @@
 import ChatIcon from "@mui/icons-material/Chat";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import SyncIcon from "@mui/icons-material/Sync";
 import Person2Icon from "@mui/icons-material/Person2";
+import SyncIcon from "@mui/icons-material/Sync";
 import {
   Box,
   Button,
@@ -30,9 +30,9 @@ import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector";
 import isColorLight from "../../../../utils/themeUtility";
-import { setAllInfo } from "../../../../store/hello/helloSlice.ts";
 
 import "./InterfaceChatbot.scss";
+import { getHelloDetailsStart } from "../../../../store/hello/helloSlice.ts";
 
 function ChatbotHeader({ setChatsLoading }) {
   const theme = useTheme();
@@ -156,71 +156,74 @@ const ResetChatOption = React.memo(
       };
 
       const EnableHumanAgent = async () => {
-        const widgetInfo = (
-          await axios.post(
-            "https://api.phone91.com/widget-info/",
-            {
-              user_data: {},
-              is_anon: false,
-            },
-            {
-              headers: {
-                authorization: process.env.REACT_APP_HELLO_ID,
-              },
-            }
-          )
-        )?.data;
-        const anonymousClientId = (
-          await axios.post(
-            "https://api.phone91.com/anonymous-client-details/",
-            "",
-            {
-              headers: {
-                authorization: process.env.REACT_APP_HELLO_ID,
-              },
-            }
-          )
-        )?.data?.data;
-        const socketJwt = (
-          await axios.get("https://api.phone91.com/jwt-token/", {
-            params: {
-              is_anon: "true",
-            },
-            headers: {
-              authorization: `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`,
-            },
-          })
-        )?.data?.data?.jwt_token;
-        const ChannelList = (
-          await axios.post(
-            "https://api.phone91.com/v2/pubnub-channels/list/",
-            {
-              uuid: anonymousClientId?.uuid,
-              anonymous_client_uuid: "",
-              user_data: {},
-              is_anon: true,
-            },
-            {
-              headers: {
-                accept: "application/json",
-                authorization: `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`,
-              },
-            }
-          )
-        )?.data;
-        console.log(widgetInfo, anonymousClientId, socketJwt, ChannelList);
         dispatch(
-          setAllInfo({
-            widgetInfo,
-            anonymousClientId,
-            Jwt: socketJwt,
-            ChannelList,
-          })
+          getHelloDetailsStart({ slugName: bridgeName, threadId: threadId })
         );
-        localStorage.setItem(
-          "HelloAgentAuth",
-          `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`
-        );
+        // const widgetInfo = (
+        //   await axios.post(
+        //     "https://api.phone91.com/widget-info/",
+        //     {
+        //       user_data: {},
+        //       is_anon: false,
+        //     },
+        //     {
+        //       headers: {
+        //         authorization: process.env.REACT_APP_HELLO_ID,
+        //       },
+        //     }
+        //   )
+        // )?.data;
+        // const anonymousClientId = (
+        //   await axios.post(
+        //     "https://api.phone91.com/anonymous-client-details/",
+        //     "",
+        //     {
+        //       headers: {
+        //         authorization: process.env.REACT_APP_HELLO_ID,
+        //       },
+        //     }
+        //   )
+        // )?.data?.data;
+        // const socketJwt = (
+        //   await axios.get("https://api.phone91.com/jwt-token/", {
+        //     params: {
+        //       is_anon: "true",
+        //     },
+        //     headers: {
+        //       authorization: `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`,
+        //     },
+        //   })
+        // )?.data?.data?.jwt_token;
+        // const ChannelList = (
+        //   await axios.post(
+        //     "https://api.phone91.com/v2/pubnub-channels/list/",
+        //     {
+        //       uuid: anonymousClientId?.uuid,
+        //       anonymous_client_uuid: "",
+        //       user_data: {},
+        //       is_anon: true,
+        //     },
+        //     {
+        //       headers: {
+        //         accept: "application/json",
+        //         authorization: `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`,
+        //       },
+        //     }
+        //   )
+        // )?.data;
+        // console.log(widgetInfo, anonymousClientId, socketJwt, ChannelList);
+        // dispatch(
+        //   setAllInfo({
+        //     widgetInfo,
+        //     anonymousClientId,
+        //     Jwt: socketJwt,
+        //     ChannelList,
+        //   })
+        // );
+        // localStorage.setItem(
+        //   "HelloAgentAuth",
+        //   `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`
+        // );
       };
       return (
         <Box className="ml-2 flex-center-center">

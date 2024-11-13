@@ -4,5 +4,6 @@ export interface $HelloReduxType {
   anonymousClientId: any;
   socketJwt: any;
   ChannelList: any;
-  Channel: any;
+  Channel?: any;
+  isLoading?: boolean;
 }

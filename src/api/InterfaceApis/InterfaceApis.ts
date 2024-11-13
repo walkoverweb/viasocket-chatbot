@@ -215,6 +215,24 @@ export async function loginUser(data: any): Promise<{ [key: string]: any }[]> {
   return response?.data?.data;
 }
 
+export async function getHelloDetailsApi({
+  threadId,
+  slugName,
+}: {
+  threadId: string;
+  slugName: string;
+}): Promise<any> {
+  try {
+    const response = await axios.post(`${URL}/hello/subscribe`, {
+      threadId,
+      slugName,
+    });
+    return response?.data;
+  } catch (error) {
+    console.error("Error getting hello details:", error);
+    return null;
+  }
+}
 export const createScripts = async (data: any, type = "flow") => {
   try {
     data.type = type;
