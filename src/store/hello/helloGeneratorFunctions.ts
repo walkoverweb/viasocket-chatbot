@@ -10,10 +10,15 @@ export function* getHelloDetailsSaga(
 ): SagaIterator {
   try {
     const { threadId, slugName } = action.payload;
-    const response: { [key: string]: any }[] = yield call(getHelloDetailsApi, {
+    const response: { [key: string]: any } = yield call(getHelloDetailsApi, {
       slugName,
       threadId,
     });
+    const helloId = response?.widgetInfo?.helloId;
+    const anonymousClientId = response?.ChannelList?.uuid;
+    if (helloId && anonymousClientId) {
+      localStorage.setItem("HelloAgentAuth", `${helloId}:${anonymousClientId}`);
+    }
     yield put(getHelloDetailsSuccess(response));
   } catch (error) {
     errorToast(
