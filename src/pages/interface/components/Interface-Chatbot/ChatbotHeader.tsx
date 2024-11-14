@@ -1,5 +1,6 @@
 import ChatIcon from "@mui/icons-material/Chat";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import Person2Icon from "@mui/icons-material/Person2";
 import SyncIcon from "@mui/icons-material/Sync";
 import {
   Box,
@@ -20,7 +21,8 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useContext } from "react";
-import { resetChatsAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
+import { useDispatch } from "react-redux";
+import { performChatAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 import { ChatbotContext } from "../../../../App";
 import { successToast } from "../../../../components/customToast";
 import { ParamsEnums } from "../../../../enums";
@@ -28,8 +30,10 @@ import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector";
 import isColorLight from "../../../../utils/themeUtility";
-import "./InterfaceChatbot.scss";
+
+import { setHuman } from "../../../../store/hello/helloSlice.ts";
 import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
+import "./InterfaceChatbot.scss";
 
 function ChatbotHeader({ setChatsLoading }) {
   const theme = useTheme();
@@ -119,14 +123,15 @@ const ResetChatOption = React.memo(
       interfaceId,
     }) => {
       const [modalOpen, setModalOpen] = React.useState(false);
-      const { threadId, bridgeName } = useCustomSelector(
+      const { threadId, bridgeName, IsHuman, mode } = useCustomSelector(
         (state: $ReduxCoreType) => ({
           threadId: state.Interface?.threadId || "",
           bridgeName: state.Interface?.bridgeName || "root",
+          IsHuman: state.Hello?.isHuman,
+          mode: state.Hello?.mode || [],
         })
       );
-
-      // const userId = localStorage.getItem("interfaceUserId");
+      const dispatch = useDispatch();
       const userId = GetSessionStorageData("interfaceUserId");
       const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
       const open = Boolean(anchorEl);
@@ -142,13 +147,27 @@ const ResetChatOption = React.memo(
       const resetHistory = async () => {
         if (preview) return;
         setChatsLoading(true);
-        await resetChatsAction({
+        await performChatAction({
           userId,
           thread_id: threadId,
           slugName: bridgeName,
           chatBotId: interfaceId,
+          purpose: "is_reset",
         });
         handleClose();
+        setChatsLoading(false);
+      };
+
+      const EnableHumanAgent = async () => {
+        setChatsLoading(true);
+        dispatch(setHuman({}));
+        await performChatAction({
+          userId,
+          thread_id: threadId,
+          slugName: bridgeName,
+          chatBotId: interfaceId,
+          purpose: "human",
+        });
         setChatsLoading(false);
       };
 
@@ -171,7 +190,18 @@ const ResetChatOption = React.memo(
               "aria-labelledby": "basic-button",
             }}
           >
-            <MenuItem onClick={resetHistory}>
+            {mode?.length > 0 && (
+              <MenuItem
+                onClick={IsHuman ? undefined : EnableHumanAgent}
+                disabled={IsHuman}
+              >
+                <ListItemIcon>
+                  <Person2Icon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Enable Human-agent</ListItemText>
+              </MenuItem>
+            )}
+            <MenuItem onClick={resetHistory} disabled={IsHuman}>
               <ListItemIcon>
                 <SyncIcon fontSize="small" />
               </ListItemIcon>
