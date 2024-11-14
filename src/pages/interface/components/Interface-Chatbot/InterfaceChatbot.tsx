@@ -109,6 +109,7 @@ function InterfaceChatbot({
   const messageRef = useRef<any>();
   const [options, setOptions] = useState<any>([]);
   const socket = useSocket();
+
   const [threadId, setThreadId] = useState(
     GetSessionStorageData("threadId") || reduxThreadId
   );
@@ -129,14 +130,14 @@ function InterfaceChatbot({
       () =>
         !inpreview
           ? [
-              { content: "hello how are you ", role: "user" },
-              {
-                responseId: "Response24131",
-                content:
-                  '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
-                role: "assistant",
-              },
-            ]
+            { content: "hello how are you ", role: "user" },
+            {
+              responseId: "Response24131",
+              content:
+                '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
+              role: "assistant",
+            },
+          ]
           : [],
       [inpreview]
     )
