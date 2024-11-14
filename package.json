@@ -31,7 +31,8 @@
     "redux-saga": "^1.2.3",
     "remark-gfm": "^4.0.0",
     "rtlayer-client": "^1.1.1",
-    "sass": "^1.77.1"
+    "sass": "^1.77.1",
+    "socket.io-client": "^4.8.1"
   },
   "scripts": {
     "start": "react-scripts start",

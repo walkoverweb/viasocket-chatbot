@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { Box, Grid, LinearProgress, useTheme } from "@mui/material";
+import axios from "axios";
 import React, {
   createContext,
   useCallback,
@@ -8,16 +9,24 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useDispatch } from "react-redux";
 import WebSocketClient from "rtlayer-client";
 import {
+  getHelloChatsApi,
   getPreviousMessage,
   sendDataToAction,
 } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 import { errorToast } from "../../../../components/customToast.js";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
+import {
+  getHelloDetailsStart,
+  setChannel,
+  setHuman,
+} from "../../../../store/hello/helloSlice.ts";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector.js";
+import useSocket from "../../hooks/socket.js";
 import ChatbotHeader from "./ChatbotHeader.tsx";
 import ChatbotTextField from "./ChatbotTextField.tsx";
 import "./InterfaceChatbot.scss";
@@ -52,6 +61,8 @@ export const MessageContext = createContext<{
   messages: MessageType[] | [];
   addMessage?: (message: string) => void;
   setMessages?: (message: MessageType[]) => void;
+  threadId?: string;
+  bridgeName?: string;
 }>({
   messages: [],
 });
@@ -60,19 +71,44 @@ function InterfaceChatbot({
   props,
   inpreview = true,
   interfaceId,
-  dragRef,
 }: InterfaceChatbotProps) {
   const theme = useTheme(); // Hook to access the theme
 
-  const { interfaceContextData, reduxThreadId, reduxBridgeName } =
-    useCustomSelector((state: $ReduxCoreType) => ({
-      interfaceContextData:
-        state.Interface?.interfaceContext?.[interfaceId]?.[
-          state.Interface?.bridgeName || "root"
-        ]?.interfaceData,
-      reduxThreadId: state.Interface?.threadId || "",
-      reduxBridgeName: state.Interface?.bridgeName || "root",
-    }));
+  const {
+    interfaceContextData,
+    reduxThreadId,
+    reduxBridgeName,
+    IsHuman,
+    uuid,
+    unique_id,
+    presence_channel,
+    team_id,
+    chat_id,
+    channelId,
+  } = useCustomSelector((state: $ReduxCoreType) => ({
+    interfaceContextData:
+      state.Interface?.interfaceContext?.[interfaceId]?.[
+        state.Interface?.bridgeName || "root"
+      ]?.interfaceData,
+    reduxThreadId: state.Interface?.threadId || "",
+    reduxBridgeName: state.Interface?.bridgeName || "root",
+    IsHuman: state.Hello.isHuman || false,
+    uuid: state.Hello.ChannelList?.uuid,
+    unique_id: state.Hello.ChannelList?.unique_id,
+    presence_channel: state.Hello.ChannelList?.presence_channel,
+    team_id: state.Hello.widgetInfo.team?.[0]?.id,
+    chat_id: state.Hello.Channel?.id,
+    channelId: state.Hello.Channel?.channel || null,
+  }));
+
+  const [chatsLoading, setChatsLoading] = useState(false);
+  const timeoutIdRef = useRef<any>(null);
+  // const userId = localStorage.getItem("interfaceUserId");
+  const userId = GetSessionStorageData("interfaceUserId");
+  const [loading, setLoading] = useState(false);
+  const messageRef = useRef<any>();
+  const [options, setOptions] = useState<any>([]);
+  const socket = useSocket();
 
   const [threadId, setThreadId] = useState(
     GetSessionStorageData("threadId") || reduxThreadId
@@ -89,13 +125,6 @@ function InterfaceChatbot({
     setBridgeName(GetSessionStorageData("bridgeName"));
   }, [reduxBridgeName]);
 
-  const [chatsLoading, setChatsLoading] = useState(false);
-  const timeoutIdRef = useRef<any>(null);
-  // const userId = localStorage.getItem("interfaceUserId");
-  const userId = GetSessionStorageData("interfaceUserId");
-  const [loading, setLoading] = useState(false);
-  const messageRef = useRef<any>();
-  const [options, setOptions] = useState<any>([]);
   const [messages, setMessages] = useState<MessageType[]>(
     useMemo(
       () =>
@@ -113,6 +142,7 @@ function InterfaceChatbot({
       [inpreview]
     )
   );
+  const dispatch = useDispatch();
 
   const addMessage = (message: string) => {
     onSend(message);
@@ -157,6 +187,37 @@ function InterfaceChatbot({
     };
   }, [handleMessage]);
 
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("NewPublish", (data) => {
+      console.log("New message in channel:", data);
+      const { response } = data;
+      const { message } = response || {};
+      const { content, chat_id, from_name, sender_id } = message || {};
+      const text = content?.text;
+      if (text && !chat_id) {
+        setLoading(false);
+        clearTimeout(timeoutIdRef.current);
+        setMessages((prevMessages) => [
+          ...prevMessages.slice(0, -1),
+          {
+            role: sender_id === "bot" ? "Bot" : "Human",
+            from_name,
+            content: text,
+          },
+        ]);
+      }
+    });
+    socket.on("message", (data) => {
+      // console.log("New message in channel message", data);
+    });
+
+    return () => {
+      socket.off("NewPublish");
+      socket.off("message");
+    };
+  }, [socket]);
+
   const startTimeoutTimer = () => {
     timeoutIdRef.current = setTimeout(() => {
       setMessages((prevMessages) => {
@@ -177,6 +238,14 @@ function InterfaceChatbot({
         const previousChats = await getPreviousMessage(threadId, bridgeName);
         if (Array.isArray(previousChats)) {
           setMessages(previousChats.length === 0 ? [] : [...previousChats]);
+          if (
+            previousChats.length > 0 &&
+            previousChats[previousChats.length - 1].mode === 1
+          ) {
+            // Call another API here
+            dispatch(setHuman({}));
+            getHelloPreviousHistory(previousChats);
+          }
         } else {
           setMessages([]);
           console.error("previousChats is not an array");
@@ -190,6 +259,46 @@ function InterfaceChatbot({
     }
   };
 
+  const getHelloPreviousHistory = async (previousChats) => {
+    if (channelId && uuid) {
+      const helloChats = (await getHelloChatsApi({ channelId: channelId }))
+        ?.data?.data;
+      let filterChats = helloChats
+        .map((chat) => {
+          let role;
+
+          if (chat?.message?.from_name) {
+            role = "Human";
+          } else if (
+            !chat?.message?.from_name &&
+            chat?.message?.sender_id === "bot"
+          ) {
+            role = "Bot";
+          } else {
+            role = "user";
+          }
+
+          return {
+            role: role,
+            from_name: chat?.message?.from_name,
+            content: chat?.message?.content?.text,
+          };
+        })
+        .reverse();
+      setMessages([...previousChats, ...filterChats]);
+    } else {
+      console.error("helloChats is not an array or empty");
+    }
+  };
+
+  const subscribeToChannel = () => {
+    if (bridgeName && threadId) {
+      dispatch(
+        getHelloDetailsStart({ slugName: bridgeName, threadId: threadId })
+      );
+    }
+  };
+
   useEffect(() => {
     if (inpreview) {
       const subscribe = () => {
@@ -198,6 +307,7 @@ function InterfaceChatbot({
       client.on("open", subscribe);
       subscribe();
       getallPreviousHistory();
+      subscribeToChannel();
 
       const handleMessage = (message: string) => {
         // Parse the incoming message string into an object
@@ -241,7 +351,11 @@ function InterfaceChatbot({
           // all previous message and new object inserted
           setMessages((prevMessages) => [
             ...prevMessages,
-            { role: "reset", content: "Resetting the chat" },
+            {
+              role: "reset",
+              mode: parsedMessage?.response?.data?.mode,
+              content: "Resetting the chat",
+            },
           ]);
         } else if (parsedMessage?.response?.data) {
           // Handle the new structure with response data
@@ -307,9 +421,74 @@ function InterfaceChatbot({
     messageRef.current.value = "";
   };
 
+  const sendMessageToHello = async (message: string) => {
+    const channelDetail = {
+      call_enabled: null,
+      uuid: uuid,
+      country: null,
+      pseudo_name: null,
+      unique_id: unique_id,
+      presence_channel: presence_channel,
+      country_iso2: null,
+      chatInputSubmitted: false,
+      is_blocked: null,
+      customer_name: null,
+      customer_number: null,
+      customer_mail: null,
+      team_id: team_id,
+      new: true,
+    };
+
+    const response = (
+      await axios.post(
+        "https://api.phone91.com/v2/send/",
+        {
+          type: "widget",
+          message_type: "text",
+          content: {
+            text: message,
+            attachment: [],
+          },
+          ...(!channelId ? { channelDetail: channelDetail } : {}),
+          chat_id: !channelId ? null : chat_id,
+          session_id: null,
+          user_data: {},
+          is_anon: true,
+        },
+        {
+          headers: {
+            accept: "application/json",
+            authorization: localStorage.getItem("HelloAgentAuth"),
+          },
+        }
+      )
+    )?.data?.data;
+    if (!channelId) dispatch(setChannel({ Channel: response }));
+  };
+
+  const onSendHello = (msg?: string, apiCall: boolean = true) => {
+    const textMessage = msg || messageRef.current.value;
+    if (!textMessage) return;
+    apiCall && sendMessageToHello(textMessage);
+    setLoading(true);
+    setOptions([]);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { role: "user", content: textMessage },
+      { role: "assistant", wait: true, content: "Rsponse is on its way..." },
+    ]);
+    messageRef.current.value = "";
+  };
+
   return (
     <MessageContext.Provider
-      value={{ messages: messages, addMessage, setMessages }}
+      value={{
+        messages: messages,
+        addMessage,
+        setMessages,
+        threadId,
+        bridgeName,
+      }}
     >
       <Box
         sx={{
@@ -336,11 +515,6 @@ function InterfaceChatbot({
           sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
         >
           <MessageList />
-          {/* <DefaultQuestions
-            defaultQuestion={defaultQuestion}
-            messageRef={messageRef}
-            onSend={onSend}
-          /> */}
         </Grid>
         <Grid
           item
@@ -359,7 +533,7 @@ function InterfaceChatbot({
             loading={loading}
             options={options}
             onSend={() => {
-              onSend();
+              IsHuman ? onSendHello() : onSend();
             }}
             messageRef={messageRef}
           />
