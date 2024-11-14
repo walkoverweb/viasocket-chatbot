@@ -19,7 +19,10 @@ import {
 import { errorToast } from "../../../../components/customToast.js";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
-import { setChannel } from "../../../../store/hello/helloSlice.ts";
+import {
+  getHelloDetailsStart,
+  setChannel,
+} from "../../../../store/hello/helloSlice.ts";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector.js";
 import useSocket from "../../hooks/socket.js";
@@ -125,14 +128,14 @@ function InterfaceChatbot({
       () =>
         !inpreview
           ? [
-            { content: "hello how are you ", role: "user" },
-            {
-              responseId: "Response24131",
-              content:
-                '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
-              role: "assistant",
-            },
-          ]
+              { content: "hello how are you ", role: "user" },
+              {
+                responseId: "Response24131",
+                content:
+                  '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
+                role: "assistant",
+              },
+            ]
           : [],
       [inpreview]
     )
@@ -184,13 +187,12 @@ function InterfaceChatbot({
 
   useEffect(() => {
     if (!socket) return;
-
     socket.on("NewPublish", (data) => {
+      console.log("New message in channel:", data);
       const { response } = data;
       const { message } = response || {};
       const { content, chat_id, from_name, sender_id } = message || {};
       const text = content?.text;
-      console.log("New message in channel:", data, !chat_id);
       if (text && !chat_id) {
         setLoading(false);
         clearTimeout(timeoutIdRef.current);
@@ -234,37 +236,22 @@ function InterfaceChatbot({
         const previousChats = await getPreviousMessage(threadId, bridgeName);
         if (Array.isArray(previousChats)) {
           setMessages(previousChats.length === 0 ? [] : [...previousChats]);
+          if (
+            previousChats.length > 0 &&
+            previousChats[previousChats.length - 1].mode === 1 &&
+            bridgeName &&
+            threadId
+          ) {
+            // Call another API here
+            dispatch(
+              getHelloDetailsStart({ slugName: bridgeName, threadId: threadId })
+            );
+          }
         } else {
           setMessages([]);
           console.error("previousChats is not an array");
         }
-        if (uuid) {
-          const helloChats = (await getHelloChatsApi({ channelId: channelId }))
-            ?.data?.data;
-          let filterChats = helloChats.map((chat) => {
-            let role;
-
-            if (chat?.message?.from_name) {
-              role = "Human";
-            } else if (
-              !chat?.message?.from_name &&
-              chat?.message?.sender_id === "bot"
-            ) {
-              role = "Bot";
-            } else {
-              role = "user";
-            }
-
-            return {
-              role: role,
-              from_name: chat?.message?.from_name,
-              content: chat?.message?.content?.text,
-            };
-          });
-          setMessages((prevMessages) => [...prevMessages, ...filterChats]);
-        } else {
-          console.error("helloChats is not an array or empty");
-        }
+        getHelloPreviousHistory(previousChats);
       } catch (error) {
         console.error("Error fetching previous chats:", error);
         setMessages([]);
@@ -273,6 +260,42 @@ function InterfaceChatbot({
       }
     }
   };
+
+  const getHelloPreviousHistory = async (previousChats) => {
+    if (channelId && uuid) {
+      const helloChats = (await getHelloChatsApi({ channelId: channelId }))
+        ?.data?.data;
+      let filterChats = helloChats
+        .map((chat) => {
+          let role;
+
+          if (chat?.message?.from_name) {
+            role = "Human";
+          } else if (
+            !chat?.message?.from_name &&
+            chat?.message?.sender_id === "bot"
+          ) {
+            role = "Bot";
+          } else {
+            role = "user";
+          }
+
+          return {
+            role: role,
+            from_name: chat?.message?.from_name,
+            content: chat?.message?.content?.text,
+          };
+        })
+        .reverse();
+      setMessages([...previousChats, ...filterChats]);
+    } else {
+      console.error("helloChats is not an array or empty");
+    }
+  };
+
+  useEffect(() => {
+    getHelloPreviousHistory(messages);
+  }, [channelId, uuid]);
 
   useEffect(() => {
     if (inpreview) {
@@ -470,7 +493,10 @@ function InterfaceChatbot({
           position: "relative",
         }}
       >
-        <ChatbotHeader setChatsLoading={setChatsLoading} />
+        <ChatbotHeader
+          setChatsLoading={setChatsLoading}
+          setMessages={setMessages}
+        />
         {chatsLoading && (
           <LinearProgress
             variant="indeterminate"

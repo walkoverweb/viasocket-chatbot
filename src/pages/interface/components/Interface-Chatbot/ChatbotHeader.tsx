@@ -35,7 +35,7 @@ import "./InterfaceChatbot.scss";
 import { getHelloDetailsStart } from "../../../../store/hello/helloSlice.ts";
 import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
 
-function ChatbotHeader({ setChatsLoading }) {
+function ChatbotHeader({ setChatsLoading, setMessages }) {
   const theme = useTheme();
   const {
     chatbotConfig: { chatbotTitle, chatbotSubtitle },
@@ -62,6 +62,7 @@ function ChatbotHeader({ setChatsLoading }) {
           <ResetChatOption
             textColor={textColor}
             setChatsLoading={setChatsLoading}
+            setMessages={setMessages}
           />
         </Box>
         {chatbotSubtitle && (
@@ -121,6 +122,7 @@ const ResetChatOption = React.memo(
       setChatsLoading = () => {},
       preview = false,
       interfaceId,
+      setMessages,
     }) => {
       const [modalOpen, setModalOpen] = React.useState(false);
       const { threadId, bridgeName, IsHuman } = useCustomSelector(
@@ -154,6 +156,18 @@ const ResetChatOption = React.memo(
         });
         handleClose();
         setChatsLoading(false);
+
+        // Update messages to add mode = true to the last message
+        setMessages((prevMessages) => {
+          const updatedMessages = [...prevMessages];
+          if (updatedMessages.length > 0) {
+            updatedMessages[updatedMessages.length - 1] = {
+              ...updatedMessages[updatedMessages.length - 1],
+              mode: 1,
+            };
+          }
+          return updatedMessages;
+        });
       };
 
       const EnableHumanAgent = async () => {

@@ -32,6 +32,7 @@ export const reducers: ValidateSliceCaseReducers<
     state.ChannelList = ChannelList;
     state.isHuman = true;
     state.isLoading = false;
+    state.Channel = ChannelList?.channels?.[0];
   },
   setChannel(state, action) {
     state.Channel = action.payload.Channel;

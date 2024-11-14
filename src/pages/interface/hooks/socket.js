@@ -1,11 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 // import/no-extraneous-dependencies
 import io from "socket.io-client";
 import { useCustomSelector } from "../../../utils/deepCheckSelector";
 
+const forceUpdateReducer = (x) => x + 1;
 const useSocket = () => {
+  const [, forceUpdate] = useReducer(forceUpdateReducer, 0);
   const socketRef = useRef(null);
-
   const { jwtToken, channelId, eventChannels } = useCustomSelector((state) => ({
     jwtToken: state.Hello.socketJwt.jwt,
     channelId: state.Hello.Channel?.channel || null,
@@ -48,10 +49,11 @@ const useSocket = () => {
     });
 
     socketRef.current = socketInstance;
+    forceUpdate();
 
     // eslint-disable-next-line consistent-return
     return () => {
-      console.log("hello");
+      console.log("disconnection socket");
       socketInstance.disconnect();
     };
   }, [jwtToken, channelId, eventChannels]);

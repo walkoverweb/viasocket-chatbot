@@ -431,7 +431,7 @@ const HumanOrBotMessageCard = React.memo(
             }}
             spacing="5px"
           >
-            {isBot ? (
+            {!isBot ? (
               <img
                 src={HumanIcon}
                 width="28"
@@ -439,7 +439,15 @@ const HumanOrBotMessageCard = React.memo(
                 alt="AI"
                 style={{ color: "red" }}
               />
-            ) : null}
+            ) : (
+              <img
+                src={AiIcon}
+                width="28"
+                height="28"
+                alt="AI"
+                style={{ color: "red" }}
+              />
+            )}
           </Stack>
 
           <Box
