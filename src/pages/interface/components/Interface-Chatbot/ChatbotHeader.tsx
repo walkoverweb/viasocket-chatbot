@@ -22,7 +22,7 @@ import {
 import axios from "axios";
 import React, { useContext } from "react";
 import { useDispatch } from "react-redux";
-import { resetChatsAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
+import { performChatAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 import { ChatbotContext } from "../../../../App";
 import { successToast } from "../../../../components/customToast";
 import { ParamsEnums } from "../../../../enums";
@@ -31,11 +31,11 @@ import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector";
 import isColorLight from "../../../../utils/themeUtility";
 
-import "./InterfaceChatbot.scss";
-import { getHelloDetailsStart } from "../../../../store/hello/helloSlice.ts";
+import { setHuman } from "../../../../store/hello/helloSlice.ts";
 import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
+import "./InterfaceChatbot.scss";
 
-function ChatbotHeader({ setChatsLoading, setMessages }) {
+function ChatbotHeader({ setChatsLoading }) {
   const theme = useTheme();
   const {
     chatbotConfig: { chatbotTitle, chatbotSubtitle },
@@ -62,7 +62,6 @@ function ChatbotHeader({ setChatsLoading, setMessages }) {
           <ResetChatOption
             textColor={textColor}
             setChatsLoading={setChatsLoading}
-            setMessages={setMessages}
           />
         </Box>
         {chatbotSubtitle && (
@@ -122,7 +121,6 @@ const ResetChatOption = React.memo(
       setChatsLoading = () => {},
       preview = false,
       interfaceId,
-      setMessages,
     }) => {
       const [modalOpen, setModalOpen] = React.useState(false);
       const { threadId, bridgeName, IsHuman } = useCustomSelector(
@@ -148,98 +146,30 @@ const ResetChatOption = React.memo(
       const resetHistory = async () => {
         if (preview) return;
         setChatsLoading(true);
-        await resetChatsAction({
+        await performChatAction({
           userId,
           thread_id: threadId,
           slugName: bridgeName,
           chatBotId: interfaceId,
+          purpose: "is_reset",
         });
         handleClose();
         setChatsLoading(false);
-
-        // Update messages to add mode = true to the last message
-        setMessages((prevMessages) => {
-          const updatedMessages = [...prevMessages];
-          if (updatedMessages.length > 0) {
-            updatedMessages[updatedMessages.length - 1] = {
-              ...updatedMessages[updatedMessages.length - 1],
-              mode: 1,
-            };
-          }
-          return updatedMessages;
-        });
       };
 
       const EnableHumanAgent = async () => {
-        dispatch(
-          getHelloDetailsStart({ slugName: bridgeName, threadId: threadId })
-        );
-        // const widgetInfo = (
-        //   await axios.post(
-        //     "https://api.phone91.com/widget-info/",
-        //     {
-        //       user_data: {},
-        //       is_anon: false,
-        //     },
-        //     {
-        //       headers: {
-        //         authorization: process.env.REACT_APP_HELLO_ID,
-        //       },
-        //     }
-        //   )
-        // )?.data;
-        // const anonymousClientId = (
-        //   await axios.post(
-        //     "https://api.phone91.com/anonymous-client-details/",
-        //     "",
-        //     {
-        //       headers: {
-        //         authorization: process.env.REACT_APP_HELLO_ID,
-        //       },
-        //     }
-        //   )
-        // )?.data?.data;
-        // const socketJwt = (
-        //   await axios.get("https://api.phone91.com/jwt-token/", {
-        //     params: {
-        //       is_anon: "true",
-        //     },
-        //     headers: {
-        //       authorization: `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`,
-        //     },
-        //   })
-        // )?.data?.data?.jwt_token;
-        // const ChannelList = (
-        //   await axios.post(
-        //     "https://api.phone91.com/v2/pubnub-channels/list/",
-        //     {
-        //       uuid: anonymousClientId?.uuid,
-        //       anonymous_client_uuid: "",
-        //       user_data: {},
-        //       is_anon: true,
-        //     },
-        //     {
-        //       headers: {
-        //         accept: "application/json",
-        //         authorization: `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`,
-        //       },
-        //     }
-        //   )
-        // )?.data;
-        // console.log(widgetInfo, anonymousClientId, socketJwt, ChannelList);
-        // dispatch(
-        //   setAllInfo({
-        //     widgetInfo,
-        //     anonymousClientId,
-        //     Jwt: socketJwt,
-        //     ChannelList,
-        //   })
-        // );
-        // localStorage.setItem(
-        //   "HelloAgentAuth",
-        //   `${process.env.REACT_APP_HELLO_ID}:${anonymousClientId?.uuid}`
-        // );
+        setChatsLoading(true);
+        dispatch(setHuman({}));
+        await performChatAction({
+          userId,
+          thread_id: threadId,
+          slugName: bridgeName,
+          chatBotId: interfaceId,
+          purpose: "human",
+        });
+        setChatsLoading(false);
       };
+
       return (
         <Box className="ml-2 flex-center-center">
           <KeyboardArrowDownIcon
@@ -268,7 +198,7 @@ const ResetChatOption = React.memo(
               </ListItemIcon>
               <ListItemText>Enable Human-agent</ListItemText>
             </MenuItem>
-            <MenuItem onClick={resetHistory}>
+            <MenuItem onClick={resetHistory} disabled={IsHuman}>
               <ListItemIcon>
                 <SyncIcon fontSize="small" />
               </ListItemIcon>

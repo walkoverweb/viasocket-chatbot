@@ -31,7 +31,11 @@ import { AiIcon, HumanIcon } from "../../../../assests/assestsIndex.ts";
 const ResetHistoryLine = ({ text = "" }) => {
   return (
     <Divider className="mb-2">
-      <Chip label={text || "History cleared"} size="small" color="error" />
+      <Chip
+        label={text || "History cleared"}
+        size="small"
+        color={!text ? "error" : "success"}
+      />
     </Divider>
   );
 };
@@ -554,7 +558,7 @@ function Message({ message, handleFeedback, addMessage }: any) {
           </Typography>
         </Box>
       ) : message?.role === "reset" ? (
-        <ResetHistoryLine />
+        <ResetHistoryLine text={message?.mode ? "Talk to human" : ""} />
       ) : null}
     </Box>
   );

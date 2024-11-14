@@ -12,5 +12,6 @@ export const {
   setChannel,
   getHelloDetailsStart,
   getHelloDetailsSuccess,
+  setHuman,
 } = interfaceSlice.actions;
 export default interfaceSlice.reducer;

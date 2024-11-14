@@ -166,7 +166,7 @@ export async function sendDataToAction(data: any): Promise<any> {
   }
 }
 
-export async function resetChatsAction(
+export async function performChatAction(
   data: any
 ): Promise<{ [key: string]: any }[]> {
   try {

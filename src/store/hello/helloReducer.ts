@@ -30,11 +30,15 @@ export const reducers: ValidateSliceCaseReducers<
     state.anonymousClientId = anonymousClientId;
     state.socketJwt = { jwt: Jwt };
     state.ChannelList = ChannelList;
-    state.isHuman = true;
+    state.isHuman = ChannelList?.channels?.[0]?.channel || false;
     state.isLoading = false;
     state.Channel = ChannelList?.channels?.[0];
   },
   setChannel(state, action) {
     state.Channel = action.payload.Channel;
+    state.isHuman = true;
+  },
+  setHuman(state) {
+    state.isHuman = true;
   },
 };

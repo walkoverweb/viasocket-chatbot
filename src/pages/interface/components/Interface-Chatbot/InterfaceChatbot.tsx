@@ -22,6 +22,7 @@ import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import {
   getHelloDetailsStart,
   setChannel,
+  setHuman,
 } from "../../../../store/hello/helloSlice.ts";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector.js";
@@ -199,7 +200,7 @@ function InterfaceChatbot({
         setMessages((prevMessages) => [
           ...prevMessages.slice(0, -1),
           {
-            role: sender_id ? "Human" : "Bot",
+            role: sender_id === "bot" ? "Bot" : "Human",
             from_name,
             content: text,
           },
@@ -243,9 +244,7 @@ function InterfaceChatbot({
             threadId
           ) {
             // Call another API here
-            dispatch(
-              getHelloDetailsStart({ slugName: bridgeName, threadId: threadId })
-            );
+            dispatch(setHuman({ slugName: bridgeName, threadId: threadId }));
           }
         } else {
           setMessages([]);
@@ -293,10 +292,17 @@ function InterfaceChatbot({
     }
   };
 
-  useEffect(() => {
-    getHelloPreviousHistory(messages);
-  }, [channelId, uuid]);
+  // useEffect(() => {
+  //   getHelloPreviousHistory(messages);
+  // }, [channelId, uuid]);
 
+  const subscribeToChannel = () => {
+    if (bridgeName && threadId) {
+      dispatch(
+        getHelloDetailsStart({ slugName: bridgeName, threadId: threadId })
+      );
+    }
+  };
   useEffect(() => {
     if (inpreview) {
       const subscribe = () => {
@@ -305,6 +311,7 @@ function InterfaceChatbot({
       client.on("open", subscribe);
       subscribe();
       getallPreviousHistory();
+      subscribeToChannel();
 
       const handleMessage = (message: string) => {
         // Parse the incoming message string into an object
@@ -348,7 +355,11 @@ function InterfaceChatbot({
           // all previous message and new object inserted
           setMessages((prevMessages) => [
             ...prevMessages,
-            { role: "reset", content: "Resetting the chat" },
+            {
+              role: "reset",
+              mode: parsedMessage?.response?.data?.mode,
+              content: "Resetting the chat",
+            },
           ]);
         } else if (parsedMessage?.response?.data) {
           // Handle the new structure with response data
@@ -468,7 +479,7 @@ function InterfaceChatbot({
     setMessages((prevMessages) => [
       ...prevMessages,
       { role: "user", content: textMessage },
-      { role: "assistant", content: "React you soon..." },
+      { role: "assistant", wait: true, content: "Rsponse is on its way..." },
     ]);
     messageRef.current.value = "";
   };
