@@ -258,7 +258,6 @@ export async function getHelloChatsApi({
         },
       }
     );
-    console.log(response.data, "response");
     return response?.data;
   } catch (error) {
     console.error("Error getting hello details:", error);

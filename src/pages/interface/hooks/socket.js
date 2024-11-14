@@ -53,7 +53,6 @@ const useSocket = () => {
 
     // eslint-disable-next-line consistent-return
     return () => {
-      console.log("disconnection socket");
       socketInstance.disconnect();
     };
   }, [jwtToken, channelId, eventChannels]);

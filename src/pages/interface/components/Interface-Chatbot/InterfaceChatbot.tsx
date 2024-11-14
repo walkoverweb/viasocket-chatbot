@@ -130,14 +130,14 @@ function InterfaceChatbot({
       () =>
         !inpreview
           ? [
-            { content: "hello how are you ", role: "user" },
-            {
-              responseId: "Response24131",
-              content:
-                '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
-              role: "assistant",
-            },
-          ]
+              { content: "hello how are you ", role: "user" },
+              {
+                responseId: "Response24131",
+                content:
+                  '{\n  "response": "Our AI services are available for you anytime, Feel free to ask anything"\n}',
+                role: "assistant",
+              },
+            ]
           : [],
       [inpreview]
     )
@@ -209,7 +209,7 @@ function InterfaceChatbot({
       }
     });
     socket.on("message", (data) => {
-      console.log("New message in channel message", data);
+      // console.log("New message in channel message", data);
     });
 
     return () => {
@@ -240,18 +240,16 @@ function InterfaceChatbot({
           setMessages(previousChats.length === 0 ? [] : [...previousChats]);
           if (
             previousChats.length > 0 &&
-            previousChats[previousChats.length - 1].mode === 1 &&
-            bridgeName &&
-            threadId
+            previousChats[previousChats.length - 1].mode === 1
           ) {
             // Call another API here
-            dispatch(setHuman({ slugName: bridgeName, threadId: threadId }));
+            dispatch(setHuman({}));
+            getHelloPreviousHistory(previousChats);
           }
         } else {
           setMessages([]);
           console.error("previousChats is not an array");
         }
-        getHelloPreviousHistory(previousChats);
       } catch (error) {
         console.error("Error fetching previous chats:", error);
         setMessages([]);
@@ -293,10 +291,6 @@ function InterfaceChatbot({
     }
   };
 
-  // useEffect(() => {
-  //   getHelloPreviousHistory(messages);
-  // }, [channelId, uuid]);
-
   const subscribeToChannel = () => {
     if (bridgeName && threadId) {
       dispatch(
@@ -304,6 +298,7 @@ function InterfaceChatbot({
       );
     }
   };
+
   useEffect(() => {
     if (inpreview) {
       const subscribe = () => {
@@ -505,10 +500,7 @@ function InterfaceChatbot({
           position: "relative",
         }}
       >
-        <ChatbotHeader
-          setChatsLoading={setChatsLoading}
-          setMessages={setMessages}
-        />
+        <ChatbotHeader setChatsLoading={setChatsLoading} />
         {chatsLoading && (
           <LinearProgress
             variant="indeterminate"
@@ -523,11 +515,6 @@ function InterfaceChatbot({
           sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
         >
           <MessageList />
-          {/* <DefaultQuestions
-            defaultQuestion={defaultQuestion}
-            messageRef={messageRef}
-            onSend={onSend}
-          /> */}
         </Grid>
         <Grid
           item

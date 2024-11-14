@@ -14,13 +14,6 @@ export const reducers: ValidateSliceCaseReducers<
   $HelloReduxType,
   SliceCaseReducers<$HelloReduxType>
 > = {
-  setAllInfo(state, action) {
-    state.widgetInfo = action.payload.widgetInfo;
-    state.anonymousClientId = action.payload.anonymousClientId;
-    state.socketJwt = { jwt: action.payload.Jwt };
-    state.ChannelList = action.payload.ChannelList;
-    state.isHuman = true;
-  },
   getHelloDetailsStart(state) {
     return { ...state, isLoading: true };
   },

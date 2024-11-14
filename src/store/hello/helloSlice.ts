@@ -8,7 +8,6 @@ const interfaceSlice = createSlice({
 });
 
 export const {
-  setAllInfo,
   setChannel,
   getHelloDetailsStart,
   getHelloDetailsSuccess,
