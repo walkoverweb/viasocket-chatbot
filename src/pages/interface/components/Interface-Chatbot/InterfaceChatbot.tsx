@@ -92,13 +92,13 @@ function InterfaceChatbot({
       ]?.interfaceData,
     reduxThreadId: state.Interface?.threadId || "",
     reduxBridgeName: state.Interface?.bridgeName || "root",
-    IsHuman: state.Hello.isHuman || false,
-    uuid: state.Hello.ChannelList?.uuid,
-    unique_id: state.Hello.ChannelList?.unique_id,
-    presence_channel: state.Hello.ChannelList?.presence_channel,
-    team_id: state.Hello.widgetInfo.team?.[0]?.id,
-    chat_id: state.Hello.Channel?.id,
-    channelId: state.Hello.Channel?.channel || null,
+    IsHuman: state.Hello?.isHuman || false,
+    uuid: state.Hello?.ChannelList?.uuid,
+    unique_id: state.Hello?.ChannelList?.unique_id,
+    presence_channel: state.Hello?.ChannelList?.presence_channel,
+    team_id: state.Hello?.widgetInfo?.team?.[0]?.id,
+    chat_id: state.Hello?.Channel?.id,
+    channelId: state.Hello?.Channel?.channel || null,
   }));
 
   const [chatsLoading, setChatsLoading] = useState(false);

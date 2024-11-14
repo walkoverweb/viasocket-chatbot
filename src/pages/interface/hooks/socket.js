@@ -8,9 +8,9 @@ const useSocket = () => {
   const [, forceUpdate] = useReducer(forceUpdateReducer, 0);
   const socketRef = useRef(null);
   const { jwtToken, channelId, eventChannels } = useCustomSelector((state) => ({
-    jwtToken: state.Hello.socketJwt.jwt,
-    channelId: state.Hello.Channel?.channel || null,
-    eventChannels: state.Hello.widgetInfo.event_channels || [],
+    jwtToken: state.Hello?.socketJwt?.jwt,
+    channelId: state.Hello?.Channel?.channel || null,
+    eventChannels: state.Hello?.widgetInfo?.event_channels || [],
   }));
 
   useEffect(() => {

@@ -123,11 +123,12 @@ const ResetChatOption = React.memo(
       interfaceId,
     }) => {
       const [modalOpen, setModalOpen] = React.useState(false);
-      const { threadId, bridgeName, IsHuman } = useCustomSelector(
+      const { threadId, bridgeName, IsHuman, mode } = useCustomSelector(
         (state: $ReduxCoreType) => ({
           threadId: state.Interface?.threadId || "",
           bridgeName: state.Interface?.bridgeName || "root",
           IsHuman: state.Hello?.isHuman,
+          mode: state.Hello?.mode || [],
         })
       );
       const dispatch = useDispatch();
@@ -189,15 +190,17 @@ const ResetChatOption = React.memo(
               "aria-labelledby": "basic-button",
             }}
           >
-            <MenuItem
-              onClick={IsHuman ? undefined : EnableHumanAgent}
-              disabled={IsHuman}
-            >
-              <ListItemIcon>
-                <Person2Icon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Enable Human-agent</ListItemText>
-            </MenuItem>
+            {mode?.length > 0 && (
+              <MenuItem
+                onClick={IsHuman ? undefined : EnableHumanAgent}
+                disabled={IsHuman}
+              >
+                <ListItemIcon>
+                  <Person2Icon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Enable Human-agent</ListItemText>
+              </MenuItem>
+            )}
             <MenuItem onClick={resetHistory} disabled={IsHuman}>
               <ListItemIcon>
                 <SyncIcon fontSize="small" />
