@@ -6,4 +6,5 @@ export interface $HelloReduxType {
   ChannelList: any;
   Channel?: any;
   isLoading?: boolean;
+  mode?: Array<string | null>;
 }

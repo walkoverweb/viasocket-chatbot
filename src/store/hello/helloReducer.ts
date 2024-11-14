@@ -8,6 +8,7 @@ export const initialState: $HelloReduxType = {
   anonymousClientId: {},
   socketJwt: {},
   isLoading: false,
+  mode: [],
 };
 
 export const reducers: ValidateSliceCaseReducers<
@@ -18,7 +19,8 @@ export const reducers: ValidateSliceCaseReducers<
     return { ...state, isLoading: true };
   },
   getHelloDetailsSuccess(state, action) {
-    const { widgetInfo, ChannelList, Jwt, anonymousClientId } = action.payload;
+    const { widgetInfo, ChannelList, Jwt, anonymousClientId, mode } =
+      action.payload;
     state.widgetInfo = widgetInfo;
     state.anonymousClientId = anonymousClientId;
     state.socketJwt = { jwt: Jwt };
@@ -26,6 +28,7 @@ export const reducers: ValidateSliceCaseReducers<
     state.isHuman = ChannelList?.channels?.[0]?.channel || false;
     state.isLoading = false;
     state.Channel = ChannelList?.channels?.[0];
+    state.mode = mode;
   },
   setChannel(state, action) {
     state.Channel = action.payload.Channel;
