@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React, {
   useCallback,
   useContext,
@@ -12,6 +12,7 @@ import "./InterfaceChatbot.scss";
 import { MessageContext } from "./InterfaceChatbot.tsx";
 import Message from "./Message.tsx";
 import MoveToDownButton from "./MoveToDownButton.tsx";
+import { ChatBotGif } from "../../../../assests/assestsIndex.ts";
 
 function MessageList() {
   const containerRef = useRef<any>(null);
@@ -19,6 +20,7 @@ function MessageList() {
   const { messages, setMessages, addMessage } = MessagesList;
   const [showScrollButton, setShowScrollButton] = useState(false); // State to control the visibility of the button
   const [shouldScroll, setShouldScroll] = useState(true);
+  const [showIcon, setShowGif] = useState(false);
 
   const handleFeedback = useCallback(
     async (
@@ -102,6 +104,13 @@ function MessageList() {
     ));
   }, [messages, handleFeedback, addMessage]); // Include handleFeedback in dependencies
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowGif(true);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Box
       sx={{
@@ -114,7 +123,33 @@ function MessageList() {
       ref={containerRef}
     >
       <Box sx={{ flex: "1 1 auto", minHeight: 0 }}>
-        {RenderMessages} {/* Corrected to render the component */}
+        {messages.length === 0 ? (
+          <Box
+            sx={{
+              // display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+            }}
+            className="flex-col"
+          >
+            <img
+              src={ChatBotGif}
+              alt="Chatbot GIF"
+              style={{ display: showIcon ? "block" : "none" }}
+            />
+            <Typography
+              variant="h6"
+              color="primary"
+              fontWeight="bold"
+              style={{ display: showIcon ? "block" : "none" }}
+            >
+              What can I help with?
+            </Typography>
+          </Box>
+        ) : (
+          RenderMessages
+        )}
       </Box>
       <MoveToDownButton
         movetoDown={movetoDown}
