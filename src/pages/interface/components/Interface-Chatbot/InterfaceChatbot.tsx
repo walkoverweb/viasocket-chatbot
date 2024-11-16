@@ -248,20 +248,6 @@ function InterfaceChatbot({
         const previousChats = await getPreviousMessage(threadId, bridgeName);
         if (Array.isArray(previousChats)) {
           setMessages(previousChats.length === 0 ? [] : [...previousChats]);
-          console.log(
-            previousChats.length > 0,
-            previousChats[previousChats.length - 1].mode,
-            previousChats
-          );
-          if (
-            previousChats.length > 0 &&
-            previousChats[previousChats.length - 1].mode === 1
-          ) {
-            // Call another API here
-            console.log("Call another API here if");
-            dispatch(setHuman({}));
-            getHelloPreviousHistory(previousChats);
-          }
         } else {
           setMessages([]);
           console.error("previousChats is not an array");
@@ -276,9 +262,7 @@ function InterfaceChatbot({
   };
 
   const getHelloPreviousHistory = async (previousChats) => {
-    console.log("inside hello history", channelId, uuid);
     if (channelId && uuid) {
-      console.log("inside hello history nad if");
       const helloChats = (await getHelloChatsApi({ channelId: channelId }))
         ?.data?.data;
       let filterChats = helloChats
