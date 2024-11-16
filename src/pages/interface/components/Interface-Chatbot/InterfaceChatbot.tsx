@@ -142,6 +142,9 @@ function InterfaceChatbot({
       [inpreview]
     )
   );
+  useEffect(() => {
+    getHelloPreviousHistory(messages);
+  }, [channelId, uuid]);
   const dispatch = useDispatch();
 
   const addMessage = (message: string) => {
@@ -198,14 +201,21 @@ function InterfaceChatbot({
       if (text && !chat_id) {
         setLoading(false);
         clearTimeout(timeoutIdRef.current);
-        setMessages((prevMessages) => [
-          ...prevMessages.slice(0, -1),
-          {
-            role: sender_id === "bot" ? "Bot" : "Human",
-            from_name,
-            content: text,
-          },
-        ]);
+        setMessages((prevMessages) => {
+          const lastMessageId = prevMessages[prevMessages.length - 1]?.id;
+          if (lastMessageId !== response?.id) {
+            return [
+              ...prevMessages,
+              {
+                role: sender_id === "bot" ? "Bot" : "Human",
+                from_name,
+                content: text,
+                id: response?.id,
+              },
+            ];
+          }
+          return prevMessages;
+        });
       }
     });
     socket.on("message", (data) => {
@@ -238,14 +248,6 @@ function InterfaceChatbot({
         const previousChats = await getPreviousMessage(threadId, bridgeName);
         if (Array.isArray(previousChats)) {
           setMessages(previousChats.length === 0 ? [] : [...previousChats]);
-          if (
-            previousChats.length > 0 &&
-            previousChats[previousChats.length - 1].mode === 1
-          ) {
-            // Call another API here
-            dispatch(setHuman({}));
-            getHelloPreviousHistory(previousChats);
-          }
         } else {
           setMessages([]);
           console.error("previousChats is not an array");
@@ -470,12 +472,11 @@ function InterfaceChatbot({
     const textMessage = msg || messageRef.current.value;
     if (!textMessage) return;
     apiCall && sendMessageToHello(textMessage);
-    setLoading(true);
     setOptions([]);
     setMessages((prevMessages) => [
       ...prevMessages,
       { role: "user", content: textMessage },
-      { role: "assistant", wait: true, content: "Rsponse is on its way..." },
+      // { role: "assistant", content: "Rsponse is on its way..." },
     ]);
     messageRef.current.value = "";
   };
