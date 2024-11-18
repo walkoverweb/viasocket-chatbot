@@ -359,7 +359,6 @@ function InterfaceChatbot({
           parsedMessage?.response?.data?.role === "reset" &&
           !parsedMessage?.response?.data?.mode
         ) {
-          console.log(parsedMessage?.response?.data?.mode, 123123);
           // all previous message and new object inserted
           setMessages((prevMessages) => [
             ...prevMessages,
