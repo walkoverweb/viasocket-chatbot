@@ -59,12 +59,14 @@ interface MessageType {
 }
 export const MessageContext = createContext<{
   messages: MessageType[] | [];
+  helloMessages: any;
   addMessage?: (message: string) => void;
   setMessages?: (message: MessageType[]) => void;
   threadId?: string;
   bridgeName?: string;
 }>({
   messages: [],
+  helloMessages: [],
 });
 
 function InterfaceChatbot({
@@ -78,6 +80,7 @@ function InterfaceChatbot({
     interfaceContextData,
     reduxThreadId,
     reduxBridgeName,
+    reduxHelloId,
     IsHuman,
     uuid,
     unique_id,
@@ -92,6 +95,7 @@ function InterfaceChatbot({
       ]?.interfaceData,
     reduxThreadId: state.Interface?.threadId || "",
     reduxBridgeName: state.Interface?.bridgeName || "root",
+    reduxHelloId: state.Interface?.helloId || null,
     IsHuman: state.Hello?.isHuman || false,
     uuid: state.Hello?.ChannelList?.uuid,
     unique_id: state.Hello?.ChannelList?.unique_id,
@@ -103,7 +107,6 @@ function InterfaceChatbot({
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
-  // const userId = localStorage.getItem("interfaceUserId");
   const userId = GetSessionStorageData("interfaceUserId");
   const [loading, setLoading] = useState(false);
   const messageRef = useRef<any>();
@@ -116,6 +119,9 @@ function InterfaceChatbot({
   const [bridgeName, setBridgeName] = useState(
     GetSessionStorageData("bridgeName") || reduxBridgeName
   );
+  const [helloId, setHelloId] = useState(
+    GetSessionStorageData("helloId") || reduxHelloId
+  );
 
   useEffect(() => {
     setThreadId(GetSessionStorageData("threadId"));
@@ -124,6 +130,10 @@ function InterfaceChatbot({
   useEffect(() => {
     setBridgeName(GetSessionStorageData("bridgeName"));
   }, [reduxBridgeName]);
+
+  useEffect(() => {
+    setHelloId(GetSessionStorageData("helloId"));
+  }, [reduxHelloId]);
 
   const [messages, setMessages] = useState<MessageType[]>(
     useMemo(
@@ -142,9 +152,13 @@ function InterfaceChatbot({
       [inpreview]
     )
   );
+
+  const [helloMessages, setHelloMessages] = useState<any>([]);
+
   useEffect(() => {
     getHelloPreviousHistory(messages);
   }, [channelId, uuid]);
+
   const dispatch = useDispatch();
 
   const addMessage = (message: string) => {
@@ -193,7 +207,6 @@ function InterfaceChatbot({
   useEffect(() => {
     if (!socket) return;
     socket.on("NewPublish", (data) => {
-      console.log("New message in channel:", data);
       const { response } = data;
       const { message } = response || {};
       const { content, chat_id, from_name, sender_id } = message || {};
@@ -201,7 +214,7 @@ function InterfaceChatbot({
       if (text && !chat_id) {
         setLoading(false);
         clearTimeout(timeoutIdRef.current);
-        setMessages((prevMessages) => {
+        setHelloMessages((prevMessages) => {
           const lastMessageId = prevMessages[prevMessages.length - 1]?.id;
           if (lastMessageId !== response?.id) {
             return [
@@ -261,7 +274,7 @@ function InterfaceChatbot({
     }
   };
 
-  const getHelloPreviousHistory = async (previousChats) => {
+  const getHelloPreviousHistory = async () => {
     if (channelId && uuid) {
       const helloChats = (await getHelloChatsApi({ channelId: channelId }))
         ?.data?.data;
@@ -282,12 +295,13 @@ function InterfaceChatbot({
 
           return {
             role: role,
+            message_id: chat?.id,
             from_name: chat?.message?.from_name,
             content: chat?.message?.content?.text,
           };
         })
         .reverse();
-      setMessages([...previousChats, ...filterChats]);
+      setHelloMessages(filterChats);
     } else {
       console.error("helloChats is not an array or empty");
     }
@@ -296,7 +310,11 @@ function InterfaceChatbot({
   const subscribeToChannel = () => {
     if (bridgeName && threadId) {
       dispatch(
-        getHelloDetailsStart({ slugName: bridgeName, threadId: threadId })
+        getHelloDetailsStart({
+          slugName: bridgeName,
+          threadId: threadId,
+          helloId: helloId || null,
+        })
       );
     }
   };
@@ -349,7 +367,10 @@ function InterfaceChatbot({
           ]);
           setLoading(false);
           clearTimeout(timeoutIdRef.current);
-        } else if (parsedMessage?.response?.data?.role === "reset") {
+        } else if (
+          parsedMessage?.response?.data?.role === "reset" &&
+          !parsedMessage?.response?.data?.mode
+        ) {
           // all previous message and new object inserted
           setMessages((prevMessages) => [
             ...prevMessages,
@@ -386,7 +407,7 @@ function InterfaceChatbot({
         clearTimeout(timeoutIdRef.current);
       };
     }
-  }, [threadId, interfaceId, userId, bridgeName]);
+  }, [threadId, interfaceId, userId, bridgeName, helloId]);
 
   const sendMessage = async (
     message: string,
@@ -473,10 +494,9 @@ function InterfaceChatbot({
     if (!textMessage) return;
     apiCall && sendMessageToHello(textMessage);
     setOptions([]);
-    setMessages((prevMessages) => [
+    setHelloMessages((prevMessages) => [
       ...prevMessages,
       { role: "user", content: textMessage },
-      // { role: "assistant", content: "Rsponse is on its way..." },
     ]);
     messageRef.current.value = "";
   };
@@ -485,6 +505,7 @@ function InterfaceChatbot({
     <MessageContext.Provider
       value={{
         messages: messages,
+        helloMessages: helloMessages,
         addMessage,
         setMessages,
         threadId,
@@ -533,6 +554,7 @@ function InterfaceChatbot({
           <ChatbotTextField
             loading={loading}
             options={options}
+            setChatsLoading={setChatsLoading}
             onSend={() => {
               IsHuman ? onSendHello() : onSend();
             }}

@@ -4,6 +4,7 @@ import defaultApp from "./App.png";
 import aiIcon from "./aiLogo.png";
 import humanIcon from "./human-icon.svg";
 import chatbotGif from "./chatbotGif.gif";
+import userAssistant from "./user-assistant.png";
 
 export const ChatBotIcon = socketAIIcon;
 export const SocketIcon = socketIcon;
@@ -11,6 +12,7 @@ export const DefaultApp = defaultApp;
 export const AiIcon = aiIcon;
 export const HumanIcon = humanIcon;
 export const ChatBotGif = chatbotGif;
+export const UserAssistant = userAssistant;
 
 function makeImageUrl(imageId: string): string {
   return `https://imagedelivery.net/Vv7GgOGQbSyClWJqhyP0VQ/${imageId}/public`;

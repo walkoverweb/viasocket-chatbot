@@ -219,14 +219,17 @@ export async function loginUser(data: any): Promise<{ [key: string]: any }[]> {
 export async function getHelloDetailsApi({
   threadId,
   slugName,
+  helloId = null,
 }: {
   threadId: string;
   slugName: string;
+  helloId?: string | null;
 }): Promise<any> {
   try {
     const response = await axios.post(`${URL}/hello/subscribe`, {
       threadId,
       slugName,
+      helloId,
     });
     return response?.data;
   } catch (error) {

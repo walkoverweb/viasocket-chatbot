@@ -8,19 +8,29 @@ import React, {
   useState,
 } from "react";
 import { sendFeedbackAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
+import { ChatBotGif } from "../../../../assests/assestsIndex.ts";
+import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
+import { useCustomSelector } from "../../../../utils/deepCheckSelector";
 import "./InterfaceChatbot.scss";
 import { MessageContext } from "./InterfaceChatbot.tsx";
 import Message from "./Message.tsx";
 import MoveToDownButton from "./MoveToDownButton.tsx";
-import { ChatBotGif } from "../../../../assests/assestsIndex.ts";
 
 function MessageList() {
   const containerRef = useRef<any>(null);
   const MessagesList: any = useContext(MessageContext);
-  const { messages, setMessages, addMessage } = MessagesList;
+  const {
+    messages,
+    setMessages,
+    addMessage,
+    helloMessages = [],
+  } = MessagesList;
   const [showScrollButton, setShowScrollButton] = useState(false); // State to control the visibility of the button
   const [shouldScroll, setShouldScroll] = useState(true);
   const [showIcon, setShowGif] = useState(false);
+  const { IsHuman } = useCustomSelector((state: $ReduxCoreType) => ({
+    IsHuman: state.Hello?.isHuman,
+  }));
 
   const handleFeedback = useCallback(
     async (
@@ -83,7 +93,7 @@ function MessageList() {
       movetoDown();
     }
     setShouldScroll(true);
-  }, [messages, movetoDown]);
+  }, [messages, movetoDown, helloMessages, IsHuman]);
 
   useEffect(() => {
     const currentContainer = containerRef.current;
@@ -94,15 +104,25 @@ function MessageList() {
   }, [handleScroll]);
 
   const RenderMessages = useMemo(() => {
+    if (IsHuman) {
+      return helloMessages?.map((message, index) => (
+        <Message
+          key={`${message.message_id}-${index}`} // Combine message_id with index to ensure uniqueness
+          message={message}
+          handleFeedback={handleFeedback}
+          addMessage={addMessage}
+        />
+      ));
+    }
     return messages?.map((message, index) => (
       <Message
-        key={message.message_id || index} // Use a unique identifier if available
+        key={`${message.message_id}-${index}`} // Combine message_id with index to ensure uniqueness
         message={message}
         handleFeedback={handleFeedback}
         addMessage={addMessage}
       />
     ));
-  }, [messages, handleFeedback, addMessage]); // Include handleFeedback in dependencies
+  }, [messages, handleFeedback, addMessage, helloMessages, IsHuman]); // Include handleFeedback in dependencies
 
   useEffect(() => {
     const timer = setTimeout(() => {
