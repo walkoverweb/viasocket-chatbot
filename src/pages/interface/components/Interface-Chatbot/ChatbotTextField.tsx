@@ -265,7 +265,9 @@ function ChatbotTextField({
                         filter: "drop-shadow(0 0 5px pink)",
                       }}
                     />
-                    AI
+                    <Typography variant="body1" color="black">
+                      AI
+                    </Typography>
                   </Button>
                   <Button
                     onClick={() => {
@@ -281,7 +283,9 @@ function ChatbotTextField({
                       alt="AI Icon"
                       style={{ marginRight: 8 }}
                     />
-                    Human Agent
+                    <Typography variant="body1" color="black">
+                      Human Agent
+                    </Typography>
                   </Button>
                 </Popover>
               </Box>
