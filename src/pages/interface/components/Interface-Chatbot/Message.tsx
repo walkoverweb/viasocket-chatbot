@@ -21,12 +21,12 @@ import copy from "copy-to-clipboard";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { AiIcon, UserAssistant } from "../../../../assests/assestsIndex.ts";
 import isColorLight from "../../../../utils/themeUtility.js";
 import { isJSONString } from "../../utils/InterfaceUtils.ts";
 import InterfaceGrid from "../Grid/Grid.tsx";
 import { Anchor, Code } from "./Interface-Markdown/MarkdownUtitily.tsx";
 import "./Message.scss";
-import { AiIcon, HumanIcon } from "../../../../assests/assestsIndex.ts";
 
 const ResetHistoryLine = ({ text = "" }) => {
   return (
@@ -437,19 +437,26 @@ const HumanOrBotMessageCard = React.memo(
           >
             {!isBot ? (
               <img
-                src={HumanIcon}
+                src={UserAssistant}
                 width="28"
                 height="28"
                 alt="AI"
                 style={{ color: "red" }}
               />
             ) : (
+              // <img
+              //   src={AiIcon}
+              //   width="28"
+              //   height="28"
+              //   alt="AI"
+              //   style={{ color: "red" }}
+              // />
+              // <SupportAgentIcon />
               <img
-                src={AiIcon}
-                width="28"
-                height="28"
-                alt="AI"
-                style={{ color: "red" }}
+                width="24"
+                height="24"
+                src="https://img.icons8.com/ios/50/message-bot.png"
+                alt="message-bot"
               />
             )}
           </Stack>

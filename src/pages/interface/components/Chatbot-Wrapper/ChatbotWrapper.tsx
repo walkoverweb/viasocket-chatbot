@@ -35,9 +35,16 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
       if (event?.data?.type === "interfaceData") {
         const receivedData = event?.data?.data;
         if (receivedData) {
-          const { threadId = null, bridgeName = null } = receivedData;
+          const {
+            threadId = null,
+            bridgeName = null,
+            helloId = null,
+          } = receivedData;
           if (threadId) {
             dispatch(setThreadId({ threadId: threadId }));
+          }
+          if (helloId) {
+            dispatch(setThreadId({ helloId: helloId }));
           }
           if (bridgeName) {
             dispatch(setThreadId({ bridgeName: bridgeName || "root" }));
