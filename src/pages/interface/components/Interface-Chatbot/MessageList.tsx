@@ -131,6 +131,13 @@ function MessageList() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowGif(true);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Box
       sx={{
