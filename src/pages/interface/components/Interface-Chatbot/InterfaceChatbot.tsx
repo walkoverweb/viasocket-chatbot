@@ -80,6 +80,7 @@ function InterfaceChatbot({
     interfaceContextData,
     reduxThreadId,
     reduxBridgeName,
+    reduxHelloId,
     IsHuman,
     uuid,
     unique_id,
@@ -94,6 +95,7 @@ function InterfaceChatbot({
       ]?.interfaceData,
     reduxThreadId: state.Interface?.threadId || "",
     reduxBridgeName: state.Interface?.bridgeName || "root",
+    reduxHelloId: state.Interface?.helloId || null,
     IsHuman: state.Hello?.isHuman || false,
     uuid: state.Hello?.ChannelList?.uuid,
     unique_id: state.Hello?.ChannelList?.unique_id,
@@ -105,7 +107,6 @@ function InterfaceChatbot({
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
-  // const userId = localStorage.getItem("interfaceUserId");
   const userId = GetSessionStorageData("interfaceUserId");
   const [loading, setLoading] = useState(false);
   const messageRef = useRef<any>();
@@ -118,6 +119,9 @@ function InterfaceChatbot({
   const [bridgeName, setBridgeName] = useState(
     GetSessionStorageData("bridgeName") || reduxBridgeName
   );
+  const [helloId, setHelloId] = useState(
+    GetSessionStorageData("helloId") || reduxHelloId
+  );
 
   useEffect(() => {
     setThreadId(GetSessionStorageData("threadId"));
@@ -126,6 +130,10 @@ function InterfaceChatbot({
   useEffect(() => {
     setBridgeName(GetSessionStorageData("bridgeName"));
   }, [reduxBridgeName]);
+
+  useEffect(() => {
+    setHelloId(GetSessionStorageData("helloId"));
+  }, [reduxHelloId]);
 
   const [messages, setMessages] = useState<MessageType[]>(
     useMemo(
@@ -302,7 +310,11 @@ function InterfaceChatbot({
   const subscribeToChannel = () => {
     if (bridgeName && threadId) {
       dispatch(
-        getHelloDetailsStart({ slugName: bridgeName, threadId: threadId })
+        getHelloDetailsStart({
+          slugName: bridgeName,
+          threadId: threadId,
+          helloId: helloId || null,
+        })
       );
     }
   };
@@ -395,7 +407,7 @@ function InterfaceChatbot({
         clearTimeout(timeoutIdRef.current);
       };
     }
-  }, [threadId, interfaceId, userId, bridgeName]);
+  }, [threadId, interfaceId, userId, bridgeName, helloId]);
 
   const sendMessage = async (
     message: string,
