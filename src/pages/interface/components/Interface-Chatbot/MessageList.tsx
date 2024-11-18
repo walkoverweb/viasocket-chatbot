@@ -150,7 +150,7 @@ function MessageList() {
       ref={containerRef}
     >
       <Box sx={{ flex: "1 1 auto", minHeight: 0 }}>
-        {messages.length === 0 ? (
+        {(IsHuman ? helloMessages.length === 0 : messages.length === 0) ? (
           <Box
             sx={{
               // display: "flex",
@@ -167,7 +167,7 @@ function MessageList() {
             />
             <Typography
               variant="h6"
-              color="primary"
+              color="black"
               fontWeight="bold"
               style={{ display: showIcon ? "block" : "none" }}
             >
