@@ -26,7 +26,7 @@ import { isJSONString } from "../../utils/InterfaceUtils.ts";
 import InterfaceGrid from "../Grid/Grid.tsx";
 import { Anchor, Code } from "./Interface-Markdown/MarkdownUtitily.tsx";
 import "./Message.scss";
-import { AiIcon, HumanIcon } from "../../../../assests/assestsIndex.ts";
+import { AiIcon, UserAssistant } from "../../../../assests/assestsIndex.ts";
 
 const ResetHistoryLine = ({ text = "" }) => {
   return (
@@ -437,7 +437,7 @@ const HumanOrBotMessageCard = React.memo(
           >
             {!isBot ? (
               <img
-                src={HumanIcon}
+                src={UserAssistant}
                 width="28"
                 height="28"
                 alt="AI"

@@ -59,12 +59,14 @@ interface MessageType {
 }
 export const MessageContext = createContext<{
   messages: MessageType[] | [];
+  helloMessages: any;
   addMessage?: (message: string) => void;
   setMessages?: (message: MessageType[]) => void;
   threadId?: string;
   bridgeName?: string;
 }>({
   messages: [],
+  helloMessages: [],
 });
 
 function InterfaceChatbot({
@@ -142,9 +144,13 @@ function InterfaceChatbot({
       [inpreview]
     )
   );
+
+  const [helloMessages, setHelloMessages] = useState<any>([]);
+
   useEffect(() => {
     getHelloPreviousHistory(messages);
   }, [channelId, uuid]);
+
   const dispatch = useDispatch();
 
   const addMessage = (message: string) => {
@@ -193,7 +199,6 @@ function InterfaceChatbot({
   useEffect(() => {
     if (!socket) return;
     socket.on("NewPublish", (data) => {
-      console.log("New message in channel:", data);
       const { response } = data;
       const { message } = response || {};
       const { content, chat_id, from_name, sender_id } = message || {};
@@ -201,7 +206,7 @@ function InterfaceChatbot({
       if (text && !chat_id) {
         setLoading(false);
         clearTimeout(timeoutIdRef.current);
-        setMessages((prevMessages) => {
+        setHelloMessages((prevMessages) => {
           const lastMessageId = prevMessages[prevMessages.length - 1]?.id;
           if (lastMessageId !== response?.id) {
             return [
@@ -261,7 +266,7 @@ function InterfaceChatbot({
     }
   };
 
-  const getHelloPreviousHistory = async (previousChats) => {
+  const getHelloPreviousHistory = async () => {
     if (channelId && uuid) {
       const helloChats = (await getHelloChatsApi({ channelId: channelId }))
         ?.data?.data;
@@ -282,12 +287,13 @@ function InterfaceChatbot({
 
           return {
             role: role,
+            message_id: chat?.id,
             from_name: chat?.message?.from_name,
             content: chat?.message?.content?.text,
           };
         })
         .reverse();
-      setMessages([...previousChats, ...filterChats]);
+      setHelloMessages(filterChats);
     } else {
       console.error("helloChats is not an array or empty");
     }
@@ -349,7 +355,11 @@ function InterfaceChatbot({
           ]);
           setLoading(false);
           clearTimeout(timeoutIdRef.current);
-        } else if (parsedMessage?.response?.data?.role === "reset") {
+        } else if (
+          parsedMessage?.response?.data?.role === "reset" &&
+          !parsedMessage?.response?.data?.mode
+        ) {
+          console.log(parsedMessage?.response?.data?.mode, 123123);
           // all previous message and new object inserted
           setMessages((prevMessages) => [
             ...prevMessages,
@@ -473,10 +483,9 @@ function InterfaceChatbot({
     if (!textMessage) return;
     apiCall && sendMessageToHello(textMessage);
     setOptions([]);
-    setMessages((prevMessages) => [
+    setHelloMessages((prevMessages) => [
       ...prevMessages,
       { role: "user", content: textMessage },
-      // { role: "assistant", content: "Rsponse is on its way..." },
     ]);
     messageRef.current.value = "";
   };
@@ -485,6 +494,7 @@ function InterfaceChatbot({
     <MessageContext.Provider
       value={{
         messages: messages,
+        helloMessages: helloMessages,
         addMessage,
         setMessages,
         threadId,
@@ -533,6 +543,7 @@ function InterfaceChatbot({
           <ChatbotTextField
             loading={loading}
             options={options}
+            setChatsLoading={setChatsLoading}
             onSend={() => {
               IsHuman ? onSendHello() : onSend();
             }}
