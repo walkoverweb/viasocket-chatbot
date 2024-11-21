@@ -563,6 +563,8 @@ function Message({ message, handleFeedback, addMessage }: any) {
             {Object.keys(message?.function).length} Functions executed
           </Typography>
         </Box>
+      ) : message?.role === "reset" ? (
+        <ResetHistoryLine text={message?.mode ? "Talk to human" : ""} />
       ) : null}
     </Box>
   );
