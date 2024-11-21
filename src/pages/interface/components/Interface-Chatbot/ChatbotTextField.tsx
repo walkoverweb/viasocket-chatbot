@@ -121,52 +121,6 @@ function ChatbotTextField({
           ))}
         </Box>
       )}
-      {/* <TextField
-        inputRef={messageRef}
-        className="input-field"
-        multiline // Todo: need to un comment this code
-        maxRows={8}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Enter your message"
-        fullWidth
-        focused
-        disabled={disabled}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end" sx={{ visibility: "hidden" }}>
-              <IconButton />
-            </InputAdornment>
-          ),
-          startAdornment: (
-            <InputAdornment position="start" sx={{ visibility: "" }}>
-              <img
-                src={AiIcon}
-                width="28"
-                height="28"
-                alt="AI"
-                style={{ color: "red" }}
-              />
-              <img
-                src={HumanIcon}
-                width="28"
-                height="28"
-                alt="AI"
-                style={{ color: "red" }}
-              />
-            </InputAdornment>
-          ),
-        }}
-        sx={{
-          backgroundColor: theme.palette.background.default,
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              border: "none",
-            },
-          },
-        }}
-      />
-       */}
       <TextField
         inputRef={messageRef}
         className="input-field"
