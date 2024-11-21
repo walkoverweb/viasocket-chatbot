@@ -47,7 +47,7 @@ function FormComponent({ open, setOpen }) {
     if (!formData.number) {
       tempErrors.number = "Number is required";
       isValid = false;
-    } else if (!/^[0-9]+$/.test(formData.number)) {
+    } else if (!/^\d{10}$/.test(formData.number)) {
       tempErrors.number = "Invalid number";
       isValid = false;
     }
