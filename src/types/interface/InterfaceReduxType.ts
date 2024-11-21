@@ -2,6 +2,7 @@ export interface $InterfaceReduxType {
   isLoading: boolean;
   threadId: string;
   helloId?: string | null;
+  version_id?: string | null;
   bridgeName: string;
   interfaceData: {
     [interfaceId: string]: InterFaceDataType;

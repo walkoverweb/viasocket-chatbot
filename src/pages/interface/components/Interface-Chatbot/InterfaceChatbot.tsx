@@ -81,6 +81,7 @@ function InterfaceChatbot({
     reduxThreadId,
     reduxBridgeName,
     reduxHelloId,
+    reduxBridgeVersionId,
     IsHuman,
     uuid,
     unique_id,
@@ -96,6 +97,7 @@ function InterfaceChatbot({
     reduxThreadId: state.Interface?.threadId || "",
     reduxBridgeName: state.Interface?.bridgeName || "root",
     reduxHelloId: state.Interface?.helloId || null,
+    reduxBridgeVersionId: state.Interface?.version_id || null,
     IsHuman: state.Hello?.isHuman || false,
     uuid: state.Hello?.ChannelList?.uuid,
     unique_id: state.Hello?.ChannelList?.unique_id,
@@ -122,6 +124,9 @@ function InterfaceChatbot({
   const [helloId, setHelloId] = useState(
     GetSessionStorageData("helloId") || reduxHelloId
   );
+  const [bridgeVersionId, setBridgeVersionId] = useState(
+    GetSessionStorageData("version_id") || reduxBridgeVersionId
+  );
 
   useEffect(() => {
     setThreadId(GetSessionStorageData("threadId"));
@@ -134,6 +139,10 @@ function InterfaceChatbot({
   useEffect(() => {
     setHelloId(GetSessionStorageData("helloId"));
   }, [reduxHelloId]);
+
+  useEffect(() => {
+    setBridgeVersionId(GetSessionStorageData("version_id"));
+  }, [reduxBridgeVersionId]);
 
   const [messages, setMessages] = useState<MessageType[]>(
     useMemo(
@@ -422,6 +431,7 @@ function InterfaceChatbot({
       threadId: thread || threadId,
       slugName: bridge || bridgeName,
       chatBotId: interfaceId,
+      version_id: bridgeVersionId,
     });
     if (!response?.success) {
       setMessages((prevMessages) => prevMessages.slice(0, -1));
