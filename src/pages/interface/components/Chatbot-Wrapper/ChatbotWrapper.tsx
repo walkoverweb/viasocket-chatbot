@@ -39,12 +39,16 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
             threadId = null,
             bridgeName = null,
             helloId = null,
+            version_id = null,
           } = receivedData;
           if (threadId) {
             dispatch(setThreadId({ threadId: threadId }));
           }
           if (helloId) {
             dispatch(setThreadId({ helloId: helloId }));
+          }
+          if (version_id) {
+            dispatch(setThreadId({ version_id: version_id }));
           }
           if (bridgeName) {
             dispatch(setThreadId({ bridgeName: bridgeName || "root" }));
