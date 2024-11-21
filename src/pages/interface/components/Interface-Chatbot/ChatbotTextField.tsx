@@ -121,6 +121,159 @@ function ChatbotTextField({
           ))}
         </Box>
       )}
+      {/* <TextField
+        inputRef={messageRef}
+        className="input-field"
+        multiline // Todo: need to un comment this code
+        maxRows={8}
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Enter your message"
+        fullWidth
+        focused
+        disabled={disabled}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Box sx={{ display: "flex", position: "relative" }}>
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: "28px",
+                    height: "28px",
+                    "& > *": {
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      transition: "opacity 0.2s ease-in-out",
+                    },
+                    ...(isHelloAssistantEnabled && {
+                      "& > .icon-visible": {
+                        opacity: 1,
+                      },
+                      "& > .icon-hidden": {
+                        opacity: 0,
+                      },
+                      "&:hover > .icon-visible": {
+                        opacity: 0,
+                      },
+                      "&:hover > .icon-hidden": {
+                        opacity: 1,
+                      },
+                    }),
+                  }}
+                  onClick={isHelloAssistantEnabled ? handlePopoverOpen : null}
+                >
+                  <img
+                    src={IsHuman ? UserAssistant : AiIcon}
+                    width="28"
+                    height="28"
+                    alt="AI"
+                    className="icon-visible"
+                    style={{
+                      cursor: "pointer",
+                      filter: !IsHuman ? "drop-shadow(0 0 5px pink)" : "",
+                    }}
+                  />
+                  {isHelloAssistantEnabled && (
+                    <ExpandLessIcon
+                      className="icon-hidden"
+                      sx={{ fontSize: "28px", cursor: "pointer" }}
+                    />
+                  )}
+                </Box>
+                <Popover
+                  open={isPopoverOpen}
+                  anchorEl={anchorEl}
+                  onClose={handlePopoverClose}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                  }}
+                  transformOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  sx={{
+                    "& .MuiPopover-paper": {
+                      display: "flex",
+                      flexDirection: "column",
+                      padding: 2,
+                    },
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      EnableAI();
+                      handlePopoverClose();
+                    }}
+                    sx={{ justifyContent: "flex-start" }}
+                  >
+                    <img
+                      src={AiIcon}
+                      width="30"
+                      height="30"
+                      alt="AI Icon"
+                      style={{
+                        marginRight: 8,
+                        filter: "drop-shadow(0 0 5px pink)",
+                      }}
+                    />
+                    <Typography variant="body1" color="black">
+                      AI
+                    </Typography>
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      EnableHumanAgent();
+                      handlePopoverClose();
+                    }}
+                    sx={{ justifyContent: "flex-start" }}
+                  >
+                    <img
+                      src={UserAssistant}
+                      width="30"
+                      height="30"
+                      alt="AI Icon"
+                      style={{ marginRight: 8 }}
+                    />
+                    <Typography variant="body1" color="black">
+                      Human Agent
+                    </Typography>
+                  </Button>
+                </Popover>
+              </Box>
+            </InputAdornment>
+          ),
+          startAdornment: (
+            <InputAdornment position="start" sx={{ visibility: "" }}>
+              <img
+                src={AiIcon}
+                width="28"
+                height="28"
+                alt="AI"
+                style={{ color: "red" }}
+              />
+              <img
+                src={HumanIcon}
+                width="28"
+                height="28"
+                alt="AI"
+                style={{ color: "red" }}
+              />
+            </InputAdornment>
+          ),
+        }}
+        sx={{
+          backgroundColor: "#f5f5f5",
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              border: "none",
+            },
+          },
+        }}
+      />
+       */}
       <TextField
         inputRef={messageRef}
         className="input-field"
