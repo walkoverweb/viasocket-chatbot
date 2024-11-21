@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, IconButton, LinearProgress } from "@mui/material";
 import React, {
   useCallback,
   useContext,
@@ -7,6 +7,8 @@ import React, {
   useRef,
   useState,
 } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { sendFeedbackAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 import { ChatBotGif } from "../../../../assests/assestsIndex.ts";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
@@ -18,6 +20,13 @@ import MoveToDownButton from "./MoveToDownButton.tsx";
 
 function MessageList() {
   const containerRef = useRef<any>(null);
+  const {
+    fetchMoreData,
+    hasMoreMessages,
+    setNewMessage,
+    newMessage,
+    currentPage,
+  } = useContext(MessageContext);
   const MessagesList: any = useContext(MessageContext);
   const {
     messages,
@@ -26,8 +35,12 @@ function MessageList() {
     helloMessages = [],
   } = MessagesList;
   const [showScrollButton, setShowScrollButton] = useState(false); // State to control the visibility of the button
+  const [previousScrollHeight, setPreviousScrollHeight] = useState<
+    number | null
+  >(null);
   const [shouldScroll, setShouldScroll] = useState(true);
   const [showIcon, setShowGif] = useState(false);
+  const [isInverse, setIsInverse] = useState(false);
   const { IsHuman } = useCustomSelector((state: $ReduxCoreType) => ({
     IsHuman: state.Hello?.isHuman,
   }));
@@ -83,25 +96,45 @@ function MessageList() {
     }
 
     // Hide the button if scrolled all the way to the bottom
-    if (scrollPosition >= maxScrollTop - 10) {
+    if (maxScrollTop - scrollPosition < maxScrollTop + 250) {
       setShowScrollButton(false);
     }
   }, []);
 
   useEffect(() => {
-    if (shouldScroll) {
+    if (shouldScroll || newMessage) {
       movetoDown();
     }
+    setNewMessage(false);
     setShouldScroll(true);
-  }, [messages, movetoDown, helloMessages, IsHuman]);
+  }, [messages, movetoDown, helloMessages, IsHuman, newMessage]);
+
+  // Update scroll position when messages change
+  useEffect(() => {
+    const currentContainer = containerRef.current;
+    if (currentContainer) {
+      const contentHeight = currentContainer.scrollHeight;
+      const containerHeight = currentContainer.clientHeight;
+
+      setIsInverse(contentHeight <= containerHeight);
+    }
+  }, [messages]);
 
   useEffect(() => {
     const currentContainer = containerRef.current;
+    if (currentContainer) {
+      const newScrollHeight = currentContainer.scrollHeight;
+      if (previousScrollHeight !== null) {
+        currentContainer.scrollTop += newScrollHeight - previousScrollHeight;
+      }
+      setPreviousScrollHeight(newScrollHeight);
+    }
+
     currentContainer?.addEventListener("scroll", handleScroll);
     return () => {
-      currentContainer?.removeEventListener("scroll", handleScroll); // Clean up scroll listener
+      currentContainer?.removeEventListener("scroll", handleScroll);
     };
-  }, [handleScroll]);
+  }, [messages, handleScroll]);
 
   const RenderMessages = useMemo(() => {
     if (IsHuman) {
@@ -140,44 +173,88 @@ function MessageList() {
 
   return (
     <Box
+      id="scrollableDiv"
       sx={{
         height: "100%",
         overflowY: "auto",
         display: "flex",
-        flexDirection: "column",
+        flexDirection: isInverse ? "column" : "column-reverse",
         padding: 2,
       }}
       ref={containerRef}
+      onScroll={handleScroll}
     >
-      <Box sx={{ flex: "1 1 auto", minHeight: 0 }}>
-        {(IsHuman ? helloMessages.length === 0 : messages.length === 0) ? (
-          <Box
-            sx={{
-              // display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-            }}
-            className="flex-col"
-          >
-            <img
-              src={ChatBotGif}
-              alt="Chatbot GIF"
-              style={{ display: showIcon ? "block" : "none" }}
-            />
-            <Typography
-              variant="h6"
-              color="black"
-              fontWeight="bold"
-              style={{ display: showIcon ? "block" : "none" }}
+      <InfiniteScroll
+        dataLength={messages.length}
+        next={fetchMoreData}
+        hasMore={hasMoreMessages}
+        inverse={!isInverse}
+        loader={
+          currentPage > 1 && (
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <LinearProgress
+                color="secondary"
+                sx={{ height: 4, width: "80%", marginBottom: 2 }}
+              />
+            </Box>
+          )
+        }
+        scrollableTarget="scrollableDiv"
+        style={{
+          display: "flex",
+          flexDirection: isInverse ? "column" : "column-reverse",
+        }}
+        scrollThreshold={0.9}
+      >
+        <Box sx={{ flex: "1 1 auto", minHeight: 0 }}>
+          {(IsHuman ? helloMessages.length === 0 : messages.length === 0) ? (
+            <Box
+              sx={{
+                // display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+              className="flex-col"
             >
-              What can I help with?
-            </Typography>
-          </Box>
-        ) : (
-          RenderMessages
-        )}
-      </Box>
+              <img
+                src={ChatBotGif}
+                alt="Chatbot GIF"
+                style={{ display: showIcon ? "block" : "none" }}
+              />
+              <Typography
+                variant="h6"
+                color="black"
+                fontWeight="bold"
+                style={{ display: showIcon ? "block" : "none" }}
+              >
+                What can I help with?
+              </Typography>
+            </Box>
+          ) : (
+            RenderMessages
+          )}
+        </Box>
+      </InfiniteScroll>
+
+      {showScrollButton && (
+        <IconButton
+          onClick={movetoDown}
+          className="move-to-down-button"
+          sx={{
+            backgroundColor: "#333",
+            color: "white",
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            zIndex: 1000,
+          }}
+          disableRipple
+        >
+          <KeyboardDoubleArrowDownIcon color="inherit" />
+        </IconButton>
+      )}
+
       <MoveToDownButton
         movetoDown={movetoDown}
         showScrollButton={showScrollButton}
