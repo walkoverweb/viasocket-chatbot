@@ -386,7 +386,6 @@ const AssistantMessageCard = React.memo(
           )}
         </Box>
         {message?.is_reset && <ResetHistoryLine />}
-        {message?.mode === 1 && <ResetHistoryLine text="Talk to human" />}
       </Box>
     );
   }
@@ -564,8 +563,6 @@ function Message({ message, handleFeedback, addMessage }: any) {
             {Object.keys(message?.function).length} Functions executed
           </Typography>
         </Box>
-      ) : message?.role === "reset" ? (
-        <ResetHistoryLine text={message?.mode ? "Talk to human" : ""} />
       ) : null}
     </Box>
   );

@@ -17,21 +17,22 @@ import {
   sendDataToAction,
 } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 import { errorToast } from "../../../../components/customToast.js";
+import FormComponent from "../../../../components/FormComponent.js";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import {
   getHelloDetailsStart,
   setChannel,
-  setHuman,
 } from "../../../../store/hello/helloSlice.ts";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector.js";
 import useSocket from "../../hooks/socket.js";
+import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
 import ChatbotHeader from "./ChatbotHeader.tsx";
+import ChatbotHeaderTab from "./ChatbotHeaderTab.tsx";
 import ChatbotTextField from "./ChatbotTextField.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
-import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
 
 const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
@@ -89,6 +90,7 @@ function InterfaceChatbot({
     team_id,
     chat_id,
     channelId,
+    mode,
   } = useCustomSelector((state: $ReduxCoreType) => ({
     interfaceContextData:
       state.Interface?.interfaceContext?.[interfaceId]?.[
@@ -105,12 +107,14 @@ function InterfaceChatbot({
     team_id: state.Hello?.widgetInfo?.team?.[0]?.id,
     chat_id: state.Hello?.Channel?.id,
     channelId: state.Hello?.Channel?.channel || null,
+    mode: state.Hello?.mode || [],
   }));
 
   const [chatsLoading, setChatsLoading] = useState(false);
   const timeoutIdRef = useRef<any>(null);
   const userId = GetSessionStorageData("interfaceUserId");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const messageRef = useRef<any>();
   const [options, setOptions] = useState<any>([]);
   const socket = useSocket();
@@ -471,6 +475,7 @@ function InterfaceChatbot({
       team_id: team_id,
       new: true,
     };
+    if (!channelId) setOpen(true);
 
     const response = (
       await axios.post(
@@ -522,6 +527,7 @@ function InterfaceChatbot({
         bridgeName,
       }}
     >
+      <FormComponent open={open} setOpen={setOpen} />
       <Box
         sx={{
           display: "flex",
@@ -533,6 +539,7 @@ function InterfaceChatbot({
         }}
       >
         <ChatbotHeader setChatsLoading={setChatsLoading} />
+        <ChatbotHeaderTab />
         {chatsLoading && (
           <LinearProgress
             variant="indeterminate"
@@ -553,12 +560,10 @@ function InterfaceChatbot({
           xs={12}
           className="third-grid"
           sx={{
-            // backgroundColor: theme.palette.background.paper,
             paddingX: theme.spacing(3),
             display: "flex",
             alignItems: "end",
             marginBottom: theme.spacing(2),
-            // borderTop:"2px black solid"
           }}
         >
           <ChatbotTextField
