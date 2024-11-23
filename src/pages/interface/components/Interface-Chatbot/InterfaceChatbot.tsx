@@ -299,9 +299,9 @@ function InterfaceChatbot({
       try {
         const previousChats = await getPreviousMessage(threadId, bridgeName, 1);
         if (Array.isArray(previousChats)) {
-          setMessages(previousChats.length === 0 ? [] : [...previousChats]);
+          setMessages(previousChats?.length === 0 ? [] : [...previousChats]);
           setCurrentPage(1);
-          setHasMoreMessages(previousChats.length > 0);
+          setHasMoreMessages(previousChats?.length >= 40);
         } else {
           setMessages([]);
           setHasMoreMessages(false);

@@ -85,10 +85,10 @@ function MessageList() {
   }, []);
 
   const handleScroll = useCallback(() => {
-    const currentContainer = containerRef.current;
-    const scrollPosition = currentContainer.scrollTop;
+    const currentContainer = containerRef?.current;
+    const scrollPosition = currentContainer?.scrollTop;
     const maxScrollTop =
-      currentContainer.scrollHeight - currentContainer.clientHeight;
+      currentContainer?.scrollHeight - currentContainer?.clientHeight;
 
     // Show the button if scrolled up
     if (scrollPosition < maxScrollTop - 150) {
@@ -111,19 +111,19 @@ function MessageList() {
 
   // Update scroll position when messages change
   useEffect(() => {
-    const currentContainer = containerRef.current;
+    const currentContainer = containerRef?.current;
     if (currentContainer) {
-      const contentHeight = currentContainer.scrollHeight;
-      const containerHeight = currentContainer.clientHeight;
+      const contentHeight = currentContainer?.scrollHeight;
+      const containerHeight = currentContainer?.clientHeight;
 
       setIsInverse(contentHeight <= containerHeight);
     }
   }, [messages]);
 
   useEffect(() => {
-    const currentContainer = containerRef.current;
+    const currentContainer = containerRef?.current;
     if (currentContainer) {
-      const newScrollHeight = currentContainer.scrollHeight;
+      const newScrollHeight = currentContainer?.scrollHeight;
       if (previousScrollHeight !== null) {
         currentContainer.scrollTop += newScrollHeight - previousScrollHeight;
       }
@@ -140,7 +140,7 @@ function MessageList() {
     if (IsHuman) {
       return helloMessages?.map((message, index) => (
         <Message
-          key={`${message.message_id}-${index}`} // Combine message_id with index to ensure uniqueness
+          key={`${message?.message_id}-${index}`} // Combine message_id with index to ensure uniqueness
           message={message}
           handleFeedback={handleFeedback}
           addMessage={addMessage}
@@ -149,7 +149,7 @@ function MessageList() {
     }
     return messages?.map((message, index) => (
       <Message
-        key={`${message.message_id}-${index}`} // Combine message_id with index to ensure uniqueness
+        key={`${message?.message_id}-${index}`} // Combine message_id with index to ensure uniqueness
         message={message}
         handleFeedback={handleFeedback}
         addMessage={addMessage}
@@ -185,10 +185,10 @@ function MessageList() {
       onScroll={handleScroll}
     >
       <InfiniteScroll
-        dataLength={messages.length}
+        dataLength={messages?.length}
         next={fetchMoreData}
         hasMore={hasMoreMessages}
-        inverse={!isInverse}
+        inverse
         loader={
           currentPage > 1 && (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
