@@ -1,4 +1,7 @@
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { DataGrid } from "@mui/x-data-grid";
+import React, { useContext } from "react";
+import { GridContext } from "../Grid/Grid.tsx";
 
 function generateColumns(data) {
   // Check if data is an object and not null
@@ -29,10 +32,24 @@ interface InterfaceTableProps {
 }
 
 function InterfaceTable({ props }: InterfaceTableProps) {
+  const { msgId } = useContext<any>(GridContext);
   const columns = generateColumns(props?.data?.[0]);
   const rows = generateRows(props?.data);
+  const handleNavigation = () => {
+    window.open(
+      `${window.location.href}/componentpreview?message_id=${msgId}`,
+      "_blank"
+    );
+  };
   return (
     <div style={{ width: "100%" }}>
+      <div
+        type="button"
+        className="flex-end-center mb-1"
+        aria-label="Open in new window"
+      >
+        <OpenInNewIcon onClick={handleNavigation} />
+      </div>
       <DataGrid
         rows={rows || []}
         columns={columns || []}

@@ -7,6 +7,7 @@ import ChatbotPreview from "./pages/interface/components/Chatbot-Preview/Chatbot
 import ChatbotWrapper from "./pages/interface/components/Chatbot-Wrapper/ChatbotWrapper.tsx";
 import InterfaceEmbed from "./pages/interface/pages/InterfaceEmbed/InterfaceEmbed.tsx";
 import "./scss/global.scss";
+import ChatbotComponentPreview from "./pages/interface/pages/Chatbot-component-preview/Chatbot-component-preview.tsx";
 
 export const ChatbotContext = createContext({});
 
@@ -43,6 +44,10 @@ function App() {
               </div>
             </ChatbotContext.Provider>
           }
+        />
+        <Route
+          path="/i/:interfaceId/componentpreview"
+          element={<ChatbotComponentPreview />}
         />
         <Route
           exact
