@@ -232,7 +232,8 @@ const AssistantMessageCard = React.memo(
                               a: Anchor,
                             }}
                           >
-                            {parsedContent?.markdown || parsedContent?.response}
+                            {parsedContent?.markdown ||
+                              JSON.stringify(parsedContent?.response)}
                           </ReactMarkdown>
                           {parsedContent?.options && (
                             <Box className="flex flex-col gap-1">
