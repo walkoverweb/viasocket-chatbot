@@ -393,6 +393,8 @@ function InterfaceChatbot({
               content: "Resetting the chat",
             },
           ]);
+        } else if (parsedMessage?.response?.data?.suggestions !== undefined) {
+          setOptions(parsedMessage.response?.data?.suggestions || []);
         } else if (parsedMessage?.response?.data) {
           // Handle the new structure with response data
           // const content = parsedMessage.response.data.content;
@@ -404,7 +406,6 @@ function InterfaceChatbot({
               ...(parsedMessage.response.data || {}),
             },
           ]);
-          setOptions(parsedMessage.response?.options || []);
           clearTimeout(timeoutIdRef.current);
         } else {
           // Handle any other cases
