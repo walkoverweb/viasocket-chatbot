@@ -284,3 +284,31 @@ export const createScripts = async (data: any, type = "flow") => {
     throw new Error(error);
   }
 };
+
+export const getAllThreadsApi = async ({ threadId = "" }) => {
+  try {
+    const response = await axios.get(`${URL}/thread/${threadId}`);
+    return response?.data;
+  } catch (error: any) {
+    console.error(error);
+    errorToast(error?.response?.data?.message || "Something went wrong!");
+    throw new Error(error);
+  }
+};
+
+export const createNewThreadApi = async ({
+  threadId = "",
+  subThreadId = "",
+}) => {
+  try {
+    const response = await axios.post(`${URL}/thread/`, {
+      thread_id: threadId,
+      subThreadId,
+    });
+    return response?.data;
+  } catch (error: any) {
+    console.error(error);
+    errorToast(error?.response?.data?.message || "Something went wrong!");
+    throw new Error(error);
+  }
+};

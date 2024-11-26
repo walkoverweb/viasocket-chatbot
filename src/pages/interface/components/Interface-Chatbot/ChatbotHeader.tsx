@@ -1,5 +1,6 @@
 import ChatIcon from "@mui/icons-material/Chat";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import MenuIcon from "@mui/icons-material/Menu";
 import SyncIcon from "@mui/icons-material/Sync";
 import {
   Box,
@@ -29,15 +30,21 @@ import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector";
 import isColorLight from "../../../../utils/themeUtility";
 import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
+import ChatbotDrawer from "./ChatbotDrawer.tsx";
 import "./InterfaceChatbot.scss";
 
 function ChatbotHeader({ setChatsLoading }) {
   const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
   const {
     chatbotConfig: { chatbotTitle, chatbotSubtitle },
   } = useContext<any>(ChatbotContext);
   const isLightBackground = isColorLight(theme.palette.primary.main);
   const textColor = isLightBackground ? "black" : "white";
+
+  const toggleDrawer = (newOpen: boolean) => () => {
+    setOpen(newOpen);
+  };
 
   return (
     <Grid
@@ -48,6 +55,12 @@ function ChatbotHeader({ setChatsLoading }) {
     >
       <Box className="flex-col-start-start">
         <Box className="flex-center-center">
+          <MenuIcon
+            color="inherit"
+            style={{ color: "white" }}
+            className="mr-2"
+            onClick={toggleDrawer(true)}
+          />
           <Typography
             variant="h6"
             className="interface-chatbot__header__title"
@@ -70,6 +83,7 @@ function ChatbotHeader({ setChatsLoading }) {
           </Typography>
         )}
       </Box>
+      <ChatbotDrawer open={open} toggleDrawer={toggleDrawer} />
     </Grid>
   );
 }
@@ -242,11 +256,22 @@ const ChatbotFeedbackForm = React.memo(function ChatbotFeedbackForm({
           value={feedback}
           onChange={(e) => setFeedback(e.target.value || "")}
         />
-        {feedback?.length < 10 && <Typography variant="caption" color="error">Minimum 10 charaters</Typography>}
+        {feedback?.length < 10 && (
+          <Typography variant="caption" color="error">
+            Minimum 10 charaters
+          </Typography>
+        )}
       </DialogContent>
       <DialogActions>
-        <Button variant="outlined" onClick={handleClose}>Cancel</Button>
-        <Button variant="contained" onClick={sendFeedback} autoFocus disabled={feedback?.length < 10}>
+        <Button variant="outlined" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          onClick={sendFeedback}
+          autoFocus
+          disabled={feedback?.length < 10}
+        >
           Submit
         </Button>
       </DialogActions>
