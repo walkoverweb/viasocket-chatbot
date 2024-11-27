@@ -34,7 +34,7 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
   const theme = useTheme();
   const isLightBackground = isColorLight(theme.palette.primary.main);
   const textColor = isLightBackground ? "black" : "white";
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
   const { reduxThreadId, subThreadList } = useCustomSelector(
     (state: $ReduxCoreType) => ({
       reduxThreadId: state.Interface?.threadId || "",
@@ -62,7 +62,7 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
       subThreadId: createRandomId(),
     });
     if (result?.success) {
-      dispath(
+      dispatch(
         setThreads({
           newThreadData: result?.thread,
           bridgeName,
@@ -74,7 +74,7 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
   };
 
   const handleChangeSubThread = (sub_thread_id: string) => {
-    dispath(setThreadId({ subThreadId: sub_thread_id }));
+    dispatch(setThreadId({ subThreadId: sub_thread_id }));
   };
 
   const DrawerList = (
