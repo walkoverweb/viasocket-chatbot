@@ -12,6 +12,7 @@ import React, {
 import { useDispatch } from "react-redux";
 import WebSocketClient from "rtlayer-client";
 import {
+  getAllThreadsApi,
   getHelloChatsApi,
   getPreviousMessage,
   sendDataToAction,
@@ -33,6 +34,7 @@ import ChatbotHeaderTab from "./ChatbotHeaderTab.tsx";
 import ChatbotTextField from "./ChatbotTextField.tsx";
 import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
+import { setThreads } from "../../../../store/interface/interfaceSlice.ts";
 
 const client = new WebSocketClient(
   "lyvSfW7uPPolwax0BHMC",
@@ -85,6 +87,7 @@ function InterfaceChatbot({
   const {
     interfaceContextData,
     reduxThreadId,
+    reduxSubThreadId,
     reduxBridgeName,
     reduxHelloId,
     reduxBridgeVersionId,
@@ -102,6 +105,7 @@ function InterfaceChatbot({
         state.Interface?.bridgeName || "root"
       ]?.interfaceData,
     reduxThreadId: state.Interface?.threadId || "",
+    reduxSubThreadId: state.Interface?.subThreadId || "",
     reduxBridgeName: state.Interface?.bridgeName || "root",
     reduxHelloId: state.Interface?.helloId || null,
     reduxBridgeVersionId: state.Interface?.version_id || null,
@@ -127,6 +131,9 @@ function InterfaceChatbot({
   const [threadId, setThreadId] = useState(
     GetSessionStorageData("threadId") || reduxThreadId
   );
+  const [subThreadId, setSubThreadId] = useState(
+    GetSessionStorageData("subThreadId") || reduxSubThreadId
+  );
   const [bridgeName, setBridgeName] = useState(
     GetSessionStorageData("bridgeName") || reduxBridgeName
   );
@@ -140,6 +147,10 @@ function InterfaceChatbot({
   useEffect(() => {
     setThreadId(GetSessionStorageData("threadId"));
   }, [reduxThreadId]);
+
+  useEffect(() => {
+    setSubThreadId(GetSessionStorageData("subThreadId"));
+  }, [reduxSubThreadId]);
 
   useEffect(() => {
     setBridgeName(GetSessionStorageData("bridgeName"));
@@ -310,7 +321,12 @@ function InterfaceChatbot({
     if (threadId && interfaceId) {
       setChatsLoading(true);
       try {
-        const previousChats = await getPreviousMessage(threadId, bridgeName, 1);
+        const previousChats = await getPreviousMessage(
+          threadId,
+          bridgeName,
+          1,
+          subThreadId
+        );
         if (Array.isArray(previousChats)) {
           setMessages(previousChats?.length === 0 ? [] : [...previousChats]);
           setCurrentPage(1);
@@ -375,10 +391,25 @@ function InterfaceChatbot({
     }
   };
 
+  const fetchAllThreads = async () => {
+    const result = await getAllThreadsApi({ threadId });
+    if (result?.success) {
+      dispatch(
+        setThreads({ bridgeName, threadId, threadList: result?.threads })
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchAllThreads();
+  }, [threadId, bridgeName]);
+
   useEffect(() => {
     if (inpreview) {
       const subscribe = () => {
-        client.subscribe(interfaceId + (threadId || userId));
+        client.subscribe(
+          interfaceId + (threadId || userId) + (subThreadId || userId)
+        );
       };
       client.on("open", subscribe);
       subscribe();
@@ -459,12 +490,14 @@ function InterfaceChatbot({
       client.on("message", handleMessage);
 
       return () => {
-        client.unsubscribe(interfaceId + (threadId || userId));
+        client.unsubscribe(
+          interfaceId + (threadId || userId) + (subThreadId || userId)
+        );
         client.removeListener("message", handleMessage);
         clearTimeout(timeoutIdRef.current);
       };
     }
-  }, [threadId, interfaceId, userId, bridgeName, helloId]);
+  }, [threadId, interfaceId, userId, bridgeName, helloId, subThreadId]);
 
   const sendMessage = async (
     message: string,
@@ -477,6 +510,7 @@ function InterfaceChatbot({
       userId,
       interfaceContextData: { ...interfaceContextData, ...variables } || {},
       threadId: thread || threadId,
+      subThreadId: subThreadId,
       slugName: bridge || bridgeName,
       chatBotId: interfaceId,
       version_id: bridgeVersionId,
