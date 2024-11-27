@@ -186,6 +186,16 @@ export const reducers: ValidateSliceCaseReducers<
         allThreadList[allThreadList.length - 1]?.sub_thread_id || "";
       sessionStorage.setItem("subThreadId", lastSubThreadId);
       state.subThreadId = lastSubThreadId;
+
+      if (allThreadList?.length === 0) {
+        updatedInterfaceContext[interfaceId][bridgeName].threadList[
+          threadId
+        ].push({
+          thread_id: threadId,
+          sub_thread_id: threadId,
+          display_name: threadId,
+        });
+      }
     } else {
       // Otherwise, push the new threadData to the thread list
       updatedInterfaceContext[interfaceId][bridgeName].threadList[
