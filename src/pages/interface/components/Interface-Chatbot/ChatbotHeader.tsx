@@ -134,9 +134,10 @@ const ResetChatOption = React.memo(
       interfaceId,
     }) => {
       const [modalOpen, setModalOpen] = React.useState(false);
-      const { threadId, bridgeName, IsHuman } = useCustomSelector(
+      const { threadId, bridgeName, IsHuman, subThreadId } = useCustomSelector(
         (state: $ReduxCoreType) => ({
           threadId: state.Interface?.threadId || "",
+          subThreadId: state.Interface?.subThreadId || "",
           bridgeName: state.Interface?.bridgeName || "root",
           IsHuman: state.Hello?.isHuman,
         })
@@ -161,6 +162,7 @@ const ResetChatOption = React.memo(
           thread_id: threadId,
           slugName: bridgeName,
           chatBotId: interfaceId,
+          sub_thread_id: subThreadId,
           purpose: "is_reset",
         });
         handleClose();
