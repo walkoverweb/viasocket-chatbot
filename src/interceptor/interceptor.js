@@ -1,17 +1,19 @@
 import defaultAxios from "axios";
-import { buildKeyGenerator, setupCache } from "axios-cache-interceptor";
+// import { buildKeyGenerator, setupCache } from "axios-cache-interceptor";
 import { errorToast } from "../components/customToast";
 import { getCurrentEnvironment, removeCookie } from "../utils/utilities";
 
 const instance = defaultAxios.create();
-const axios = setupCache(instance, {
-  ttl: 1000 * 60 * 5, // 5 minute.
-  methods: ["get"],
-  generateKey: buildKeyGenerator((request) => ({
-    method: request.method,
-    url: request.url,
-  })),
-});
+// const axios = setupCache(instance, {
+//   ttl: 1000 * 60 * 5, // 5 minute.
+//   methods: ["get"],
+//   generateKey: buildKeyGenerator((request) => ({
+//     method: request.method,
+//     url: request.url,
+//   })),
+// });
+
+const axios = instance;
 
 axios.interceptors.request.use(
   async (config) => {

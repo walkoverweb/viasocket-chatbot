@@ -218,9 +218,18 @@ const AssistantMessageCard = React.memo(
                     // console.log(parsedContent)
                     if (
                       parsedContent &&
-                      ("isMarkdown" in parsedContent ||
-                        "response" in parsedContent ||
-                        "components" in parsedContent)
+                      (Object.prototype.hasOwnProperty.call(
+                        parsedContent,
+                        "isMarkdown"
+                      ) ||
+                        Object.prototype.hasOwnProperty.call(
+                          parsedContent,
+                          "response"
+                        ) ||
+                        Object.prototype.hasOwnProperty.call(
+                          parsedContent,
+                          "components"
+                        ))
                     ) {
                       return parsedContent.isMarkdown ||
                         parsedContent?.response ? (

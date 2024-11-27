@@ -9,9 +9,11 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { lighten, useTheme } from "@mui/system";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createNewThreadApi } from "../../../../api/InterfaceApis/InterfaceApis.ts";
+import CloseSidebarIcon from "../../../../assests/CloseSidebar.tsx";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import {
@@ -20,6 +22,7 @@ import {
 } from "../../../../store/interface/interfaceSlice.ts";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector";
+import isColorLight from "../../../../utils/themeUtility";
 import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
 
 // function to create random id for new thread
@@ -28,6 +31,9 @@ const createRandomId = () => {
 };
 
 function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
+  const theme = useTheme();
+  const isLightBackground = isColorLight(theme.palette.primary.main);
+  const textColor = isLightBackground ? "black" : "white";
   const dispath = useDispatch();
   const { reduxThreadId, subThreadList } = useCustomSelector(
     (state: $ReduxCoreType) => ({
@@ -71,10 +77,16 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box sx={{ width: 280 }} role="presentation" onClick={toggleDrawer(false)}>
       {(subThreadList || []).length === 0 ? (
         <Box className="flex-center-center">
-          <Typography variant="subtitle1">No Threads</Typography>
+          <Typography
+            variant="subtitle1"
+            className="mt-5"
+            color={textColor || "black"}
+          >
+            No Threads
+          </Typography>
         </Box>
       ) : (
         <List>
@@ -82,11 +94,28 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
             <ListItem
               key={thread?._id}
               disablePadding
+              dense
               onClick={() => handleChangeSubThread(thread?.sub_thread_id)}
             >
-              <ListItemButton>
+              <ListItemButton
+                selected={
+                  thread?.sub_thread_id === GetSessionStorageData("subThreadId")
+                }
+                sx={{
+                  backgroundColor:
+                    thread?.sub_thread_id ===
+                    GetSessionStorageData("subThreadId")
+                      ? "primary.main" // Set to your desired color or theme color
+                      : "transparent",
+                  "&.Mui-selected": {
+                    backgroundColor: "primary.main", // Customize the background color of the selected state
+                  },
+                }}
+              >
                 <ListItemText
                   primary={thread?.display_name || thread?.sub_thread_id}
+                  color="inherit"
+                  sx={{ color: textColor || "black" }}
                 />
               </ListItemButton>
             </ListItem>
@@ -98,16 +127,32 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
   return (
     <Drawer open={open} onClose={toggleDrawer(false)}>
       <Box
-        className="flex-end-center p-3 gap-2 cursor-pointer"
-        onClick={handleCreateNewSubThread}
+        sx={{
+          backgroundColor: lighten(theme.palette.primary.main, 0.2),
+          flex: 1,
+        }}
       >
-        <Typography variant="body1" className="font-bold">
-          New chat
-        </Typography>
-        <CreateIcon />
+        <Box className="flex-spaceBetween-center p-3 gap-2">
+          <Box onClick={toggleDrawer(false)} className="mr-2 cursor-pointer">
+            <CloseSidebarIcon color={textColor} />
+          </Box>
+          <Typography
+            variant="body1"
+            className="font-bold"
+            sx={{ color: textColor }}
+          >
+            History
+          </Typography>
+          <CreateIcon
+            className="cursor-pointer"
+            onClick={handleCreateNewSubThread}
+            color="inherit"
+            style={{ color: textColor || "black" }}
+          />
+        </Box>
+        <Divider sx={{ borderColor: textColor || "black" }} />
+        {DrawerList}
       </Box>
-      <Divider />
-      {DrawerList}
     </Drawer>
   );
 }

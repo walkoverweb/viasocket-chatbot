@@ -1,6 +1,5 @@
 import ChatIcon from "@mui/icons-material/Chat";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import MenuIcon from "@mui/icons-material/Menu";
 import SyncIcon from "@mui/icons-material/Sync";
 import {
   Box,
@@ -32,6 +31,7 @@ import isColorLight from "../../../../utils/themeUtility";
 import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
 import ChatbotDrawer from "./ChatbotDrawer.tsx";
 import "./InterfaceChatbot.scss";
+import OpenSidebarIcon from "../../../../assests/OpenSidebar.tsx";
 
 function ChatbotHeader({ setChatsLoading }) {
   const theme = useTheme();
@@ -51,16 +51,17 @@ function ChatbotHeader({ setChatsLoading }) {
       item
       xs={12}
       className="first-grid"
-      sx={{ paddingX: 2, paddingY: 1, background: theme.palette.primary.main }}
+      sx={{ paddingX: 1, paddingY: 1, background: theme.palette.primary.main }}
     >
       <Box className="flex-col-start-start">
         <Box className="flex-center-center">
-          <MenuIcon
+          <Box
             color="inherit"
-            style={{ color: "white" }}
-            className="mr-2"
+            className="mr-2 cursor-pointer flex-center"
             onClick={toggleDrawer(true)}
-          />
+          >
+            <OpenSidebarIcon color={textColor} />
+          </Box>
           <Typography
             variant="h6"
             className="interface-chatbot__header__title"

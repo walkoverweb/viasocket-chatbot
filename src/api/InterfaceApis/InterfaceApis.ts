@@ -124,6 +124,7 @@ export async function getPreviousMessage(
   threadId: string | null,
   bridgeName: string | null,
   pageNo: number | null,
+  subThreadId: string | null = threadId,
   limit = 40
 ): Promise<{ [key: string]: any }[]> {
   if (currentController) {
@@ -133,7 +134,7 @@ export async function getPreviousMessage(
 
   try {
     const response = await axios.get(
-      `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridgeName}?pageNo=${pageNo}&limit=${limit}`,
+      `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridgeName}?sub_thread_id=${subThreadId}&pageNo=${pageNo}&limit=${limit}`,
       { signal: currentController.signal }
     );
     return response?.data?.data.conversations;

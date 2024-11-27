@@ -321,7 +321,12 @@ function InterfaceChatbot({
     if (threadId && interfaceId) {
       setChatsLoading(true);
       try {
-        const previousChats = await getPreviousMessage(threadId, bridgeName, 1);
+        const previousChats = await getPreviousMessage(
+          threadId,
+          bridgeName,
+          1,
+          subThreadId
+        );
         if (Array.isArray(previousChats)) {
           setMessages(previousChats?.length === 0 ? [] : [...previousChats]);
           setCurrentPage(1);
@@ -402,7 +407,9 @@ function InterfaceChatbot({
   useEffect(() => {
     if (inpreview) {
       const subscribe = () => {
-        client.subscribe(interfaceId + (threadId || userId));
+        client.subscribe(
+          interfaceId + (threadId || userId) + (subThreadId || userId)
+        );
       };
       client.on("open", subscribe);
       subscribe();
@@ -482,7 +489,9 @@ function InterfaceChatbot({
       client.on("message", handleMessage);
 
       return () => {
-        client.unsubscribe(interfaceId + (threadId || userId));
+        client.unsubscribe(
+          interfaceId + (threadId || userId) + (subThreadId || userId)
+        );
         client.removeListener("message", handleMessage);
         clearTimeout(timeoutIdRef.current);
       };
@@ -500,6 +509,7 @@ function InterfaceChatbot({
       userId,
       interfaceContextData: { ...interfaceContextData, ...variables } || {},
       threadId: thread || threadId,
+      subThreadId: subThreadId,
       slugName: bridge || bridgeName,
       chatBotId: interfaceId,
       version_id: bridgeVersionId,

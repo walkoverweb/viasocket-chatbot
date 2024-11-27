@@ -182,7 +182,8 @@ export const reducers: ValidateSliceCaseReducers<
       // Replace thread list with the new list
       updatedInterfaceContext[interfaceId][bridgeName].threadList[threadId] =
         allThreadList;
-      const lastSubThreadId = allThreadList[allThreadList.length - 1] || "";
+      const lastSubThreadId =
+        allThreadList[allThreadList.length - 1]?.sub_thread_id || "";
       sessionStorage.setItem("subThreadId", lastSubThreadId);
       state.subThreadId = lastSubThreadId;
     } else {
