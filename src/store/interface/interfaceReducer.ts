@@ -191,6 +191,8 @@ export const reducers: ValidateSliceCaseReducers<
       updatedInterfaceContext[interfaceId][bridgeName].threadList[
         threadId
       ].push(threadData);
+      sessionStorage.setItem("subThreadId", threadData?.sub_thread_id || "");
+      state.subThreadId = threadData?.sub_thread_id || "";
     }
 
     // Update the state with the modified interfaceContext

@@ -69,6 +69,7 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
           threadId: thread_id,
         })
       );
+      toggleDrawer(false)();
     }
   };
 
