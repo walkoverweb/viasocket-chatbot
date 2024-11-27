@@ -1,4 +1,4 @@
-import { Box, Typography, IconButton, LinearProgress } from "@mui/material";
+import { Box, LinearProgress, Typography } from "@mui/material";
 import React, {
   useCallback,
   useContext,
@@ -8,7 +8,6 @@ import React, {
   useState,
 } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { sendFeedbackAction } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 import { ChatBotGif } from "../../../../assests/assestsIndex.ts";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
@@ -171,7 +170,31 @@ function MessageList() {
     return () => clearTimeout(timer);
   }, []);
 
-  return (
+  return (IsHuman ? helloMessages.length === 0 : messages.length === 0) ? (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+      }}
+    >
+      <img
+        src={ChatBotGif}
+        alt="Chatbot GIF"
+        style={{ display: showIcon ? "block" : "none" }}
+      />
+      <Typography
+        variant="h6"
+        color="black"
+        fontWeight="bold"
+        style={{ display: showIcon ? "block" : "none" }}
+      >
+        What can I help with?
+      </Typography>
+    </Box>
+  ) : (
     <Box
       id="scrollableDiv"
       sx={{
@@ -202,58 +225,13 @@ function MessageList() {
         scrollableTarget="scrollableDiv"
         style={{
           display: "flex",
-          flexDirection: isInverse ? "column" : "column-reverse",
+          // flexDirection: isInverse ? "column" : "column-reverse",
+          flexDirection: "column",
         }}
-        scrollThreshold={0.9}
+        scrollThreshold="230px"
       >
-        <Box sx={{ flex: "1 1 auto", minHeight: 0 }}>
-          {(IsHuman ? helloMessages.length === 0 : messages.length === 0) ? (
-            <Box
-              sx={{
-                // display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              }}
-              className="flex-col"
-            >
-              <img
-                src={ChatBotGif}
-                alt="Chatbot GIF"
-                style={{ display: showIcon ? "block" : "none" }}
-              />
-              <Typography
-                variant="h6"
-                color="black"
-                fontWeight="bold"
-                style={{ display: showIcon ? "block" : "none" }}
-              >
-                What can I help with?
-              </Typography>
-            </Box>
-          ) : (
-            RenderMessages
-          )}
-        </Box>
+        {RenderMessages}
       </InfiniteScroll>
-
-      {showScrollButton && (
-        <IconButton
-          onClick={movetoDown}
-          className="move-to-down-button"
-          sx={{
-            backgroundColor: "#333",
-            color: "white",
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            zIndex: 1000,
-          }}
-          disableRipple
-        >
-          <KeyboardDoubleArrowDownIcon color="inherit" />
-        </IconButton>
-      )}
 
       <MoveToDownButton
         movetoDown={movetoDown}
