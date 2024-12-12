@@ -139,7 +139,7 @@ export async function getPreviousMessage(
       }&pageNo=${pageNo}&limit=${limit}`,
       { signal: currentController.signal }
     );
-    return response?.data?.data.conversations;
+    return response?.data?.data;
   } catch (error) {
     if (error.name === "AbortError") {
       console.log("Request aborted:", error.message);
