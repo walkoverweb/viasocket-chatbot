@@ -201,6 +201,14 @@ const AssistantMessageCard = React.memo(
                     Timeout reached. Please try again later.
                   </Typography>
                 </Box>
+              ) : message.image_url ? (
+                <Box className="assistant-message-slide">
+                  <img
+                    src={message.image_url}
+                    alt="Message Image"
+                    style={{ maxWidth: "100%", borderRadius: "10px" }}
+                  />
+                </Box>
               ) : (
                 <Box className="assistant-message-slide">
                   {(() => {
