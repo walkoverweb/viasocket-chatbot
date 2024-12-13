@@ -419,9 +419,6 @@ function InterfaceChatbot({
       const handleMessage = (message: string) => {
         // Parse the incoming message string into an object
         const parsedMessage = JSON.parse(message || "{}");
-        const parsedMessageForImage = JSON.parse(
-          parsedMessage?.message || "{}"
-        );
         // Check if the status is "connected"
         if (parsedMessage?.status === "connected") {
           return;
@@ -483,28 +480,8 @@ function InterfaceChatbot({
             },
           ]);
           clearTimeout(timeoutIdRef.current);
-        } else if (parsedMessageForImage?.response?.data?.image_url) {
-          if (parsedMessageForImage?.success) {
-            const imageUrl = parsedMessageForImage?.response?.data?.image_url;
-            setMessages((prevMessages) => [
-              ...prevMessages.slice(0, -1),
-              {
-                role: "assistant",
-                content: "", // Ensure 'content' is provided to match MessageType
-                image_url: imageUrl,
-              },
-            ]);
-          } else {
-            setMessages((prevMessages) => [
-              ...prevMessages.slice(0, -1),
-              {
-                role: "assistant",
-                content: `${parsedMessageForImage?.error || "Error in AI"}`,
-              },
-            ]);
-          }
-          setLoading(false);
-          clearTimeout(timeoutIdRef.current);
+        } else {
+          console.error("Some error occurred in the message");
         }
       };
 

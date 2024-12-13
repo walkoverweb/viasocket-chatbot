@@ -140,25 +140,6 @@ const AssistantMessageCard = React.memo(
             }}
             spacing="5px"
           >
-            {/* <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-bot"
-            >
-              <path d="M12 8V4H8" />
-              <rect width="16" height="12" x="4" y="8" rx="2" />
-              <path d="M2 14h2" />
-              <path d="M20 14h2" />
-              <path d="M15 13v2" />
-              <path d="M9 13v2" />
-            </svg> */}
             <img
               src={AiIcon}
               width="28"
@@ -203,11 +184,33 @@ const AssistantMessageCard = React.memo(
                 </Box>
               ) : message.image_url ? (
                 <Box className="assistant-message-slide">
-                  <img
-                    src={message.image_url}
-                    alt="Message Image"
-                    style={{ maxWidth: "100%", borderRadius: "10px" }}
-                  />
+                  <div>
+                    <img
+                      src={message.image_url}
+                      alt="Message Image"
+                      style={{
+                        maxWidth: "100%",
+                        minWidth: "150px",
+                        maxHeight: "400px",
+                        minHeight: "100px",
+                        borderRadius: "10px",
+                      }}
+                    />
+                    <Button
+                      href={message.image_url}
+                      target="_blank"
+                      download
+                      variant="text"
+                      sx={{
+                        display: "block",
+                        textAlign: "center",
+                        color: theme.palette.primary.main,
+                        textDecoration: "none",
+                      }}
+                    >
+                      Full screen image
+                    </Button>
+                  </div>
                 </Box>
               ) : (
                 <Box className="assistant-message-slide">
@@ -452,14 +455,6 @@ const HumanOrBotMessageCard = React.memo(
                 style={{ color: "red" }}
               />
             ) : (
-              // <img
-              //   src={AiIcon}
-              //   width="28"
-              //   height="28"
-              //   alt="AI"
-              //   style={{ color: "red" }}
-              // />
-              // <SupportAgentIcon />
               <img
                 width="24"
                 height="24"
