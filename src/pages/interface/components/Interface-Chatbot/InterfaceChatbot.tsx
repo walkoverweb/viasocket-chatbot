@@ -407,7 +407,7 @@ function InterfaceChatbot({
           ]);
           clearTimeout(timeoutIdRef.current);
         } else {
-          console.error("Some error occurred in the message");
+          console.error("Some error occurred in the message", parsedMessage);
         }
       };
 
