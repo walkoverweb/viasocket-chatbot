@@ -264,7 +264,7 @@ function InterfaceChatbot({
         setLoading(false);
         return updatedMessages;
       });
-    }, 120000);
+    }, 240000);
   };
 
   const getallPreviousHistory = async () => {
