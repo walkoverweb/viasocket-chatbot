@@ -345,7 +345,6 @@ function InterfaceChatbot({
       const handleMessage = (message: string) => {
         // Parse the incoming message string into an object
         const parsedMessage = JSON.parse(message || "{}");
-
         // Check if the status is "connected"
         if (parsedMessage?.status === "connected") {
           return;
@@ -408,8 +407,7 @@ function InterfaceChatbot({
           ]);
           clearTimeout(timeoutIdRef.current);
         } else {
-          // Handle any other cases
-          console.error("Unexpected message structure:", parsedMessage);
+          console.error("Some error occurred in the message");
         }
       };
 
