@@ -35,9 +35,11 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
   const isLightBackground = isColorLight(theme.palette.primary.main);
   const textColor = isLightBackground ? "black" : "white";
   const dispatch = useDispatch();
-  const { reduxThreadId, subThreadList } = useCustomSelector(
+
+  const { reduxThreadId, subThreadList, reduxSubThreadId } = useCustomSelector(
     (state: $ReduxCoreType) => ({
       reduxThreadId: state.Interface?.threadId || "",
+      reduxSubThreadId: state.Interface?.subThreadId || "", // Get subThreadId from Redux
       subThreadList:
         state.Interface?.interfaceContext?.[interfaceId]?.[
           GetSessionStorageData("bridgeName") ||
@@ -51,10 +53,7 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
 
   const thread_id = GetSessionStorageData("threadId") || reduxThreadId;
   const [bridgeName] = useState(GetSessionStorageData("bridgeName") || "root");
-
-  // useEffect(() => {
-  //     setThreadId(GetSessionStorageData("threadId"));
-  // }, [reduxThreadId]);
+  const selectedSubThreadId = reduxSubThreadId;
 
   const handleCreateNewSubThread = async () => {
     const result = await createNewThreadApi({
@@ -79,19 +78,34 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
 
   const DrawerList = (
     <Box sx={{ width: 280 }} role="presentation" onClick={toggleDrawer(false)}>
-      {(subThreadList || []).length === 0 ? (
-        <Box className="flex-center-center">
-          <Typography
-            variant="subtitle1"
-            className="mt-5"
-            color={textColor || "black"}
-          >
-            No Threads
-          </Typography>
-        </Box>
-      ) : (
-        <List>
-          {subThreadList.map((thread) => (
+      <ListItem
+        key={thread_id}
+        disablePadding
+        dense
+        onClick={() => handleChangeSubThread(thread_id)}
+      >
+        <ListItemButton
+          selected={thread_id === selectedSubThreadId}
+          sx={{
+            backgroundColor:
+              thread_id === selectedSubThreadId
+                ? "primary.main"
+                : "transparent",
+            "&.Mui-selected": {
+              backgroundColor: "primary.main",
+            },
+          }}
+        >
+          <ListItemText
+            primary={`Main Thread (${thread_id})`}
+            color="inherit"
+            sx={{ color: textColor || "black" }}
+          />
+        </ListItemButton>
+      </ListItem>
+      <List>
+        {subThreadList &&
+          subThreadList.map((thread) => (
             <ListItem
               key={thread?._id}
               disablePadding
@@ -99,13 +113,10 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
               onClick={() => handleChangeSubThread(thread?.sub_thread_id)}
             >
               <ListItemButton
-                selected={
-                  thread?.sub_thread_id === GetSessionStorageData("subThreadId")
-                }
+                selected={thread?.sub_thread_id === selectedSubThreadId}
                 sx={{
                   backgroundColor:
-                    thread?.sub_thread_id ===
-                    GetSessionStorageData("subThreadId")
+                    thread?.sub_thread_id === selectedSubThreadId
                       ? "primary.main" // Set to your desired color or theme color
                       : "transparent",
                   "&.Mui-selected": {
@@ -121,8 +132,7 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
               </ListItemButton>
             </ListItem>
           ))}
-        </List>
-      )}
+      </List>
     </Box>
   );
   return (
