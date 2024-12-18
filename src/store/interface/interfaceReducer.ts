@@ -182,6 +182,20 @@ export const reducers: ValidateSliceCaseReducers<
       // Replace thread list with the new list
       updatedInterfaceContext[interfaceId][bridgeName].threadList[threadId] =
         allThreadList;
+      if (state.threadId) {
+        const selectedThread = allThreadList.find(
+          (thread: any) => thread.thread_id === state.threadId
+        );
+        if (
+          !state?.subThreadId &&
+          state.threadId === selectedThread?.thread_id
+        ) {
+          state.subThreadId =
+            allThreadList[allThreadList.length - 1]?.sub_thread_id;
+        } else if (selectedThread === undefined) {
+          state.subThreadId = state.threadId;
+        }
+      }
       if (allThreadList?.length === 0) {
         updatedInterfaceContext[interfaceId][bridgeName].threadList[
           threadId
@@ -197,19 +211,10 @@ export const reducers: ValidateSliceCaseReducers<
       updatedInterfaceContext[interfaceId][bridgeName].threadList[
         threadId
       ].push(threadData);
+      debugger;
       state.subThreadId = threadData?.sub_thread_id || ""; // Store in reducer state
     }
-    if (state.threadId) {
-      const selectedThread = allThreadList.find(
-        (thread: any) => thread.thread_id === state.threadId
-      );
-      if (!state?.subThreadId && state.threadId === selectedThread?.thread_id) {
-        state.subThreadId =
-          allThreadList[allThreadList.length - 1]?.sub_thread_id;
-      } else if (selectedThread === undefined) {
-        state.subThreadId = state.threadId;
-      }
-    }
+
     state.interfaceContext = updatedInterfaceContext;
   },
 
