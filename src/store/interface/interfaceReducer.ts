@@ -211,7 +211,6 @@ export const reducers: ValidateSliceCaseReducers<
       updatedInterfaceContext[interfaceId][bridgeName].threadList[
         threadId
       ].push(threadData);
-      debugger;
       state.subThreadId = threadData?.sub_thread_id || ""; // Store in reducer state
     }
 
