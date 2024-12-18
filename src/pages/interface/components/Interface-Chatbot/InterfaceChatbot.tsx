@@ -131,9 +131,8 @@ function InterfaceChatbot({
   const [threadId, setThreadId] = useState(
     GetSessionStorageData("threadId") || reduxThreadId
   );
-  const [subThreadId, setSubThreadId] = useState(
-    GetSessionStorageData("subThreadId") || reduxSubThreadId
-  );
+  const [subThreadId, setSubThreadId] = useState(reduxSubThreadId);
+  console.log(subThreadId, "subThreadid");
   const [bridgeName, setBridgeName] = useState(
     GetSessionStorageData("bridgeName") || reduxBridgeName
   );
@@ -149,7 +148,7 @@ function InterfaceChatbot({
   }, [reduxThreadId]);
 
   useEffect(() => {
-    setSubThreadId(GetSessionStorageData("subThreadId"));
+    setSubThreadId(reduxSubThreadId);
   }, [reduxSubThreadId]);
 
   useEffect(() => {

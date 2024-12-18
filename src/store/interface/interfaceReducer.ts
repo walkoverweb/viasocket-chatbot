@@ -144,7 +144,7 @@ export const reducers: ValidateSliceCaseReducers<
   },
 
   setThreads(state, action) {
-    const { interfaceId } = action.urlData;
+    const { interfaceId } = action?.urlData || {};
     const bridgeName = action.payload?.bridgeName || state.bridgeName || "root";
     const threadId = action.payload?.threadId || state.threadId;
     const threadData = action.payload?.newThreadData || {};
@@ -171,7 +171,7 @@ export const reducers: ValidateSliceCaseReducers<
     }
     // Ensure threadList exists for the given threadId
     if (
-      !updatedInterfaceContext[interfaceId][bridgeName].threadList?.[threadId]
+      !updatedInterfaceContext[interfaceId][bridgeName]?.threadList?.[threadId]
     ) {
       updatedInterfaceContext[interfaceId][bridgeName].threadList[threadId] =
         [];
@@ -182,11 +182,20 @@ export const reducers: ValidateSliceCaseReducers<
       // Replace thread list with the new list
       updatedInterfaceContext[interfaceId][bridgeName].threadList[threadId] =
         allThreadList;
-      const lastSubThreadId =
-        allThreadList[allThreadList.length - 1]?.sub_thread_id || "";
-      sessionStorage.setItem("subThreadId", lastSubThreadId);
-      state.subThreadId = lastSubThreadId;
-
+      if (state.threadId) {
+        const selectedThread = allThreadList.find(
+          (thread: any) => thread.thread_id === state.threadId
+        );
+        if (
+          !state?.subThreadId &&
+          state.threadId === selectedThread?.thread_id
+        ) {
+          state.subThreadId =
+            allThreadList[allThreadList.length - 1]?.sub_thread_id;
+        } else if (selectedThread === undefined) {
+          state.subThreadId = state.threadId;
+        }
+      }
       if (allThreadList?.length === 0) {
         updatedInterfaceContext[interfaceId][bridgeName].threadList[
           threadId
@@ -195,28 +204,31 @@ export const reducers: ValidateSliceCaseReducers<
           sub_thread_id: threadId,
           display_name: threadId,
         });
+        state.subThreadId = threadId;
       }
     } else {
       // Otherwise, push the new threadData to the thread list
       updatedInterfaceContext[interfaceId][bridgeName].threadList[
         threadId
       ].push(threadData);
-      sessionStorage.setItem("subThreadId", threadData?.sub_thread_id || "");
-      state.subThreadId = threadData?.sub_thread_id || "";
+      state.subThreadId = threadData?.sub_thread_id || ""; // Store in reducer state
     }
 
-    // Update the state with the modified interfaceContext
     state.interfaceContext = updatedInterfaceContext;
   },
 
   setThreadId(state, action: actionType<any>) {
     const data = action.payload;
-    const tempData = {};
-    Object.keys(data || {})?.forEach((element) => {
-      tempData[element] = data[element];
+    if (data?.threadId && data.threadId !== state?.threadId) {
+      state.subThreadId = "";
+    }
+    if (data.subThreadId) {
+      state.subThreadId = data?.subThreadId || "";
+    }
+    Object.keys(data || {}).forEach((element) => {
+      state[element] = data[element];
       sessionStorage.setItem(element, data[element]);
     });
-    return { ...state, ...tempData };
   },
   get(state, action: actionType<any>) {
     const data = action.payload;

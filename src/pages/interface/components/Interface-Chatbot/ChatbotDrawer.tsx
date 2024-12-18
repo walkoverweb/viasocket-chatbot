@@ -35,9 +35,10 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
   const isLightBackground = isColorLight(theme.palette.primary.main);
   const textColor = isLightBackground ? "black" : "white";
   const dispatch = useDispatch();
-  const { reduxThreadId, subThreadList } = useCustomSelector(
+  const { reduxThreadId, subThreadList, reduxSubThreadId } = useCustomSelector(
     (state: $ReduxCoreType) => ({
       reduxThreadId: state.Interface?.threadId || "",
+      reduxSubThreadId: state.Interface?.subThreadId || "", // Get subThreadId from Redux
       subThreadList:
         state.Interface?.interfaceContext?.[interfaceId]?.[
           GetSessionStorageData("bridgeName") ||
@@ -51,10 +52,7 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
 
   const thread_id = GetSessionStorageData("threadId") || reduxThreadId;
   const [bridgeName] = useState(GetSessionStorageData("bridgeName") || "root");
-
-  // useEffect(() => {
-  //     setThreadId(GetSessionStorageData("threadId"));
-  // }, [reduxThreadId]);
+  const selectedSubThreadId = reduxSubThreadId;
 
   const handleCreateNewSubThread = async () => {
     const result = await createNewThreadApi({
@@ -99,13 +97,10 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
               onClick={() => handleChangeSubThread(thread?.sub_thread_id)}
             >
               <ListItemButton
-                selected={
-                  thread?.sub_thread_id === GetSessionStorageData("subThreadId")
-                }
+                selected={thread?.sub_thread_id === selectedSubThreadId}
                 sx={{
                   backgroundColor:
-                    thread?.sub_thread_id ===
-                    GetSessionStorageData("subThreadId")
+                    thread?.sub_thread_id === selectedSubThreadId
                       ? "primary.main" // Set to your desired color or theme color
                       : "transparent",
                   "&.Mui-selected": {
