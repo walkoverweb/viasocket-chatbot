@@ -132,7 +132,6 @@ function InterfaceChatbot({
     GetSessionStorageData("threadId") || reduxThreadId
   );
   const [subThreadId, setSubThreadId] = useState(reduxSubThreadId);
-  console.log(subThreadId, "subThreadid");
   const [bridgeName, setBridgeName] = useState(
     GetSessionStorageData("bridgeName") || reduxBridgeName
   );
