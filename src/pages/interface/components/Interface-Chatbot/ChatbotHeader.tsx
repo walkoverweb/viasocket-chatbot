@@ -29,25 +29,39 @@ import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector";
 import isColorLight from "../../../../utils/themeUtility";
 import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
+import ChatbotDrawer from "./ChatbotDrawer.tsx";
 import "./InterfaceChatbot.scss";
+import OpenSidebarIcon from "../../../../assests/OpenSidebar.tsx";
 
 function ChatbotHeader({ setChatsLoading }) {
   const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
   const {
     chatbotConfig: { chatbotTitle, chatbotSubtitle },
   } = useContext<any>(ChatbotContext);
   const isLightBackground = isColorLight(theme.palette.primary.main);
   const textColor = isLightBackground ? "black" : "white";
 
+  const toggleDrawer = (newOpen: boolean) => () => {
+    setOpen(newOpen);
+  };
+
   return (
     <Grid
       item
       xs={12}
       className="first-grid"
-      sx={{ paddingX: 2, paddingY: 1, background: theme.palette.primary.main }}
+      sx={{ paddingX: 1, paddingY: 1, background: theme.palette.primary.main }}
     >
       <Box className="flex-col-start-start">
         <Box className="flex-center-center">
+          <Box
+            color="inherit"
+            className="mr-2 cursor-pointer flex-center"
+            onClick={toggleDrawer(true)}
+          >
+            <OpenSidebarIcon color={textColor} />
+          </Box>
           <Typography
             variant="h6"
             className="interface-chatbot__header__title"
@@ -70,6 +84,7 @@ function ChatbotHeader({ setChatsLoading }) {
           </Typography>
         )}
       </Box>
+      <ChatbotDrawer open={open} toggleDrawer={toggleDrawer} />
     </Grid>
   );
 }
@@ -119,9 +134,10 @@ const ResetChatOption = React.memo(
       interfaceId,
     }) => {
       const [modalOpen, setModalOpen] = React.useState(false);
-      const { threadId, bridgeName, IsHuman } = useCustomSelector(
+      const { threadId, bridgeName, IsHuman, subThreadId } = useCustomSelector(
         (state: $ReduxCoreType) => ({
           threadId: state.Interface?.threadId || "",
+          subThreadId: state.Interface?.subThreadId || "",
           bridgeName: state.Interface?.bridgeName || "root",
           IsHuman: state.Hello?.isHuman,
         })
@@ -146,6 +162,7 @@ const ResetChatOption = React.memo(
           thread_id: threadId,
           slugName: bridgeName,
           chatBotId: interfaceId,
+          sub_thread_id: subThreadId,
           purpose: "is_reset",
         });
         handleClose();
@@ -242,6 +259,7 @@ const ChatbotFeedbackForm = React.memo(function ChatbotFeedbackForm({
           value={feedback}
           onChange={(e) => setFeedback(e.target.value || "")}
         />
+
         {feedback?.length < 10 && <Typography variant="caption" color="error">Minimum 10 charaters</Typography>}
       </DialogContent>
       <DialogActions>

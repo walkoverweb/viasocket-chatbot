@@ -1,10 +1,10 @@
-import socketIcon from "./socketIcon.png";
-import socketAIIcon from "./Viasocket_AI.svg";
-import defaultApp from "./App.png";
 import aiIcon from "./aiLogo.png";
-import humanIcon from "./human-icon.svg";
+import defaultApp from "./App.png";
 import chatbotGif from "./chatbotGif.gif";
+import humanIcon from "./human-icon.svg";
+import socketIcon from "./socketIcon.png";
 import userAssistant from "./user-assistant.png";
+import socketAIIcon from "./Viasocket_AI.svg";
 
 export const ChatBotIcon = socketAIIcon;
 export const SocketIcon = socketIcon;

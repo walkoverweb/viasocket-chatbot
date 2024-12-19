@@ -47,5 +47,6 @@ export const {
   addInterfaceContext,
   addDefaultContext,
   setThreadId,
+  setThreads,
 } = interfaceSlice.actions;
 export default interfaceSlice.reducer;

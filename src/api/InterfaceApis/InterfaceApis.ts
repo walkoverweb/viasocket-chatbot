@@ -122,7 +122,10 @@ export async function deleteComponentOrGridApi(
 
 export async function getPreviousMessage(
   threadId: string | null,
-  bridgeName: string | null
+  bridgeName: string | null,
+  pageNo: number | null,
+  subThreadId: string | null = threadId,
+  limit = 40
 ): Promise<{ [key: string]: any }[]> {
   if (currentController) {
     currentController.abort();
@@ -131,7 +134,9 @@ export async function getPreviousMessage(
 
   try {
     const response = await axios.get(
-      `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridgeName}`,
+      `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridgeName}?sub_thread_id=${
+        subThreadId || threadId
+      }&pageNo=${pageNo}&limit=${limit}`,
       { signal: currentController.signal }
     );
     return response?.data?.data;
@@ -276,6 +281,34 @@ export const createScripts = async (data: any, type = "flow") => {
       data
     );
     return res;
+  } catch (error: any) {
+    console.error(error);
+    errorToast(error?.response?.data?.message || "Something went wrong!");
+    throw new Error(error);
+  }
+};
+
+export const getAllThreadsApi = async ({ threadId = "" }) => {
+  try {
+    const response = await axios.get(`${URL}/thread/${threadId}`);
+    return response?.data;
+  } catch (error: any) {
+    console.error(error);
+    errorToast(error?.response?.data?.message || "Something went wrong!");
+    throw new Error(error);
+  }
+};
+
+export const createNewThreadApi = async ({
+  threadId = "",
+  subThreadId = "",
+}) => {
+  try {
+    const response = await axios.post(`${URL}/thread/`, {
+      thread_id: threadId,
+      subThreadId,
+    });
+    return response?.data;
   } catch (error: any) {
     console.error(error);
     errorToast(error?.response?.data?.message || "Something went wrong!");
