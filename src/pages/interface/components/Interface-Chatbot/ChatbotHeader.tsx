@@ -259,22 +259,12 @@ const ChatbotFeedbackForm = React.memo(function ChatbotFeedbackForm({
           value={feedback}
           onChange={(e) => setFeedback(e.target.value || "")}
         />
-        {feedback?.length < 10 && (
-          <Typography variant="caption" color="error">
-            Minimum 10 charaters
-          </Typography>
-        )}
+
+        {feedback?.length < 10 && <Typography variant="caption" color="error">Minimum 10 charaters</Typography>}
       </DialogContent>
       <DialogActions>
-        <Button variant="outlined" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          onClick={sendFeedback}
-          autoFocus
-          disabled={feedback?.length < 10}
-        >
+        <Button variant="outlined" onClick={handleClose}>Cancel</Button>
+        <Button variant="contained" onClick={sendFeedback} autoFocus disabled={feedback?.length < 10}>
           Submit
         </Button>
       </DialogActions>
