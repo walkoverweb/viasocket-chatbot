@@ -494,7 +494,7 @@ function InterfaceChatbot({
       };
     }
   }, [threadId, interfaceId, userId, bridgeName, helloId, subThreadId]);
-  console.log(bridgeName, "bridgeName in chatbot");
+  console.log(bridgeName, reduxBridgeName, "bridgeName in chatbot");
   const sendMessage = async (
     message: string,
     variables = {},
