@@ -315,3 +315,17 @@ export const createNewThreadApi = async ({
     throw new Error(error);
   }
 };
+
+export const uploadImage = async ({ formData = {} }) => {
+  try {
+    const response = await axios.post(
+      `${PYTHON_URL}/image/processing/`,
+      formData
+    );
+    return response?.data;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    errorToast(error?.response?.data?.message || "Something went wrong!");
+    return null;
+  }
+};

@@ -126,6 +126,7 @@ function InterfaceChatbot({
   const [open, setOpen] = useState(false);
   const messageRef = useRef<any>();
   const [options, setOptions] = useState<any>([]);
+  const [images, setImages] = useState<string[]>([]); // Ensure images are string URLs
   const socket = useSocket();
 
   const [threadId, setThreadId] = useState(
@@ -497,12 +498,14 @@ function InterfaceChatbot({
 
   const sendMessage = async (
     message: string,
+    imageUrls: string[], // Now expecting image URLs
     variables = {},
     thread = "",
     bridge = ""
   ) => {
     const response = await sendDataToAction({
       message,
+      images: imageUrls, // Send image URLs
       userId,
       interfaceContextData: { ...interfaceContextData, ...variables } || {},
       threadId: thread || threadId,
@@ -517,19 +520,22 @@ function InterfaceChatbot({
     }
   };
 
-  const onSend = (msg?: string, apiCall: boolean = true) => {
+  const onSend = async (msg?: string, apiCall: boolean = true) => {
     const textMessage = msg || messageRef.current.value;
-    if (!textMessage) return;
+    if (!textMessage && images.length === 0) return;
+
     setNewMessage(true);
     startTimeoutTimer();
-    apiCall && sendMessage(textMessage);
+
+    if (apiCall) sendMessage(textMessage, images);
     setLoading(true);
     setOptions([]);
     setMessages((prevMessages) => [
       ...prevMessages,
-      { role: "user", content: textMessage },
+      { role: "user", content: textMessage, images: images },
       { role: "assistant", wait: true, content: "Talking with AI" },
     ]);
+    setImages([]); // Clear images after sending
     messageRef.current.value = "";
   };
 
@@ -654,6 +660,8 @@ function InterfaceChatbot({
               IsHuman ? onSendHello() : onSend();
             }}
             messageRef={messageRef}
+            setImages={setImages}
+            images={images}
           />
         </Grid>
       </Box>

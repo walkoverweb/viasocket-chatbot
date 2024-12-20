@@ -1,5 +1,6 @@
 /* eslint-disable */
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
@@ -8,17 +9,20 @@ import {
   InputAdornment,
   Popover,
   TextField,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AiIcon, UserAssistant } from "../../../../assests/assestsIndex.ts";
 import { setHuman } from "../../../../store/hello/helloSlice.ts";
 import { $ReduxCoreType } from "../../../../types/reduxCore.ts";
 import { useCustomSelector } from "../../../../utils/deepCheckSelector.js";
 import isColorLight from "../../../../utils/themeUtility";
 import { MessageContext } from "./InterfaceChatbot.tsx";
+import { uploadImage } from "../../../../api/InterfaceApis/InterfaceApis.ts";
+import { errorToast } from "../../../../components/customToast.js";
 
 interface ChatbotTextFieldType {
   onSend?: any;
@@ -27,6 +31,8 @@ interface ChatbotTextFieldType {
   disabled?: boolean;
   options?: any[];
   setChatsLoading?: any;
+  images?: String[];
+  setImages?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 function ChatbotTextField({
   onSend = () => {},
@@ -35,8 +41,11 @@ function ChatbotTextField({
   disabled = false,
   options = [],
   setChatsLoading = () => {},
+  images = [],
+  setImages = () => {},
 }: ChatbotTextFieldType) {
   const [message, setMessage] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
   const dispatch = useDispatch();
   const theme = useTheme(); // Hook to access the theme
   const isLight = isColorLight(theme.palette.primary.main);
@@ -48,12 +57,15 @@ function ChatbotTextField({
   }));
   const isHelloAssistantEnabled = mode?.length > 0;
 
+  const reduxConfig = useCustomSelector(
+    (state: $ReduxCoreType) => state.Interface?.config || ""
+  );
   const MessagesList: any = useContext(MessageContext);
   const { addMessage } = MessagesList;
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" && !event.shiftKey && !loading) {
+    if (event.key === "Enter" && !event.shiftKey && !loading && !isUploading) {
       event.preventDefault();
-      onSend(message);
+      onSend({ Message: message, images: images });
     }
   };
 
@@ -90,6 +102,35 @@ function ChatbotTextField({
     setChatsLoading(false);
   };
 
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files) {
+      const filesArray = Array.from(event.target.files);
+      setIsUploading(true);
+      try {
+        for (const file of filesArray) {
+          if (images.length > 4) {
+            errorToast.warn("You have uploaded more than 4 images.");
+          }
+          const formData = new FormData();
+          formData.append("image", file);
+          const response = await uploadImage({ formData });
+          if (response.success) {
+            setImages((prev) => [...prev, response.image_url]);
+          }
+        }
+        if (filesArray.length > 4) {
+          errorToast.warn("You have uploaded more than 4 images.");
+        }
+      } catch (error) {
+        console.error("Error uploading images:", error);
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
   return (
     <Box sx={{ position: "relative", width: "100%" }}>
       {options && options.length > 0 && (
@@ -121,6 +162,24 @@ function ChatbotTextField({
           ))}
         </Box>
       )}
+      <Box
+        sx={{
+          display: "flex",
+          marginTop: theme.spacing(2),
+          marginBottom: theme.spacing(1),
+          flexWrap: "wrap",
+          gap: theme.spacing(1),
+        }}
+      >
+        {images.map((image, index) => (
+          <img
+            key={index}
+            src={image} // Assuming images now contain URLs
+            alt={`Uploaded Preview ${index + 1}`}
+            style={{ maxWidth: "30%", maxHeight: "50px", borderRadius: "2px" }}
+          />
+        ))}
+      </Box>
 
       <TextField
         inputRef={messageRef}
@@ -136,7 +195,13 @@ function ChatbotTextField({
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <Box sx={{ display: "flex", position: "relative" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  position: "relative",
+                  marginLeft: theme.spacing(reduxConfig?.vision ? 5 : 1),
+                }}
+              >
                 <Box
                   sx={{
                     position: "relative",
@@ -256,13 +321,48 @@ function ChatbotTextField({
           },
         }}
       />
+      {reduxConfig?.vision && (
+        <>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            style={{ display: "none" }}
+            id="upload-image"
+            multiple
+          />
+          <label htmlFor="upload-image">
+            <Tooltip title="Upload Image" placement="top">
+              <IconButton
+                component="span"
+                sx={{
+                  position: "absolute",
+                  bottom: theme.spacing(1),
+                  left: theme.spacing(1),
+                  opacity: loading || isUploading ? 0.5 : 1,
+                  backgroundColor: theme.palette.secondary.main,
+                  padding: theme.spacing(1),
+                }}
+                disableRipple
+                disabled={isUploading || loading}
+              >
+                <UploadFileIcon sx={{ color: isLight ? "black" : "white" }} />
+              </IconButton>
+            </Tooltip>
+          </label>
+        </>
+      )}
       <IconButton
-        onClick={() => (!loading ? onSend(message) : null)}
+        onClick={() =>
+          !loading && !isUploading
+            ? onSend({ Message: message, images: images })
+            : null
+        }
         sx={{
           position: "absolute",
           bottom: theme.spacing(1),
           right: theme.spacing(1),
-          opacity: loading ? 0.5 : 1,
+          opacity: loading || isUploading ? 0.5 : 1,
           backgroundColor: theme.palette.primary.main,
           padding: theme.spacing(1),
         }}
