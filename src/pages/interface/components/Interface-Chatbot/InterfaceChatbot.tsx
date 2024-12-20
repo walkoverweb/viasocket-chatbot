@@ -143,7 +143,7 @@ function InterfaceChatbot({
   );
 
   useEffect(() => {
-    setThreadId(GetSessionStorageData("threadId"));
+    setThreadId(GetSessionStorageData("threadId") || reduxThreadId);
   }, [reduxThreadId]);
 
   useEffect(() => {
@@ -151,7 +151,7 @@ function InterfaceChatbot({
   }, [reduxSubThreadId]);
 
   useEffect(() => {
-    setBridgeName(GetSessionStorageData("bridgeName"));
+    setBridgeName(GetSessionStorageData("bridgeName") || reduxBridgeName);
   }, [reduxBridgeName]);
 
   useEffect(() => {
