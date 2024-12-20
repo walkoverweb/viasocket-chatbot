@@ -34,6 +34,7 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
     const handleMessage = (event: MessageEvent) => {
       if (event?.data?.type === "interfaceData") {
         const receivedData = event?.data?.data;
+        console.log(receivedData, "receivedData on chatbot");
         if (receivedData) {
           const {
             threadId = null,
