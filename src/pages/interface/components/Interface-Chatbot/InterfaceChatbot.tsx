@@ -380,11 +380,12 @@ function InterfaceChatbot({
 
   const subscribeToChannel = () => {
     if (bridgeName && threadId) {
-      dispatch(
+      const result = dispatch(
         getHelloDetailsStart({
           slugName: bridgeName,
           threadId: threadId,
           helloId: helloId || null,
+          versionId: reduxBridgeVersionId || null,
         })
       );
     }

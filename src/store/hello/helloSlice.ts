@@ -12,5 +12,6 @@ export const {
   getHelloDetailsStart,
   getHelloDetailsSuccess,
   setHuman,
+  setIsVision,
 } = interfaceSlice.actions;
 export default interfaceSlice.reducer;

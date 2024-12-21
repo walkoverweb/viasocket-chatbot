@@ -225,16 +225,19 @@ export async function getHelloDetailsApi({
   threadId,
   slugName,
   helloId = null,
+  versionId = null,
 }: {
   threadId: string;
   slugName: string;
   helloId?: string | null;
+  versionId: string | null;
 }): Promise<any> {
   try {
     const response = await axios.post(`${URL}/hello/subscribe`, {
       threadId,
       slugName,
       helloId,
+      versionId,
     });
     return response?.data;
   } catch (error) {

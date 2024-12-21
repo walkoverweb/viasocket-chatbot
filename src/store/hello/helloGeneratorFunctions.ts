@@ -10,14 +10,21 @@ export function* getHelloDetailsSaga(
     threadId: string;
     slugName: string;
     helloId?: string | null;
+    versionId: string | null;
   }>
 ): SagaIterator {
   try {
-    const { threadId, slugName, helloId = null } = action.payload;
+    const {
+      threadId,
+      slugName,
+      helloId = null,
+      versionId = null,
+    } = action.payload;
     const response: { [key: string]: any } = yield call(getHelloDetailsApi, {
       slugName,
       threadId,
       helloId,
+      versionId,
     });
     const receivedHelloId = response?.widgetInfo?.helloId;
     const anonymousClientId = response?.ChannelList?.uuid;

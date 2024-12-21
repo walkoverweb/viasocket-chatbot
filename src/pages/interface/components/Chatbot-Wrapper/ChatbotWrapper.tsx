@@ -39,7 +39,7 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
           const {
             threadId = null,
             bridgeName = null,
-            configuration = null,
+            vision = null,
             helloId = null,
             version_id = null,
           } = receivedData;
@@ -61,8 +61,8 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
               })
             );
           }
-          if (configuration) {
-            dispatch(setConfig({ configuration: configuration }));
+          if (vision) {
+            dispatch(setConfig({ vision: vision }));
           } else {
             dispatch(
               addDefaultContext({ variables: { ...receivedData?.variables } })

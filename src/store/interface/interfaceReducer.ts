@@ -240,11 +240,11 @@ export const reducers: ValidateSliceCaseReducers<
     return { ...state, ...tempData };
   },
   setConfig(state, action: actionType<any>) {
-    const data = action.payload.configuration;
-    if (!state.config) {
-      state.config = {};
+    const data = action.payload.vision;
+    if (!state.isVision) {
+      state.isVision = {};
     }
-    state.config = data;
-    sessionStorage.setItem("config", JSON.stringify(state.config));
+    state.isVision = data;
+    sessionStorage.setItem("config", JSON.stringify(state.isVision));
   },
 };

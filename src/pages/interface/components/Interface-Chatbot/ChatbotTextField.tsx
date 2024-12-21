@@ -51,14 +51,16 @@ function ChatbotTextField({
   const isLight = isColorLight(theme.palette.primary.main);
   const [anchorEl, setAnchorEl] = useState(null);
   const isPopoverOpen = Boolean(anchorEl);
-  const { IsHuman, mode } = useCustomSelector((state: $ReduxCoreType) => ({
-    IsHuman: state.Hello?.isHuman,
-    mode: state.Hello?.mode || [],
-  }));
+  const { IsHuman, mode, vision } = useCustomSelector(
+    (state: $ReduxCoreType) => ({
+      IsHuman: state.Hello?.isHuman,
+      mode: state.Hello?.mode || [],
+      vision: state?.Hello?.vision || false,
+    })
+  );
   const isHelloAssistantEnabled = mode?.length > 0;
-
-  const reduxConfig = useCustomSelector(
-    (state: $ReduxCoreType) => state.Interface?.config || ""
+  const reduxIsVision = useCustomSelector(
+    (state: $ReduxCoreType) => state.Interface?.isVision || ""
   );
   const MessagesList: any = useContext(MessageContext);
   const { addMessage } = MessagesList;
@@ -199,7 +201,12 @@ function ChatbotTextField({
                 sx={{
                   display: "flex",
                   position: "relative",
-                  marginLeft: theme.spacing(reduxConfig?.vision ? 5 : 1),
+                  marginLeft: theme.spacing(
+                    (reduxIsVision?.vision && vision) ||
+                      (reduxIsVision?.vision && !vision)
+                      ? 5
+                      : 1
+                  ),
                 }}
               >
                 <Box
@@ -321,7 +328,8 @@ function ChatbotTextField({
           },
         }}
       />
-      {reduxConfig?.vision && (
+      {((reduxIsVision?.vision && vision) ||
+        (reduxIsVision?.vision && !vision)) && (
         <>
           <input
             type="file"
