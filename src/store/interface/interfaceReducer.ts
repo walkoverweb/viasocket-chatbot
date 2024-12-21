@@ -239,4 +239,12 @@ export const reducers: ValidateSliceCaseReducers<
     });
     return { ...state, ...tempData };
   },
+  setConfig(state, action: actionType<any>) {
+    const data = action.payload.vision;
+    if (!state.isVision) {
+      state.isVision = {};
+    }
+    state.isVision = data;
+    sessionStorage.setItem("config", JSON.stringify(state.isVision));
+  },
 };

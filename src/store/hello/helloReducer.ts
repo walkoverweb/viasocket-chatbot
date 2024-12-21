@@ -19,7 +19,7 @@ export const reducers: ValidateSliceCaseReducers<
     return { ...state, isLoading: true };
   },
   getHelloDetailsSuccess(state, action) {
-    const { widgetInfo, ChannelList, Jwt, anonymousClientId, mode } =
+    const { widgetInfo, ChannelList, Jwt, anonymousClientId, mode, vision } =
       action.payload;
     state.widgetInfo = widgetInfo;
     state.anonymousClientId = anonymousClientId;
@@ -29,6 +29,7 @@ export const reducers: ValidateSliceCaseReducers<
     state.isLoading = false;
     state.Channel = ChannelList?.channels?.[0];
     state.mode = mode;
+    state.vision = vision || false;
   },
   setChannel(state, action) {
     state.Channel = action.payload.Channel;

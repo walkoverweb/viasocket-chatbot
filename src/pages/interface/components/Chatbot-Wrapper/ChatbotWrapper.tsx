@@ -5,6 +5,7 @@ import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import {
   addDefaultContext,
   getInterfaceDataByIdStart,
+  setConfig,
   setThreadId,
 } from "../../../../store/interface/interfaceSlice.ts";
 import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
@@ -38,6 +39,7 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
           const {
             threadId = null,
             bridgeName = null,
+            vision = null,
             helloId = null,
             version_id = null,
           } = receivedData;
@@ -58,6 +60,9 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
                 bridgeName: bridgeName,
               })
             );
+          }
+          if (vision) {
+            dispatch(setConfig({ vision: vision }));
           } else {
             dispatch(
               addDefaultContext({ variables: { ...receivedData?.variables } })

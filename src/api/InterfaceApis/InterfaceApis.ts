@@ -225,16 +225,19 @@ export async function getHelloDetailsApi({
   threadId,
   slugName,
   helloId = null,
+  versionId = null,
 }: {
   threadId: string;
   slugName: string;
   helloId?: string | null;
+  versionId: string | null;
 }): Promise<any> {
   try {
     const response = await axios.post(`${URL}/hello/subscribe`, {
       threadId,
       slugName,
       helloId,
+      versionId,
     });
     return response?.data;
   } catch (error) {
@@ -313,5 +316,19 @@ export const createNewThreadApi = async ({
     console.error(error);
     errorToast(error?.response?.data?.message || "Something went wrong!");
     throw new Error(error);
+  }
+};
+
+export const uploadImage = async ({ formData = {} }) => {
+  try {
+    const response = await axios.post(
+      `${PYTHON_URL}/image/processing/`,
+      formData
+    );
+    return response?.data;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    errorToast(error?.response?.data?.message || "Something went wrong!");
+    return null;
   }
 };
