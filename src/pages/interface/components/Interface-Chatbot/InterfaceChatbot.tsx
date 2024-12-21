@@ -59,6 +59,7 @@ interface MessageType {
   createdAt?: string;
   function?: () => void;
   id?: string;
+  images?: string[]; // Added images property to MessageType
 }
 export const MessageContext = createContext<{
   messages: MessageType[] | [];
@@ -533,7 +534,7 @@ function InterfaceChatbot({
     setOptions([]);
     setMessages((prevMessages) => [
       ...prevMessages,
-      { role: "user", content: textMessage, images: images },
+      { role: "user", content: textMessage, urls: images },
       { role: "assistant", wait: true, content: "Talking with AI" },
     ]);
     setImages([]); // Clear images after sending

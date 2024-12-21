@@ -5,6 +5,7 @@ import SendIcon from "@mui/icons-material/Send";
 import {
   Box,
   Button,
+  CircularProgress,
   IconButton,
   InputAdornment,
   Popover,
@@ -130,6 +131,10 @@ function ChatbotTextField({
     }
   };
 
+  const handleRemoveImage = (index: number) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
   return (
     <Box sx={{ position: "relative", width: "100%" }}>
       {options && options.length > 0 && (
@@ -171,12 +176,58 @@ function ChatbotTextField({
         }}
       >
         {images.map((image, index) => (
-          <img
+          <Box
             key={index}
-            src={image} // Assuming images now contain URLs
-            alt={`Uploaded Preview ${index + 1}`}
-            style={{ maxWidth: "30%", maxHeight: "50px", borderRadius: "2px" }}
-          />
+            sx={{
+              position: "relative",
+              maxWidth: "20%",
+              maxHeight: "50px",
+              borderRadius: "5px",
+              backgroundColor: "rgba(0, 0, 0, 0.1)", // Adding background
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "2px",
+            }}
+          >
+            <img
+              src={image} // Assuming images now contain URLs
+              alt={`Uploaded Preview ${index + 1}`}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                borderRadius: "5px",
+              }}
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                top: -2,
+                right: -2,
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                borderRadius: "50%",
+                cursor: "pointer",
+                // padding: "2px",
+              }}
+              onClick={() => handleRemoveImage(index)} // Assuming a function to handle image removal
+            >
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: "bold",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                ✕
+              </Typography>
+            </Box>
+          </Box>
         ))}
       </Box>
 
@@ -344,14 +395,20 @@ function ChatbotTextField({
                   position: "absolute",
                   bottom: theme.spacing(1),
                   left: theme.spacing(1),
-                  opacity: loading || isUploading ? 0.5 : 1,
                   backgroundColor: theme.palette.secondary.main,
                   padding: theme.spacing(1),
                 }}
                 disableRipple
                 disabled={isUploading || loading}
               >
-                <UploadFileIcon sx={{ color: isLight ? "black" : "white" }} />
+                {isUploading ? (
+                  <CircularProgress
+                    size={24}
+                    sx={{ color: theme.palette.primary.main }}
+                  />
+                ) : (
+                  <UploadFileIcon sx={{ color: isLight ? "black" : "white" }} />
+                )}
               </IconButton>
             </Tooltip>
           </label>

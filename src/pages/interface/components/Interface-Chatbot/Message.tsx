@@ -74,6 +74,23 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
             //  boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
           }}
         >
+          {Array.isArray(message?.urls) &&
+            message.urls.map((url, index) => (
+              <img
+                key={index}
+                src={url}
+                alt={`Message Image ${index + 1}`}
+                style={{
+                  maxWidth: "70px",
+                  minWidth: "70px",
+                  maxHeight: "50px",
+                  minHeight: "50px",
+                  borderRadius: "10px",
+                  marginTop: "10px",
+                  margin: "5px",
+                }}
+              />
+            ))}
           <Typography
             variant="body1"
             sx={{
