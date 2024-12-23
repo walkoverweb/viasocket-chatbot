@@ -13,7 +13,7 @@ function ChatbotHeaderTab() {
     mode: state.Hello?.mode || [],
   }));
 
-  const isHelloAssistantEnabled = mode?.length > 0;
+  const isHelloAssistantEnabled = mode?.length > 0 && mode?.includes("human");
   const [value, setValue] = useState(IsHuman ? "Human" : "AI"); // Set default tab based on IsHuman
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
