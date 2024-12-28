@@ -23,6 +23,55 @@ function ChatbotWrapper({
     window?.parent?.postMessage({ type: "interfaceLoaded" }, "*");
   }, []);
 
+  const handleMessage = (event: MessageEvent) => {
+    if (event?.data?.type === "interfaceData") {
+      const receivedData = event?.data?.data;
+      if (receivedData) {
+        const {
+          threadId = null,
+          bridgeName = null,
+          vision = null,
+          helloId = null,
+          version_id = null,
+        } = receivedData;
+        if (threadId) {
+          dispatch(setThreadId({ threadId: threadId }));
+        }
+        if (helloId) {
+          dispatch(setThreadId({ helloId: helloId }));
+        }
+        if (version_id) {
+          dispatch(setThreadId({ version_id: version_id }));
+        }
+        if (bridgeName) {
+          dispatch(setThreadId({ bridgeName: bridgeName || "root" }));
+          dispatch(
+            addDefaultContext({
+              variables: { ...receivedData?.variables },
+              bridgeName: bridgeName,
+            })
+          );
+        }
+        if (vision) {
+          dispatch(setConfig({ vision: vision }));
+        } else {
+          dispatch(
+            addDefaultContext({ variables: { ...receivedData?.variables } })
+          );
+        }
+        if (threadId && bridgeName) {
+          navigate(`/i/${interfaceId}/${bridgeName}/${threadId}`);
+        } else if (threadId) {
+          navigate(`/i/${interfaceId}/${slug}/${threadId}`);
+        } else if (bridgeName) {
+          navigate(`/i/${interfaceId}/${bridgeName}/${threadIdUrl}`);
+        } else {
+          navigate(`/i/${interfaceId}/${slug}/${threadIdUrl}`);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     (async () => {
       // const interfaceToken = intefaceGetLocalStorage("interfaceToken");
@@ -36,55 +85,6 @@ function ChatbotWrapper({
         dispatch(getInterfaceDataByIdStart({}));
       }
     })();
-
-    const handleMessage = (event: MessageEvent) => {
-      if (event?.data?.type === "interfaceData") {
-        const receivedData = event?.data?.data;
-        if (receivedData) {
-          const {
-            threadId = null,
-            bridgeName = null,
-            vision = null,
-            helloId = null,
-            version_id = null,
-          } = receivedData;
-          if (threadId) {
-            dispatch(setThreadId({ threadId: threadId }));
-          }
-          if (helloId) {
-            dispatch(setThreadId({ helloId: helloId }));
-          }
-          if (version_id) {
-            dispatch(setThreadId({ version_id: version_id }));
-          }
-          if (bridgeName) {
-            dispatch(setThreadId({ bridgeName: bridgeName || "root" }));
-            dispatch(
-              addDefaultContext({
-                variables: { ...receivedData?.variables },
-                bridgeName: bridgeName,
-              })
-            );
-          }
-          if (vision) {
-            dispatch(setConfig({ vision: vision }));
-          } else {
-            dispatch(
-              addDefaultContext({ variables: { ...receivedData?.variables } })
-            );
-          }
-          if (threadId && bridgeName) {
-            navigate(`/i/${interfaceId}/${bridgeName}/${threadId}`);
-          } else if (threadId) {
-            navigate(`/i/${interfaceId}/${slug}/${threadId}`);
-          } else if (bridgeName) {
-            navigate(`/i/${interfaceId}/${bridgeName}/${threadIdUrl}`);
-          } else {
-            navigate(`/i/${interfaceId}/root`);
-          }
-        }
-      }
-    };
 
     window.addEventListener("message", handleMessage);
     return () => {

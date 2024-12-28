@@ -88,7 +88,6 @@ function InterfaceChatbot({
   threadIdUrl: threadId = "asdf",
 }: InterfaceChatbotProps) {
   const theme = useTheme(); // Hook to access the theme
-  console.log(bridgeName, "slug", threadId, "threadIdUrl");
   const {
     interfaceContextData,
     // reduxThreadId,
