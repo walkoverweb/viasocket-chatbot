@@ -10,7 +10,7 @@ export default function addUrlDataHoc(
     const setSearchParams = useSearchParams()[1];
     const data: { [key: string]: string | boolean | undefined } = {};
     paramsToInject?.forEach((key: string) => {
-      data.interfaceId = urlParams[key];
+      data[key] = urlParams[key];
     });
 
     return (

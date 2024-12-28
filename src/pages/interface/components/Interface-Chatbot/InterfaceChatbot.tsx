@@ -48,6 +48,8 @@ interface InterfaceChatbotProps {
   componentId: string;
   gridId: string;
   dragRef: any;
+  slug: string;
+  threadIdUrl: string;
 }
 
 interface MessageType {
@@ -82,14 +84,16 @@ function InterfaceChatbot({
   props,
   inpreview = true,
   interfaceId,
+  slug: bridgeName = "root",
+  threadIdUrl: threadId = "asdf",
 }: InterfaceChatbotProps) {
   const theme = useTheme(); // Hook to access the theme
-
+  console.log(bridgeName, "slug", threadId, "threadIdUrl");
   const {
     interfaceContextData,
-    reduxThreadId,
+    // reduxThreadId,
     reduxSubThreadId,
-    reduxBridgeName,
+    // reduxBridgeName,
     reduxHelloId,
     reduxBridgeVersionId,
     IsHuman,
@@ -102,10 +106,9 @@ function InterfaceChatbot({
     mode,
   } = useCustomSelector((state: $ReduxCoreType) => ({
     interfaceContextData:
-      state.Interface?.interfaceContext?.[interfaceId]?.[
-        state.Interface?.bridgeName || "root"
-      ]?.interfaceData,
-    reduxThreadId: state.Interface?.threadId || "",
+      state.Interface?.interfaceContext?.[interfaceId]?.[bridgeName || "root"]
+        ?.interfaceData,
+    // reduxThreadId: state.Interface?.threadId || "",
     reduxSubThreadId: state.Interface?.subThreadId || "",
     reduxBridgeName: state.Interface?.bridgeName || "root",
     reduxHelloId: state.Interface?.helloId || null,
@@ -130,13 +133,13 @@ function InterfaceChatbot({
   const [images, setImages] = useState<string[]>([]); // Ensure images are string URLs
   const socket = useSocket();
 
-  const [threadId, setThreadId] = useState(
-    GetSessionStorageData("threadId") || reduxThreadId
-  );
+  // const [threadId, setThreadId] = useState(
+  //   GetSessionStorageData("threadId") || reduxThreadId
+  // );
   const [subThreadId, setSubThreadId] = useState(reduxSubThreadId);
-  const [bridgeName, setBridgeName] = useState(
-    GetSessionStorageData("bridgeName") || reduxBridgeName
-  );
+  // const [bridgeName, setBridgeName] = useState(
+  //   GetSessionStorageData("bridgeName") || reduxBridgeName
+  // );
   const [helloId, setHelloId] = useState(
     GetSessionStorageData("helloId") || reduxHelloId
   );
@@ -144,17 +147,17 @@ function InterfaceChatbot({
     GetSessionStorageData("version_id") || reduxBridgeVersionId
   );
 
-  useEffect(() => {
-    setThreadId(GetSessionStorageData("threadId"));
-  }, [reduxThreadId]);
+  // useEffect(() => {
+  //   setThreadId(GetSessionStorageData("threadId"));
+  // }, [reduxThreadId]);
 
   useEffect(() => {
     setSubThreadId(reduxSubThreadId);
   }, [reduxSubThreadId]);
 
-  useEffect(() => {
-    setBridgeName(GetSessionStorageData("bridgeName"));
-  }, [reduxBridgeName]);
+  // useEffect(() => {
+  //   setBridgeName(GetSessionStorageData("bridgeName"));
+  // }, [reduxBridgeName]);
 
   useEffect(() => {
     setHelloId(GetSessionStorageData("helloId"));
@@ -672,5 +675,9 @@ function InterfaceChatbot({
 }
 
 export default React.memo(
-  addUrlDataHoc(React.memo(InterfaceChatbot), [ParamsEnums.interfaceId])
+  addUrlDataHoc(React.memo(InterfaceChatbot), [
+    ParamsEnums.interfaceId,
+    ParamsEnums.slug,
+    ParamsEnums.threadIdUrl,
+  ])
 );

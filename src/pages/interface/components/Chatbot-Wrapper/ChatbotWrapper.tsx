@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import {
@@ -9,11 +10,15 @@ import {
   setThreadId,
 } from "../../../../store/interface/interfaceSlice.ts";
 import { GetSessionStorageData } from "../../utils/InterfaceUtils.ts";
-import InterfaceChatbot from "../Interface-Chatbot/InterfaceChatbot.tsx";
 
-function ChatbotWrapper({ interfaceId, loadInterface = true }) {
+function ChatbotWrapper({
+  interfaceId,
+  loadInterface = true,
+  threadIdUrl,
+  slug,
+}) {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   useEffect(() => {
     window?.parent?.postMessage({ type: "interfaceLoaded" }, "*");
   }, []);
@@ -68,23 +73,33 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
               addDefaultContext({ variables: { ...receivedData?.variables } })
             );
           }
+          if (threadId && bridgeName) {
+            navigate(`/i/${interfaceId}/${bridgeName}/${threadId}`);
+          } else if (threadId) {
+            navigate(`/i/${interfaceId}/${slug}/${threadId}`);
+          } else if (bridgeName) {
+            navigate(`/i/${interfaceId}/${bridgeName}/${threadIdUrl}`);
+          } else {
+            navigate(`/i/${interfaceId}/root`);
+          }
         }
       }
     };
 
-    if (loadInterface) {
-      window.addEventListener("message", handleMessage);
-    }
+    window.addEventListener("message", handleMessage);
     return () => {
-      if (loadInterface) {
-        window.removeEventListener("message", handleMessage);
-      }
+      window.removeEventListener("message", handleMessage);
     };
-  }, [dispatch, interfaceId, loadInterface]);
+  }, [dispatch, interfaceId, slug, threadIdUrl]);
 
-  return <InterfaceChatbot />;
+  // return <InterfaceChatbot />;
+  return null;
 }
 
 export default React.memo(
-  addUrlDataHoc(React.memo(ChatbotWrapper), [ParamsEnums.interfaceId])
+  addUrlDataHoc(React.memo(ChatbotWrapper), [
+    ParamsEnums.interfaceId,
+    ParamsEnums.slug,
+    ParamsEnums.threadIdUrl,
+  ])
 );

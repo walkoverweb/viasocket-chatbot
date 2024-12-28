@@ -322,6 +322,14 @@ export const removeCookie = (cookieName) => {
 export const getInfoParamtersFromUrl = () => {
   const params = window.location.pathname.slice(1)?.split("/");
   const urlParameters = {};
-  if (params[0] === "i") urlParameters.interfaceId = params[1];
+  if (params[0] === "i") {
+    urlParameters.interfaceId = params[1];
+    if (params.length > 2) {
+      urlParameters.slug = params[2];
+    }
+    if (params.length > 3) {
+      urlParameters.threadIdUrl = params[3];
+    }
+  }
   return urlParameters;
 };

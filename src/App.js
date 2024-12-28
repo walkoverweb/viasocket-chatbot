@@ -1,14 +1,27 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import React, { createContext, useCallback, useMemo, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Outlet, Route, Routes } from "react-router-dom";
 import "./App.css";
 import generateTheme from "./hoc/theme";
 import ChatbotPreview from "./pages/interface/components/Chatbot-Preview/ChatbotPreview.tsx";
 import ChatbotWrapper from "./pages/interface/components/Chatbot-Wrapper/ChatbotWrapper.tsx";
 import InterfaceEmbed from "./pages/interface/pages/InterfaceEmbed/InterfaceEmbed.tsx";
 import "./scss/global.scss";
+import InterfaceChatbot from "./pages/interface/components/Interface-Chatbot/InterfaceChatbot.tsx";
 
 export const ChatbotContext = createContext({});
+
+export function ParentComponent({ chatbotContextValue }) {
+  return (
+    <ChatbotContext.Provider value={chatbotContextValue}>
+      <div id="parent-view-only-grid" className="h-100vh w-100">
+        <ChatbotWrapper />
+        {/* Outlet renders child routes */}
+        <Outlet />
+      </div>
+    </ChatbotContext.Provider>
+  );
+}
 
 function App() {
   const [themeColor, setThemeColor] = useState("#000000"); // Default color
@@ -23,6 +36,11 @@ function App() {
   const handleThemeChange = useCallback((color) => {
     setThemeColor(color);
   }, []);
+
+  const chatbotContextValue = useMemo(
+    () => ({ chatbotConfig, themeColor }),
+    [chatbotConfig, themeColor]
+  );
 
   return (
     <ThemeProvider theme={theme}>
@@ -44,6 +62,17 @@ function App() {
             </ChatbotContext.Provider>
           }
         />
+        {/* Parent route */}
+        <Route
+          path="/i/:interfaceId"
+          element={
+            <ParentComponent chatbotContextValue={chatbotContextValue} />
+          }
+        >
+          {/* Child route */}
+          <Route path=":slug?/:threadIdUrl?" element={<InterfaceChatbot />} />
+        </Route>
+
         <Route
           exact
           path="/i"
