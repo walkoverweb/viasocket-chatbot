@@ -47,7 +47,9 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
         className="user-message-slide"
         sx={{
           alignItems: "flex-end",
-          gap: "0px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
           width: "100%",
           justifyContent: "flex-end",
           "@media(max-width:479px)": {
@@ -58,8 +60,37 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
         }}
         direction="row"
       >
+        {Array.isArray(message?.urls) && message.urls.length > 0 && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row-reverse",
+              flexWrap: "wrap",
+              gap: "10px",
+              maxWidth: "80%",
+              padding: "10px",
+              boxSizing: "border-box",
+              borderRadius: "10px 10px 1px 10px",
+            }}
+          >
+            {message.urls.map((url, index) => (
+              <img
+                key={index}
+                src={url}
+                alt={`Image ${index + 1}`}
+                style={{
+                  display: "block",
+                  maxWidth: "40%",
+                  height: "auto",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+                onClick={() => window.open(url, "_blank")}
+              />
+            ))}
+          </Box>
+        )}
         <Box
-          // className="user-message-slide"
           sx={{
             backgroundColor: theme.palette.primary.main,
             padding: "10px",
@@ -74,23 +105,6 @@ const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
             //  boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
           }}
         >
-          {Array.isArray(message?.urls) &&
-            message.urls.map((url, index) => (
-              <img
-                key={index}
-                src={url}
-                alt={`Message Image ${index + 1}`}
-                style={{
-                  maxWidth: "70px",
-                  minWidth: "70px",
-                  maxHeight: "50px",
-                  minHeight: "50px",
-                  borderRadius: "10px",
-                  marginTop: "10px",
-                  margin: "5px",
-                }}
-              />
-            ))}
           <Typography
             variant="body1"
             sx={{
@@ -243,7 +257,6 @@ const AssistantMessageCard = React.memo(
                             : message?.chatbot_message || message?.content
                         )
                       : null;
-                    // console.log(parsedContent)
                     if (
                       parsedContent &&
                       (parsedContent.hasOwnProperty("isMarkdown") ||
