@@ -409,11 +409,15 @@ function InterfaceChatbot({
     if (inpreview) {
       const subscribe = () => {
         client.subscribe(
-          interfaceId + (threadId || userId) + (subThreadId || userId)
+          (
+            interfaceId +
+            (threadId || userId) +
+            (subThreadId || userId)
+          ).replace(/ /g, "_")
         );
       };
       client.on("open", subscribe);
-      subscribe();
+      // subscribe();
       getallPreviousHistory();
       subscribeToChannel();
 
@@ -490,7 +494,11 @@ function InterfaceChatbot({
 
       return () => {
         client.unsubscribe(
-          interfaceId + (threadId || userId) + (subThreadId || userId)
+          (
+            interfaceId +
+            (threadId || userId) +
+            (subThreadId || userId)
+          ).replace(/ /g, "_")
         );
         client.removeListener("message", handleMessage);
         clearTimeout(timeoutIdRef.current);
