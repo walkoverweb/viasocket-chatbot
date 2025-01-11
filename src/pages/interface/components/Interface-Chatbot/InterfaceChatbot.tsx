@@ -408,16 +408,16 @@ function InterfaceChatbot({
   useEffect(() => {
     if (inpreview) {
       const subscribe = () => {
-        client.subscribe(
-          (
-            interfaceId +
-            (threadId || userId) +
-            (subThreadId || userId)
-          ).replace(/ /g, "_")
-        );
+        const channelId = (
+          interfaceId +
+          (threadId || userId) +
+          (subThreadId || userId)
+        ).replace(/ /g, "_");
+
+        client.subscribe(channelId);
       };
       client.on("open", subscribe);
-      // subscribe();
+      subscribe();
       getallPreviousHistory();
       subscribeToChannel();
 
@@ -493,19 +493,19 @@ function InterfaceChatbot({
       client.on("message", handleMessage);
 
       return () => {
-        client.unsubscribe(
-          (
-            interfaceId +
-            (threadId || userId) +
-            (subThreadId || userId)
-          ).replace(/ /g, "_")
-        );
+        const channelId = (
+          interfaceId +
+          (threadId || userId) +
+          (subThreadId || userId)
+        ).replace(/ /g, "_");
+
+        client.unsubscribe(channelId);
         client.removeListener("message", handleMessage);
         clearTimeout(timeoutIdRef.current);
       };
     }
   }, [threadId, interfaceId, userId, bridgeName, helloId, subThreadId]);
-  console.log(bridgeName, reduxBridgeName, "bridgeName in chatbot");
+
   const sendMessage = async (
     message: string,
     imageUrls: string[], // Now expecting image URLs
