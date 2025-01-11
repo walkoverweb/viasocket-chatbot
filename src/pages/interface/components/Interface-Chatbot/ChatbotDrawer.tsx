@@ -7,6 +7,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { lighten, useTheme } from "@mui/system";
@@ -101,15 +102,29 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
                 sx={{
                   backgroundColor:
                     thread?.sub_thread_id === selectedSubThreadId
-                      ? "primary.main" // Set to your desired color or theme color
+                      ? "primary.main"
                       : "transparent",
                   "&.Mui-selected": {
-                    backgroundColor: "primary.main", // Customize the background color of the selected state
+                    backgroundColor: "primary.main",
                   },
                 }}
               >
                 <ListItemText
-                  primary={thread?.display_name || thread?.sub_thread_id}
+                  primary={
+                    (thread?.display_name || thread?.sub_thread_id)?.length >
+                    30 ? (
+                      <Tooltip
+                        title={thread?.display_name || thread?.sub_thread_id}
+                        placement="top"
+                      >
+                        <span>{`${(
+                          thread?.display_name || thread?.sub_thread_id
+                        )?.substring(0, 27)}...`}</span>
+                      </Tooltip>
+                    ) : (
+                      thread?.display_name || thread?.sub_thread_id
+                    )
+                  }
                   color="inherit"
                   sx={{ color: textColor || "black" }}
                 />
