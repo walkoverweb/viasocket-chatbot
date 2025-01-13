@@ -408,9 +408,12 @@ function InterfaceChatbot({
   useEffect(() => {
     if (inpreview) {
       const subscribe = () => {
-        client.subscribe(
-          interfaceId + (threadId || userId) + (subThreadId || userId)
-        );
+        const channelId = (
+          interfaceId +
+          (threadId || userId) +
+          (subThreadId || userId)
+        ).replace(/ /g, "_");
+        client.subscribe(channelId);
       };
       client.on("open", subscribe);
       subscribe();
@@ -489,9 +492,12 @@ function InterfaceChatbot({
       client.on("message", handleMessage);
 
       return () => {
-        client.unsubscribe(
-          interfaceId + (threadId || userId) + (subThreadId || userId)
-        );
+        const channelId = (
+          interfaceId +
+          (threadId || userId) +
+          (subThreadId || userId)
+        ).replace(/ /g, "_");
+        client.unsubscribe(channelId);
         client.removeListener("message", handleMessage);
         clearTimeout(timeoutIdRef.current);
       };
