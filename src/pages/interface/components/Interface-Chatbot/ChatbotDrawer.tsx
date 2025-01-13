@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { lighten, useTheme } from "@mui/system";
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { createNewThreadApi } from "../../../../api/InterfaceApis/InterfaceApis.ts";
 import CloseSidebarIcon from "../../../../assests/CloseSidebar.tsx";
@@ -36,10 +36,14 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
   const isLightBackground = isColorLight(theme.palette.primary.main);
   const textColor = isLightBackground ? "black" : "white";
   const dispatch = useDispatch();
-  const { reduxThreadId, subThreadList, reduxSubThreadId } = useCustomSelector(
-    (state: $ReduxCoreType) => ({
+  const { reduxThreadId, subThreadList, reduxSubThreadId, reduxBridgeName } =
+    useCustomSelector((state: $ReduxCoreType) => ({
       reduxThreadId: state.Interface?.threadId || "",
       reduxSubThreadId: state.Interface?.subThreadId || "", // Get subThreadId from Redux
+      reduxBridgeName:
+        GetSessionStorageData("bridgeName") ||
+        state.Interface?.bridgeName ||
+        "root", // Get bridgeName
       subThreadList:
         state.Interface?.interfaceContext?.[interfaceId]?.[
           GetSessionStorageData("bridgeName") ||
@@ -48,11 +52,9 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
         ]?.threadList?.[
           GetSessionStorageData("threadId") || state.Interface?.threadId
         ] || [],
-    })
-  );
+    }));
 
   const thread_id = GetSessionStorageData("threadId") || reduxThreadId;
-  const [bridgeName] = useState(GetSessionStorageData("bridgeName") || "root");
   const selectedSubThreadId = reduxSubThreadId;
 
   const handleCreateNewSubThread = async () => {
@@ -64,7 +66,7 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
       dispatch(
         setThreads({
           newThreadData: result?.thread,
-          bridgeName,
+          bridgeName: GetSessionStorageData("bridgeName") || reduxBridgeName,
           threadId: thread_id,
         })
       );
