@@ -207,10 +207,26 @@ export const reducers: ValidateSliceCaseReducers<
         state.subThreadId = threadId;
       }
     } else {
-      // Otherwise, push the new threadData to the thread list
-      updatedInterfaceContext[interfaceId][bridgeName].threadList[
-        threadId
-      ].push(threadData);
+      // Otherwise, update the thread list with the new threadData
+      const threadList =
+        updatedInterfaceContext[interfaceId][bridgeName].threadList[threadId];
+      const existingThreadIndex = threadList.findIndex(
+        (thread: any) => thread.thread_id === threadData.thread_id
+      );
+
+      if (existingThreadIndex === -1) {
+        threadList.push({
+          thread_id: threadId,
+          sub_thread_id: threadId || "",
+          display_name: threadId,
+        });
+      }
+      threadList.push(threadData);
+
+      // Add the updated threadList back to updatedInterfaceContext
+      updatedInterfaceContext[interfaceId][bridgeName].threadList[threadId] =
+        threadList;
+
       state.subThreadId = threadData?.sub_thread_id || ""; // Store in reducer state
     }
 
