@@ -73,6 +73,7 @@ export const MessageContext = createContext<{
   setNewMessage?: (newMessage: boolean) => void;
   newMessage?: boolean;
   currentPage?: Number;
+  starterQuestions?: string[];
 }>({
   messages: [],
   helloMessages: [],
@@ -187,6 +188,7 @@ function InterfaceChatbot({
   );
 
   const [helloMessages, setHelloMessages] = useState<any>([]);
+  const [starterQuestions, setStarterQuestions] = useState<any>([]);
 
   useEffect(() => {
     getHelloPreviousHistory(messages);
@@ -321,7 +323,7 @@ function InterfaceChatbot({
     if (threadId && interfaceId) {
       setChatsLoading(true);
       try {
-        const previousChats = await getPreviousMessage(
+        const { previousChats, starterQuestion } = await getPreviousMessage(
           threadId,
           bridgeName,
           1,
@@ -335,6 +337,9 @@ function InterfaceChatbot({
           setMessages([]);
           setHasMoreMessages(false);
           console.error("previousChats is not an array");
+        }
+        if (Array.isArray(starterQuestion)) {
+          setStarterQuestions(starterQuestion.slice(0, 4));
         }
       } catch (error) {
         console.error("Error fetching previous chats:", error);
@@ -619,6 +624,7 @@ function InterfaceChatbot({
         setNewMessage,
         newMessage,
         currentPage,
+        starterQuestions,
       }}
     >
       <FormComponent open={open} setOpen={setOpen} />

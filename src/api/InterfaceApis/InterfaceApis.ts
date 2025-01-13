@@ -126,7 +126,7 @@ export async function getPreviousMessage(
   pageNo: number | null,
   subThreadId: string | null = threadId,
   limit = 40
-): Promise<{ [key: string]: any }[]> {
+): Promise<{ previousChats: any; starterQuestion: string[] }> {
   if (currentController) {
     currentController.abort();
   }
@@ -139,7 +139,10 @@ export async function getPreviousMessage(
       }&pageNo=${pageNo}&limit=${limit}`,
       { signal: currentController.signal }
     );
-    return response?.data?.data;
+    return {
+      previousChats: response?.data?.data || [],
+      starterQuestion: response?.data?.starterQuestion || [],
+    };
   } catch (error) {
     if (error.name === "AbortError") {
       console.log("Request aborted:", error.message);
@@ -292,12 +295,19 @@ export const createScripts = async (data: any, type = "flow") => {
 };
 
 export const getAllThreadsApi = async ({ threadId = "" }) => {
+  if (!threadId) {
+    console.error("Invalid threadId provided");
+    return null;
+  }
   try {
     const response = await axios.get(`${URL}/thread/${threadId}`);
     return response?.data;
   } catch (error: any) {
     console.error(error);
-    errorToast(error?.response?.data?.message || "Something went wrong!");
+    errorToast(
+      error?.response?.data?.message ||
+        "Something went wrong While fetching Threads!"
+    );
     throw new Error(error);
   }
 };
