@@ -25,6 +25,7 @@ function MessageList() {
     setNewMessage,
     newMessage,
     currentPage,
+    starterQuestions,
   } = useContext(MessageContext);
   const MessagesList: any = useContext(MessageContext);
   const {
@@ -193,6 +194,35 @@ function MessageList() {
       >
         What can I help with?
       </Typography>
+
+      {starterQuestions.length > 0 && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: 2,
+          }}
+        >
+          {starterQuestions.map((question, index) => (
+            <Box
+              key={index}
+              onClick={() => addMessage(question)}
+              sx={{
+                cursor: "pointer",
+                marginBottom: 1,
+                padding: 1,
+                borderRadius: 2,
+                border: "0.5px solid gray",
+              }}
+            >
+              <Typography variant="body1" color="text.primary">
+                {question}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      )}
     </Box>
   ) : (
     <Box
