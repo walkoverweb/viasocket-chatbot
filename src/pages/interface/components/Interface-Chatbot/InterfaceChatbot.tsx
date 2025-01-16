@@ -432,7 +432,6 @@ function InterfaceChatbot({
         if (parsedMessage?.status === "connected") {
           return;
         }
-
         // Check if the function call is present
         if (
           parsedMessage?.response?.function_call &&
