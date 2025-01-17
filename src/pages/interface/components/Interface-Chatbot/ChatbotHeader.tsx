@@ -33,7 +33,7 @@ import ChatbotDrawer from "./ChatbotDrawer.tsx";
 import "./InterfaceChatbot.scss";
 import OpenSidebarIcon from "../../../../assests/OpenSidebar.tsx";
 
-function ChatbotHeader({ setChatsLoading }) {
+function ChatbotHeader({ setLoading, setChatsLoading }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const {
@@ -84,7 +84,11 @@ function ChatbotHeader({ setChatsLoading }) {
           </Typography>
         )}
       </Box>
-      <ChatbotDrawer open={open} toggleDrawer={toggleDrawer} />
+      <ChatbotDrawer
+        open={open}
+        toggleDrawer={toggleDrawer}
+        setLoading={setLoading}
+      />
     </Grid>
   );
 }
@@ -260,11 +264,22 @@ const ChatbotFeedbackForm = React.memo(function ChatbotFeedbackForm({
           onChange={(e) => setFeedback(e.target.value || "")}
         />
 
-        {feedback?.length < 10 && <Typography variant="caption" color="error">Minimum 10 charaters</Typography>}
+        {feedback?.length < 10 && (
+          <Typography variant="caption" color="error">
+            Minimum 10 charaters
+          </Typography>
+        )}
       </DialogContent>
       <DialogActions>
-        <Button variant="outlined" onClick={handleClose}>Cancel</Button>
-        <Button variant="contained" onClick={sendFeedback} autoFocus disabled={feedback?.length < 10}>
+        <Button variant="outlined" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          onClick={sendFeedback}
+          autoFocus
+          disabled={feedback?.length < 10}
+        >
           Submit
         </Button>
       </DialogActions>
