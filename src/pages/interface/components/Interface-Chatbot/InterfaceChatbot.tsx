@@ -640,7 +640,10 @@ function InterfaceChatbot({
           position: "relative",
         }}
       >
-        <ChatbotHeader setChatsLoading={setChatsLoading} />
+        <ChatbotHeader
+          setLoading={setLoading}
+          setChatsLoading={setChatsLoading}
+        />
         <ChatbotHeaderTab />
         {chatsLoading && (
           <LinearProgress
