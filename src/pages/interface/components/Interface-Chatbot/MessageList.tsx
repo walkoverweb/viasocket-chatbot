@@ -179,12 +179,18 @@ function MessageList() {
         justifyContent: "center",
         alignItems: "center",
         height: "100%",
+        // width: "100%",  // Ensure full width to center content
       }}
     >
+      {/* Always show the chatbot gif */}
       <img
         src={ChatBotGif}
         alt="Chatbot GIF"
-        style={{ display: showIcon ? "block" : "none" }}
+        style={{
+          display: showIcon ? "block" : "none",
+          marginBottom: 20,
+          marginTop: starterQuestions?.length > 0 ? 140 : 240,
+        }}
       />
       <Typography
         variant="h6"
@@ -195,45 +201,54 @@ function MessageList() {
         What can I help with?
       </Typography>
 
-      {starterQuestions?.length > 0 && (
-        <Box
-          sx={{
-            position: "absolute",
-            left: 30,
-            bottom: 80,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            marginTop: 1,
-            maxWidth: "100%",
-            overflow: "auto",
-          }}
-        >
-          {starterQuestions.map((question, index) => (
-            <Box
-              key={index}
-              onClick={() => addMessage(question)}
-              sx={{
-                cursor: "pointer",
-                marginBottom: 0.5,
-                padding: 1,
-                borderRadius: 3,
-                border: "1px solid #ddd",
-                boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
-                transition: "transform 0.2s",
-                width: "auto",
-                "&:hover": {
-                  transform: "scale(1.03)",
-                },
-              }}
-            >
-              <Typography variant="body2" color="text.primary" align="center">
-                {question}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-      )}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end", // Align to the end if there are starter questions
+          height: "100%",
+          width: "100%",
+        }}
+      >
+        {/* Show starter questions if available */}
+        {starterQuestions?.length > 0 && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start", // Align left
+              marginTop: 1,
+              padding: 2,
+              width: "100%", // Take full width
+              maxWidth: "600px", // Optional: limit the width to something reasonable
+            }}
+          >
+            {starterQuestions.map((question, index) => (
+              <Box
+                key={index}
+                onClick={() => addMessage(question)}
+                sx={{
+                  cursor: "pointer",
+                  marginBottom: 0.5,
+                  padding: 1,
+                  borderRadius: 3,
+                  border: "1px solid #ddd",
+                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
+                  transition: "transform 0.2s",
+                  width: "auto",
+                  "&:hover": {
+                    transform: "scale(1.03)",
+                  },
+                }}
+              >
+                <Typography variant="body2" color="text.primary" align="center">
+                  {question}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        )}
+      </Box>
     </Box>
   ) : (
     <Box
@@ -266,7 +281,6 @@ function MessageList() {
         scrollableTarget="scrollableDiv"
         style={{
           display: "flex",
-          // flexDirection: isInverse ? "column" : "column-reverse",
           flexDirection: "column",
         }}
         scrollThreshold="230px"
