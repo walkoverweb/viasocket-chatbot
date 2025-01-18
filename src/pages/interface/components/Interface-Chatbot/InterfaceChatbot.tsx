@@ -36,10 +36,7 @@ import "./InterfaceChatbot.scss";
 import MessageList from "./MessageList.tsx";
 import { setThreads } from "../../../../store/interface/interfaceSlice.ts";
 
-const client = new WebSocketClient(
-  "lyvSfW7uPPolwax0BHMC",
-  "DprvynUwAdFwkE91V5Jj"
-);
+const client = WebSocketClient("lyvSfW7uPPolwax0BHMC", "DprvynUwAdFwkE91V5Jj");
 
 interface InterfaceChatbotProps {
   props: any;
@@ -488,33 +485,6 @@ function InterfaceChatbot({
     }
   };
 
-  // useEffect(() => {
-  //   const newChannelId = (
-  //     interfaceId +
-  //     (threadId || userId) +
-  //     (subThreadId || userId)
-  //   ).replace(/ /g, "_");
-
-  //   if (newChannelId !== channelIdRef.current) {
-  //     channelIdRef.current = newChannelId;
-  //     console.log(userId, 'userf', newChannelId);
-  //     const timeoutId = setTimeout(() => {
-  //       const listener = client.on(newChannelId, handleMessageRTLayer);
-
-  //       return () => {
-  //         listener.remove();
-  //         clearTimeout(timeoutIdRef.current);
-  //       };
-  //     }, 500);
-
-  //     return () => {
-  //       listener.remove();
-  //       clearTimeout(timeoutIdRef.current);
-  //       clearTimeout(timeoutId);
-  //     };
-  //   }
-  // }, [interfaceId, userId, threadId, subThreadId]);
-
   useEffect(() => {
     const newChannelId = (
       interfaceId +
@@ -525,20 +495,12 @@ function InterfaceChatbot({
     if (newChannelId !== channelIdRef.current) {
       channelIdRef.current = newChannelId;
 
-      const timeoutId = setTimeout(() => {
-        const listener = client.on(newChannelId, handleMessageRTLayer);
-        // Store the listener in a ref for cleanup
-        listenerRef.current = listener;
-      }, 500);
+      const listener = client.on(newChannelId, handleMessageRTLayer);
 
       // Cleanup on effect re-run or unmount
       return () => {
-        clearTimeout(timeoutId);
-
-        if (listenerRef.current) {
-          listenerRef.current?.remove();
-          listenerRef.current = null;
-        }
+        listener.remove();
+        clearTimeout(timeoutIdRef.current);
       };
     }
   }, [interfaceId, userId, threadId, subThreadId]);
