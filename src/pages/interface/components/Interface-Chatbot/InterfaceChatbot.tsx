@@ -130,6 +130,8 @@ function InterfaceChatbot({
   const [options, setOptions] = useState<any>([]);
   const [images, setImages] = useState<string[]>([]); // Ensure images are string URLs
   const socket = useSocket();
+  const channelIdRef = useRef<string | null>(null);
+  const listenerRef = useRef<string | null>(null);
 
   const [threadId, setThreadId] = useState(
     GetSessionStorageData("threadId") || reduxThreadId
@@ -386,7 +388,7 @@ function InterfaceChatbot({
 
   const subscribeToChannel = () => {
     if (bridgeName && threadId) {
-      const result = dispatch(
+      dispatch(
         getHelloDetailsStart({
           slugName: bridgeName,
           threadId: threadId,
@@ -411,102 +413,135 @@ function InterfaceChatbot({
   }, [threadId, bridgeName]);
 
   useEffect(() => {
-    if (inpreview) {
-      const subscribe = () => {
-        const channelId = (
-          interfaceId +
-          (threadId || userId) +
-          (subThreadId || userId)
-        ).replace(/ /g, "_");
-        client.subscribe(channelId);
-      };
-      client.on("open", subscribe);
-      subscribe();
-      getallPreviousHistory();
-      subscribeToChannel();
+    subscribeToChannel();
+  }, [bridgeName, threadId, helloId]);
 
-      const handleMessage = (message: string) => {
-        // Parse the incoming message string into an object
-        const parsedMessage = JSON.parse(message || "{}");
-        // Check if the status is "connected"
-        if (parsedMessage?.status === "connected") {
-          return;
-        }
-        // Check if the function call is present
-        if (
-          parsedMessage?.response?.function_call &&
-          !parsedMessage?.response?.message
-        ) {
-          setMessages((prevMessages) => [
-            ...prevMessages.slice(0, -1),
-            { role: "assistant", wait: true, content: "Function Calling" },
-          ]);
-        } else if (
-          parsedMessage?.response?.function_call &&
-          parsedMessage?.response?.message
-        ) {
-          // Check if the function call is false and no response is provided
-          setMessages((prevMessages) => [
-            ...prevMessages.slice(0, -1),
-            { role: "assistant", wait: true, content: "Talking with AI" },
-          ]);
-        } else if (!parsedMessage?.response?.data && parsedMessage?.error) {
-          // Check if there is an error and no response data
-          setMessages((prevMessages) => [
-            ...prevMessages.slice(0, -1),
-            {
-              role: "assistant",
-              content: `${parsedMessage?.error || "Error in AI"}`,
-            },
-          ]);
-          setLoading(false);
-          clearTimeout(timeoutIdRef.current);
-        } else if (
-          parsedMessage?.response?.data?.role === "reset" &&
-          !parsedMessage?.response?.data?.mode
-        ) {
-          // all previous message and new object inserted
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              role: "reset",
-              mode: parsedMessage?.response?.data?.mode,
-              content: "Resetting the chat",
-            },
-          ]);
-        } else if (parsedMessage?.response?.data?.suggestions !== undefined) {
-          setOptions(parsedMessage.response?.data?.suggestions || []);
-        } else if (parsedMessage?.response?.data) {
-          // Handle the new structure with response data
-          // const content = parsedMessage.response.data.content;
-          setLoading(false);
-          setMessages((prevMessages) => [
-            ...prevMessages.slice(0, -1),
-            {
-              role: parsedMessage.response?.data?.role || "assistant",
-              ...(parsedMessage.response.data || {}),
-            },
-          ]);
-          clearTimeout(timeoutIdRef.current);
-        } else {
-          console.error("Some error occurred in the message", parsedMessage);
-        }
-      };
+  useEffect(() => {
+    getallPreviousHistory();
+  }, [threadId, bridgeName, subThreadId]);
 
-      client.on("message", handleMessage);
+  const handleMessageRTLayer = (message: string) => {
+    // Parse the incoming message string into an object
+    const parsedMessage = JSON.parse(message || "{}");
+    // Check if the status is "connected"
+    if (parsedMessage?.status === "connected") {
+      return;
+    }
+    // Check if the function call is present
+    if (
+      parsedMessage?.response?.function_call &&
+      !parsedMessage?.response?.message
+    ) {
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        { role: "assistant", wait: true, content: "Function Calling" },
+      ]);
+    } else if (
+      parsedMessage?.response?.function_call &&
+      parsedMessage?.response?.message
+    ) {
+      // Check if the function call is false and no response is provided
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        { role: "assistant", wait: true, content: "Talking with AI" },
+      ]);
+    } else if (!parsedMessage?.response?.data && parsedMessage?.error) {
+      // Check if there is an error and no response data
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        {
+          role: "assistant",
+          content: `${parsedMessage?.error || "Error in AI"}`,
+        },
+      ]);
+      setLoading(false);
+      clearTimeout(timeoutIdRef.current);
+    } else if (
+      parsedMessage?.response?.data?.role === "reset" &&
+      !parsedMessage?.response?.data?.mode
+    ) {
+      // all previous message and new object inserted
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          role: "reset",
+          mode: parsedMessage?.response?.data?.mode,
+          content: "Resetting the chat",
+        },
+      ]);
+    } else if (parsedMessage?.response?.data?.suggestions !== undefined) {
+      setOptions(parsedMessage.response?.data?.suggestions || []);
+    } else if (parsedMessage?.response?.data) {
+      // Handle the new structure with response data
+      // const content = parsedMessage.response.data.content;
+      setLoading(false);
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        {
+          role: parsedMessage.response?.data?.role || "assistant",
+          ...(parsedMessage.response.data || {}),
+        },
+      ]);
+      clearTimeout(timeoutIdRef.current);
+    } else {
+      console.error("Some error occurred in the message", parsedMessage);
+    }
+  };
 
+  // useEffect(() => {
+  //   const newChannelId = (
+  //     interfaceId +
+  //     (threadId || userId) +
+  //     (subThreadId || userId)
+  //   ).replace(/ /g, "_");
+
+  //   if (newChannelId !== channelIdRef.current) {
+  //     channelIdRef.current = newChannelId;
+  //     console.log(userId, 'userf', newChannelId);
+  //     const timeoutId = setTimeout(() => {
+  //       const listener = client.on(newChannelId, handleMessageRTLayer);
+
+  //       return () => {
+  //         listener.remove();
+  //         clearTimeout(timeoutIdRef.current);
+  //       };
+  //     }, 500);
+
+  //     return () => {
+  //       listener.remove();
+  //       clearTimeout(timeoutIdRef.current);
+  //       clearTimeout(timeoutId);
+  //     };
+  //   }
+  // }, [interfaceId, userId, threadId, subThreadId]);
+
+  useEffect(() => {
+    const newChannelId = (
+      interfaceId +
+      (threadId || userId) +
+      (subThreadId || userId)
+    ).replace(/ /g, "_");
+
+    if (newChannelId !== channelIdRef.current) {
+      channelIdRef.current = newChannelId;
+
+      const timeoutId = setTimeout(() => {
+        const listener = client.on(newChannelId, handleMessageRTLayer);
+        // Store the listener in a ref for cleanup
+        listenerRef.current = listener;
+      }, 500);
+
+      // Cleanup on effect re-run or unmount
       return () => {
-        const channelId = (
-          interfaceId +
-          (threadId || userId) +
-          (subThreadId || userId)
-        ).replace(/ /g, "_");
-        client.unsubscribe(channelId);
-        client.removeListener("message", handleMessage);
-        clearTimeout(timeoutIdRef.current);
+        clearTimeout(timeoutId);
+
+        if (listenerRef.current) {
+          listenerRef.current?.remove();
+          listenerRef.current = null;
+        }
       };
     }
-  }, [threadId, interfaceId, userId, bridgeName, helloId, subThreadId]);
+  }, [interfaceId, userId, threadId, subThreadId]);
 
   const sendMessage = async (
     message: string,
