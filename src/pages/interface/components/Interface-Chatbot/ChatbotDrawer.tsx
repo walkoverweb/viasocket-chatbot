@@ -31,7 +31,7 @@ const createRandomId = () => {
   return Math.random().toString(36).substring(2, 15);
 };
 
-function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
+function ChatbotDrawer({ setLoading, open, toggleDrawer, interfaceId }) {
   const theme = useTheme();
   const isLightBackground = isColorLight(theme.palette.primary.main);
   const textColor = isLightBackground ? "black" : "white";
@@ -75,6 +75,7 @@ function ChatbotDrawer({ open, toggleDrawer, interfaceId }) {
   };
 
   const handleChangeSubThread = (sub_thread_id: string) => {
+    setLoading(false);
     dispatch(setThreadId({ subThreadId: sub_thread_id }));
   };
 
