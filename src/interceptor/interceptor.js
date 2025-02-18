@@ -17,8 +17,13 @@ const axios = instance;
 
 axios.interceptors.request.use(
   async (config) => {
-    // config.headers["Authorization"] = localStorage.getItem("interfaceToken");
-    config.headers["Authorization"] = sessionStorage.getItem("interfaceToken");
+    // Check if URL contains 'rag' to determine which token to use
+    if (config.url?.includes("rag")) {
+      config.headers["proxy_auth_token"] = sessionStorage.getItem("ragToken");
+    } else {
+      config.headers["Authorization"] =
+        sessionStorage.getItem("interfaceToken");
+    }
     return config;
   },
   (error) => {
