@@ -7,6 +7,7 @@ import ChatbotPreview from "./pages/interface/components/Chatbot-Preview/Chatbot
 import ChatbotWrapper from "./pages/interface/components/Chatbot-Wrapper/ChatbotWrapper.tsx";
 import InterfaceEmbed from "./pages/interface/pages/InterfaceEmbed/InterfaceEmbed.tsx";
 import "./scss/global.scss";
+import RagCompoonent from "./pages/rag/ragCompoonent.tsx";
 
 export const ChatbotContext = createContext({});
 
@@ -54,6 +55,7 @@ function App() {
           path="/chatbotpreview"
           element={<ChatbotPreview onThemeChange={handleThemeChange} />}
         />
+        <Route exact path="/rag" element={<RagCompoonent />} />
       </Routes>
     </ThemeProvider>
   );

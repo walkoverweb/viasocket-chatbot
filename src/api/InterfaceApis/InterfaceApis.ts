@@ -342,3 +342,13 @@ export const uploadImage = async ({ formData = {} }) => {
     return null;
   }
 };
+
+export const createKnowledgeBaseEntry = async (data) => {
+  try {
+    const response = await axios.post(`${PYTHON_URL}/rag/`, data);
+    return response;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};
