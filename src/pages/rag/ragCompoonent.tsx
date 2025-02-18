@@ -1,5 +1,10 @@
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import LinkIcon from "@mui/icons-material/Link";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Alert,
   Chip,
   Dialog,
@@ -8,6 +13,7 @@ import {
   DialogTitle,
   Divider,
   LinearProgress,
+  MenuItem,
   Snackbar,
   TextField,
 } from "@mui/material";
@@ -17,12 +23,25 @@ import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useLocation } from "react-router-dom";
-import { createKnowledgeBaseEntry } from "../../api/InterfaceApis/InterfaceApis.ts";
+import {
+  createKnowledgeBaseEntry,
+  deleteKnowBaseData,
+  getAllKnowBaseData,
+} from "../../api/InterfaceApis/InterfaceApis.ts";
+import { CsvLogo, DocLogo, PdfLogo } from "../../assests/assestsIndex.ts";
+import {
+  KNOWLEDGE_BASE_CUSTOM_SECTION,
+  KNOWLEDGE_BASE_SECTION_TYPES,
+} from "../../enums";
 import { SetSessionStorage } from "../interface/utils/InterfaceUtils.ts";
 
 function RagCompoonent() {
   const { search } = useLocation();
   const [isInitialized, setIsInitialized] = React.useState(false);
+  const [KnowledgeBases, setKnowledgeBases] = React.useState([]);
+  const [selectedSectionType, setSelectedSectionType] =
+    React.useState("default");
+  const [chunkingType, setChunkingType] = React.useState("");
   const { token } = JSON.parse(
     new URLSearchParams(search).get("ragDetails") || "{}"
   );
@@ -39,23 +58,34 @@ function RagCompoonent() {
     severity: "success",
   });
 
+  const fetchAllKnowledgeBase = async () => {
+    const result = await getAllKnowBaseData();
+    if (result.success) {
+      setKnowledgeBases(result?.data || []);
+    }
+  };
+
   React.useEffect(() => {
     if (token) {
       SetSessionStorage("ragToken", token);
       window?.parent?.postMessage({ type: "ragLoaded" }, "*");
       setIsInitialized(true);
+      fetchAllKnowledgeBase();
     }
   }, [token]);
 
   const handleSave = async (event) => {
     event.preventDefault();
-    setIsLoading(true);
+    // setIsLoading(true);
     const formData = new FormData(event.target);
 
     // Create payload object
     const payload = {
       name: formData.get("name"),
       description: formData.get("description"),
+      chunking_type: formData.get("chunking_type"),
+      chunk_size: Number(formData.get("chunk_size")) || null,
+      chunk_overlap: Number(formData.get("chunk_overlap")) || null,
     };
 
     // Convert payload to FormData
@@ -86,6 +116,10 @@ function RagCompoonent() {
         });
         setFile(null); // Reset file state after submission
         window.parent.postMessage({ type: "rag", data: response.data }, "*");
+        setKnowledgeBases((prevKnowledgeBase) => [
+          ...prevKnowledgeBase,
+          response.data,
+        ]);
       } else {
         throw new Error("Failed to upload document");
       }
@@ -131,6 +165,20 @@ function RagCompoonent() {
     window.parent.postMessage({ type: "closeRag" }, "*");
   };
 
+  const handleDeleteKnowledgeBase = async (id: string) => {
+    const result = await deleteKnowBaseData({ id });
+    if (result.success) {
+      setKnowledgeBases((prevKnowledgeBase) =>
+        prevKnowledgeBase.filter((item: any) => (item.id || item?._id) !== id)
+      );
+      setAlert({
+        show: true,
+        message: "Knowledge base deleted successfully",
+        severity: "success",
+      });
+    }
+  };
+
   return (
     <div>
       <Dialog
@@ -145,9 +193,12 @@ function RagCompoonent() {
         {isLoading && <LinearProgress color="success" />}
         <DialogTitle>KnowlegeBase Configuration</DialogTitle>
         {isInitialized ? (
-          <form onSubmit={handleSave}>
-            <DialogContent>
-              <Typography variant="subtitle1" sx={{ mb: 1 }}>
+          <form
+            onSubmit={handleSave}
+            style={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
+            <DialogContent sx={{ flexGrow: 1, overflow: "auto" }}>
+              <Typography variant="subtitle1">
                 Document Name <span style={{ color: "red" }}>*</span>
               </Typography>
               <TextField
@@ -155,10 +206,10 @@ function RagCompoonent() {
                 fullWidth
                 required
                 placeholder="Enter document name"
-                helperText="Name of the document to be uploaded"
                 variant="outlined"
+                sx={{ mb: 1 }}
               />
-              <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              <Typography variant="subtitle1">
                 Document Description <span style={{ color: "red" }}>*</span>
               </Typography>
               <TextField
@@ -166,21 +217,19 @@ function RagCompoonent() {
                 fullWidth
                 required
                 placeholder="Enter document description"
-                helperText="Description of the document to be uploaded"
                 variant="outlined"
+                sx={{ mb: 1 }}
               />
-              <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                Document URL
-              </Typography>
+              <Typography variant="subtitle1">Google Document URL</Typography>
               <TextField
                 name="url"
                 type="url"
                 fullWidth
                 placeholder="https://example.com/documentation"
-                helperText="URL where the document can be accessed"
                 variant="outlined"
+                sx={{ mb: 1 }}
               />
-              <Divider sx={{ my: 2 }}>OR</Divider>
+              <Divider sx={{ my: 1 }}>OR</Divider>
               <Box
                 sx={{
                   mt: 2,
@@ -256,13 +305,231 @@ function RagCompoonent() {
                   </Button>
                 )}
               </Box>
+              <Box sx={{ mt: 3 }}>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+                    gap: 2,
+                  }}
+                >
+                  <Box>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mb: 1 }}
+                    >
+                      Processing Method
+                    </Typography>
+                    <TextField
+                      name="processing_method"
+                      select
+                      fullWidth
+                      size="small"
+                      defaultValue="default"
+                      disabled={isLoading}
+                      onChange={(e) => setSelectedSectionType(e.target.value)}
+                      required
+                    >
+                      {KNOWLEDGE_BASE_SECTION_TYPES?.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Box>
+
+                  {selectedSectionType === "custom" && (
+                    <Box>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        Chunking Type
+                      </Typography>
+                      <TextField
+                        name="chunking_type"
+                        select
+                        fullWidth
+                        size="small"
+                        required
+                        disabled={isLoading}
+                        defaultValue={chunkingType || ""}
+                        onChange={(e) => setChunkingType(e.target.value)}
+                      >
+                        <MenuItem value="" disabled>
+                          Select strategy
+                        </MenuItem>
+                        {KNOWLEDGE_BASE_CUSTOM_SECTION?.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    </Box>
+                  )}
+                </Box>
+
+                {selectedSectionType === "custom" &&
+                  chunkingType !== "semantic" &&
+                  chunkingType && (
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+                        gap: 2,
+                        mt: 2,
+                      }}
+                    >
+                      <Box>
+                        <Typography variant="body2" sx={{ mb: 1 }}>
+                          Chunk Size
+                        </Typography>
+                        <TextField
+                          name="chunk_size"
+                          type="number"
+                          fullWidth
+                          size="small"
+                          defaultValue={1000}
+                          inputProps={{ min: "100" }}
+                          disabled={isLoading}
+                        />
+                      </Box>
+
+                      <Box>
+                        <Typography variant="body2" sx={{ mb: 1 }}>
+                          Chunk Overlap
+                        </Typography>
+                        <TextField
+                          name="chunk_overlap"
+                          type="number"
+                          fullWidth
+                          size="small"
+                          defaultValue={100}
+                          inputProps={{ min: "0" }}
+                          disabled={isLoading}
+                        />
+                      </Box>
+                    </Box>
+                  )}
+              </Box>
+              <Divider sx={{ my: 2 }} />
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <img src={DocLogo} alt="DOC" width={20} height={20} />
+                    Existing Knowledge Bases
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                  >
+                    {KnowledgeBases.length === 0 ? (
+                      <Typography color="error" sx={{ textAlign: "center" }}>
+                        No existing knowledge bases
+                      </Typography>
+                    ) : (
+                      KnowledgeBases.map((kb: any) => (
+                        <Box
+                          key={kb._id || kb.id}
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: 2,
+                            justifyContent: "space-between",
+                            p: 1,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: 1,
+                              alignItems: "center",
+                            }}
+                          >
+                            {(() => {
+                              switch (kb?.type?.toUpperCase()) {
+                                case "PDF":
+                                  return (
+                                    <img
+                                      src={PdfLogo}
+                                      alt="PDF"
+                                      width={20}
+                                      height={20}
+                                    />
+                                  );
+                                case "DOC":
+                                  return (
+                                    <img
+                                      src={DocLogo}
+                                      alt="DOC"
+                                      width={20}
+                                      height={20}
+                                    />
+                                  );
+                                case "CSV":
+                                  return (
+                                    <img
+                                      src={CsvLogo}
+                                      alt="CSV"
+                                      width={20}
+                                      height={20}
+                                    />
+                                  );
+                                case "URL":
+                                  return (
+                                    <LinkIcon sx={{ width: 20, height: 20 }} />
+                                  );
+                                default:
+                                  return (
+                                    <LinkIcon sx={{ width: 20, height: 20 }} />
+                                  );
+                              }
+                            })()}
+                            <Typography>{kb?.name}</Typography>
+                            <Typography
+                              sx={{
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              - {kb?.description}
+                            </Typography>
+                          </Box>
+                          <Box>
+                            <Button
+                              color="error"
+                              size="small"
+                              variant="outlined"
+                              onClick={() => handleDeleteKnowledgeBase(kb?._id)}
+                              sx={{ alignSelf: "flex-end" }}
+                            >
+                              Delete
+                            </Button>
+                          </Box>
+                        </Box>
+                      ))
+                    )}
+                  </Box>
+                </AccordionDetails>
+              </Accordion>
             </DialogContent>
-            <DialogActions>
-              <Button type="submit" variant="contained" disabled={isLoading}>
-                {isLoading ? "Saving..." : "Save"}
-              </Button>
-              <Button variant="contained" onClick={handleClose}>
+            <DialogActions
+              sx={{
+                position: "sticky",
+                bottom: 0,
+                bgcolor: "background.paper",
+                borderTop: "1px solid",
+                borderColor: "divider",
+                p: 2,
+              }}
+            >
+              <Button variant="outlined" onClick={handleClose}>
                 Cancel
+              </Button>
+              <Button type="submit" variant="contained" disabled={isLoading}>
+                {isLoading ? "Creating..." : "Create"}
               </Button>
             </DialogActions>
           </form>
