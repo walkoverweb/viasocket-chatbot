@@ -413,7 +413,11 @@ function RagCompoonent() {
               <Divider sx={{ my: 2 }} />
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography variant="subtitle1">
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <img src={DocLogo} alt="DOC" width={20} height={20} />
                     Existing Knowledge Bases
                   </Typography>
                 </AccordionSummary>
