@@ -36,6 +36,17 @@ const ParamsEnums = {
   chatBotId: "chatBotId",
 };
 
+export const KNOWLEDGE_BASE_SECTION_TYPES = [
+  { value: "default", label: "Default" },
+  { value: "custom", label: "Custom" },
+];
+
+export const KNOWLEDGE_BASE_CUSTOM_SECTION = [
+  { value: "semantic", label: "Semantic Chunking" },
+  { value: "manual", label: "Manual Chunking" },
+  { value: "recursive", label: "Recursive Chunking" },
+];
+
 Object.freeze(EmbedVerificationStatus);
 Object.freeze(ParamsEnums);
 
