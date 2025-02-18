@@ -352,3 +352,26 @@ export const createKnowledgeBaseEntry = async (data) => {
     return error;
   }
 };
+
+export const getAllKnowBaseData = async () => {
+  try {
+    const response = await axios.get(`${PYTHON_URL}/rag/docs`);
+    return response?.data;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};
+
+export const deleteKnowBaseData = async (data) => {
+  try {
+    const { id } = data;
+    const response = await axios.delete(`${PYTHON_URL}/rag/docs`, {
+      data: { id },
+    });
+    return response?.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
