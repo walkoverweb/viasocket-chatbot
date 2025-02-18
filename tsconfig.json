@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": false,
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true, // ✅ Ignore errors in declaration files
+    "baseUrl": "./src",
+    "paths": {
+      // "*": ["./types/*"]
+    }
+  }
+}
