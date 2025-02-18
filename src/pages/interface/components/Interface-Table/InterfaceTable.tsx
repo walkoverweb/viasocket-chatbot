@@ -29,6 +29,7 @@ interface InterfaceTableProps {
 }
 
 function InterfaceTable({ props }: InterfaceTableProps) {
+  console.log(props, 234);
   const columns = generateColumns(props?.data?.[0]);
   const rows = generateRows(props?.data);
   return (
