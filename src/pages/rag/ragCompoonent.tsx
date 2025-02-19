@@ -105,6 +105,7 @@ function RagCompoonent() {
         payloadFormData.append("doc_url", url.toString());
       }
     }
+    console.log(payloadFormData, "payloadFormData");
 
     try {
       const response = await createKnowledgeBaseEntry(payloadFormData);
