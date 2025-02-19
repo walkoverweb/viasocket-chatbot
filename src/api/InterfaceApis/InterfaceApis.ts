@@ -345,7 +345,7 @@ export const uploadImage = async ({ formData = {} }) => {
 
 export const createKnowledgeBaseEntry = async (data) => {
   try {
-    const response = await axios.post(`${PYTHON_URL}/rag`, data);
+    const response = await axios.post(`http://api.gtwy.ai/rag`, data);
     return response;
   } catch (error) {
     console.error(error);
