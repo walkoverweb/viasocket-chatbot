@@ -115,7 +115,10 @@ function RagCompoonent() {
           severity: "success",
         });
         setFile(null); // Reset file state after submission
-        window.parent.postMessage({ type: "rag", data: response.data }, "*");
+        window.parent.postMessage(
+          { type: "rag", status: "create", data: response.data },
+          "*"
+        );
         setKnowledgeBases((prevKnowledgeBase) => [
           ...prevKnowledgeBase,
           response.data,
@@ -171,6 +174,7 @@ function RagCompoonent() {
       setKnowledgeBases((prevKnowledgeBase) =>
         prevKnowledgeBase.filter((item: any) => (item.id || item?._id) !== id)
       );
+      window.parent.postMessage({ type: "rag", status: "delete" }, "*");
       setAlert({
         show: true,
         message: "Knowledge base deleted successfully",
