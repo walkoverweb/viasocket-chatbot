@@ -76,7 +76,7 @@ function RagCompoonent() {
 
   const handleSave = async (event) => {
     event.preventDefault();
-    // setIsLoading(true);
+    setIsLoading(true);
     const formData = new FormData(event.target);
 
     // Create payload object
