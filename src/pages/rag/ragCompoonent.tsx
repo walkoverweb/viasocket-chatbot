@@ -174,7 +174,10 @@ function RagCompoonent() {
       setKnowledgeBases((prevKnowledgeBase) =>
         prevKnowledgeBase.filter((item: any) => (item.id || item?._id) !== id)
       );
-      window.parent.postMessage({ type: "rag", status: "delete" }, "*");
+      window.parent.postMessage(
+        { type: "rag", status: "delete", data: result?.data || {} },
+        "*"
+      );
       setAlert({
         show: true,
         message: "Knowledge base deleted successfully",
