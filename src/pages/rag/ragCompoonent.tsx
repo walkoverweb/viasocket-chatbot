@@ -35,16 +35,32 @@ import {
 } from "../../enums";
 import { SetSessionStorage } from "../interface/utils/InterfaceUtils.ts";
 
+interface KnowledgeBaseType {
+  _id: string;
+  name: string;
+  description: string;
+  doc_id: string;
+  org_id: string;
+  chunks_id_array: string[];
+  user_id: string | null;
+  type: string;
+}
+
 function RagCompoonent() {
   const { search } = useLocation();
-  const [isInitialized, setIsInitialized] = React.useState(false);
-  const [KnowledgeBases, setKnowledgeBases] = React.useState([]);
-  const [selectedSectionType, setSelectedSectionType] =
-    React.useState("default");
-  const [chunkingType, setChunkingType] = React.useState("");
-  const { token } = JSON.parse(
+  const { token, configuration } = JSON.parse(
     new URLSearchParams(search).get("ragDetails") || "{}"
   );
+  const [isInitialized, setIsInitialized] = React.useState(false);
+  const [KnowledgeBases, setKnowledgeBases] = React.useState<
+    KnowledgeBaseType[]
+  >([]);
+  const [selectedSectionType, setSelectedSectionType] = React.useState<
+    "default" | "custom"
+  >("default");
+  const [chunkingType, setChunkingType] = React.useState<
+    keyof typeof KNOWLEDGE_BASE_CUSTOM_SECTION | ""
+  >(configuration?.chunkingType || "");
   const [open] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
   const [file, setFile] = React.useState<File | null>(null); // State to hold the uploaded file
@@ -83,9 +99,16 @@ function RagCompoonent() {
     const payload = {
       name: formData.get("name"),
       description: formData.get("description"),
-      chunking_type: formData.get("chunking_type"),
-      chunk_size: Number(formData.get("chunk_size")) || null,
-      chunk_overlap: Number(formData.get("chunk_overlap")) || null,
+      chunking_type:
+        configuration?.chunkingType || formData.get("chunking_type"),
+      chunk_size:
+        Number(configuration?.chunkSize) ||
+        Number(formData.get("chunk_size")) ||
+        null,
+      chunk_overlap:
+        Number(configuration?.chunkOverlap) ||
+        Number(formData.get("chunk_overlap")) ||
+        null,
     };
 
     // Convert payload to FormData
@@ -312,71 +335,74 @@ function RagCompoonent() {
                   </Button>
                 )}
               </Box>
-              <Box sx={{ mt: 3 }}>
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-                    gap: 2,
-                  }}
-                >
-                  <Box>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mb: 1 }}
-                    >
-                      Processing Method
-                    </Typography>
-                    <TextField
-                      name="processing_method"
-                      select
-                      fullWidth
-                      size="small"
-                      defaultValue="default"
-                      disabled={isLoading}
-                      onChange={(e) => setSelectedSectionType(e.target.value)}
-                      required
-                    >
-                      {KNOWLEDGE_BASE_SECTION_TYPES?.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Box>
-
-                  {selectedSectionType === "custom" && (
+              {!(
+                configuration?.hideConfig === "true" ||
+                configuration?.hideConfig === true
+              ) && (
+                <Box sx={{ mt: 3 }}>
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+                      gap: 2,
+                    }}
+                  >
                     <Box>
                       <Typography variant="body2" sx={{ mb: 1 }}>
-                        Chunking Type
+                        Processing Method
                       </Typography>
                       <TextField
-                        name="chunking_type"
+                        name="processing_method"
                         select
                         fullWidth
                         size="small"
-                        required
+                        defaultValue="default"
                         disabled={isLoading}
-                        defaultValue={chunkingType || ""}
-                        onChange={(e) => setChunkingType(e.target.value)}
+                        onChange={(e) => {
+                          setSelectedSectionType(e.target.value);
+                          if (e.target.value === "default") {
+                            setChunkingType("");
+                          }
+                        }}
+                        required
                       >
-                        <MenuItem value="" disabled>
-                          Select strategy
-                        </MenuItem>
-                        {KNOWLEDGE_BASE_CUSTOM_SECTION?.map((option) => (
+                        {KNOWLEDGE_BASE_SECTION_TYPES?.map((option) => (
                           <MenuItem key={option.value} value={option.value}>
                             {option.label}
                           </MenuItem>
                         ))}
                       </TextField>
                     </Box>
-                  )}
-                </Box>
 
-                {selectedSectionType === "custom" &&
-                  chunkingType !== "semantic" &&
-                  chunkingType && (
+                    {selectedSectionType === "custom" && (
+                      <Box>
+                        <Typography variant="body2" sx={{ mb: 1 }}>
+                          Chunking Type
+                        </Typography>
+                        <TextField
+                          name="chunking_type"
+                          select
+                          fullWidth
+                          size="small"
+                          required
+                          disabled={isLoading}
+                          defaultValue={chunkingType || ""}
+                          onChange={(e) => setChunkingType(e.target.value)}
+                        >
+                          <MenuItem value="" disabled>
+                            Select strategy
+                          </MenuItem>
+                          {KNOWLEDGE_BASE_CUSTOM_SECTION?.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                              {option.label}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </Box>
+                    )}
+                  </Box>
+
+                  {(chunkingType ? chunkingType !== "semantic" : true) && (
                     <Box
                       sx={{
                         display: "grid",
@@ -416,7 +442,8 @@ function RagCompoonent() {
                       </Box>
                     </Box>
                   )}
-              </Box>
+                </Box>
+              )}
               <Divider sx={{ my: 2 }} />
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
