@@ -195,18 +195,13 @@ function MessageList() {
         What can I help with?
       </Typography>
 
-      {starterQuestions?.length > 0 && (
+      {starterQuestions.length > 0 && (
         <Box
           sx={{
-            position: "absolute",
-            left: 30,
-            bottom: 80,
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-start",
-            marginTop: 1,
-            maxWidth: "100%",
-            overflow: "auto",
+            alignItems: "center",
+            marginTop: 2,
           }}
         >
           {starterQuestions.map((question, index) => (
@@ -215,19 +210,13 @@ function MessageList() {
               onClick={() => addMessage(question)}
               sx={{
                 cursor: "pointer",
-                marginBottom: 0.5,
+                marginBottom: 1,
                 padding: 1,
-                borderRadius: 3,
-                border: "1px solid #ddd",
-                boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
-                transition: "transform 0.2s",
-                width: "auto",
-                "&:hover": {
-                  transform: "scale(1.03)",
-                },
+                borderRadius: 2,
+                border: "0.5px solid gray",
               }}
             >
-              <Typography variant="body2" color="text.primary" align="center">
+              <Typography variant="body1" color="text.primary">
                 {question}
               </Typography>
             </Box>
