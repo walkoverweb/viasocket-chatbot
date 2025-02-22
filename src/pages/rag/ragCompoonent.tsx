@@ -27,6 +27,7 @@ import {
   createKnowledgeBaseEntry,
   deleteKnowBaseData,
   getAllKnowBaseData,
+  updateKnowBaseData,
 } from "../../api/InterfaceApis/InterfaceApis.ts";
 import { CsvLogo, DocLogo, PdfLogo } from "../../assests/assestsIndex.ts";
 import {
@@ -73,6 +74,8 @@ function RagCompoonent() {
     message: "",
     severity: "success",
   });
+  const [editingKnowledgeBase, setEditingKnowledgeBase] =
+    React.useState<KnowledgeBaseType | null>(null);
 
   const fetchAllKnowledgeBase = async () => {
     const result = await getAllKnowBaseData();
@@ -111,58 +114,122 @@ function RagCompoonent() {
         null,
     };
 
-    // Convert payload to FormData
-    const payloadFormData = new FormData();
-    Object.entries(payload).forEach(([key, value]) => {
-      if (value !== null) {
-        payloadFormData.append(key, value);
-      }
-    });
-
-    // Add file to FormData if present
-    if (file) {
-      payloadFormData.append("file", file);
-    } else {
-      const url = formData.get("url");
-      if (url) {
-        payloadFormData.append("doc_url", url.toString());
-      }
-    }
-
-    try {
-      const response = await createKnowledgeBaseEntry(payloadFormData);
-      if (response?.data) {
+    if (editingKnowledgeBase) {
+      // Handle update logic here
+      try {
+        // You'll need to implement the updateKnowledgeBaseEntry API
+        const response = await updateKnowBaseData({
+          id: editingKnowledgeBase._id,
+          data: payload,
+        });
+        console.log(response.data, 34);
+        if (response?.success) {
+          setAlert({
+            show: true,
+            message: "Document updated successfully!",
+            severity: "success",
+          });
+          setKnowledgeBases((prevKnowledgeBases) =>
+            prevKnowledgeBases.map((kb) =>
+              kb._id === editingKnowledgeBase._id ? response.data : kb
+            )
+          );
+        }
+      } catch (error) {
         setAlert({
           show: true,
-          message: "Document uploaded successfully!",
-          severity: "success",
+          message:
+            error?.response?.data?.message || "Failed to update knowledge base",
+          severity: "error",
         });
-        setFile(null); // Reset file state after submission
-        window.parent.postMessage(
-          { type: "rag", status: "create", data: response.data },
-          "*"
-        );
-        setKnowledgeBases((prevKnowledgeBase) => [
-          ...prevKnowledgeBase,
-          response.data,
-        ]);
-      } else {
-        throw new Error("Failed to upload document");
+      } finally {
+        setEditingKnowledgeBase(null);
+        setIsLoading(false);
+        setFile(null);
+        event.target.reset();
       }
-    } catch (error) {
-      console.error("Error saving:", error);
-      setAlert({
-        show: true,
-        message:
-          error?.response?.data?.message ||
-          "Failed to upload document. Please try again.",
-        severity: "error",
+    } else {
+      // Existing create logic
+      // Convert payload to FormData
+      const payloadFormData = new FormData();
+      Object.entries(payload).forEach(([key, value]) => {
+        if (value !== null) {
+          payloadFormData.append(key, value);
+        }
       });
-      return; // Exit early on error
-    } finally {
-      setIsLoading(false);
-      setFile(null);
-      event.target.reset();
+
+      // Add file to FormData if present
+      if (file) {
+        payloadFormData.append("file", file);
+      } else {
+        const url = formData.get("url");
+        if (url) {
+          payloadFormData.append("doc_url", url.toString());
+        }
+      }
+
+      try {
+        const response = await createKnowledgeBaseEntry(payloadFormData);
+        if (response?.data) {
+          setAlert({
+            show: true,
+            message: "Document will be uploaded soon.",
+            severity: "success",
+          });
+          setFile(null); // Reset file state after submission
+          window.parent.postMessage(
+            { type: "rag", status: "create", data: response.data },
+            "*"
+          );
+          setKnowledgeBases((prevKnowledgeBase) => [
+            ...prevKnowledgeBase,
+            response.data,
+          ]);
+        } else {
+          throw new Error("Failed to upload document");
+        }
+      } catch (error) {
+        console.error("Error saving:", error);
+        setAlert({
+          show: true,
+          message:
+            error?.response?.data?.message ||
+            "Failed to upload document. Please try again.",
+          severity: "error",
+        });
+        return; // Exit early on error
+      } finally {
+        setIsLoading(false);
+        setFile(null);
+        event.target.reset();
+      }
+    }
+  };
+
+  const handleEdit = (kb: KnowledgeBaseType) => {
+    setEditingKnowledgeBase(kb);
+    // Pre-fill the form fields
+    setTimeout(() => {
+      const form = document.querySelector("form");
+      if (form) {
+        (form.elements.namedItem("name") as HTMLInputElement).value = kb.name;
+        (form.elements.namedItem("description") as HTMLInputElement).value =
+          kb.description;
+        if (kb.type?.toLowerCase() === "url") {
+          (form.elements.namedItem("url") as HTMLInputElement).value =
+            kb.doc_id;
+        }
+      }
+    }, 0);
+  };
+
+  const handleReset = () => {
+    setEditingKnowledgeBase(null);
+    setFile(null);
+    // Reset form fields
+    const form = document.querySelector("form");
+    if (form) {
+      form.reset();
     }
   };
 
@@ -221,7 +288,23 @@ function RagCompoonent() {
         fullWidth
       >
         {isLoading && <LinearProgress color="success" />}
-        <DialogTitle>KnowlegeBase Configuration</DialogTitle>
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          {editingKnowledgeBase
+            ? "Edit Knowledge Base"
+            : "Knowledge Base Configuration"}
+          {editingKnowledgeBase && (
+            <Button variant="outlined" color="error" onClick={handleReset}>
+              Reset
+            </Button>
+          )}
+        </DialogTitle>
+
         {isInitialized ? (
           <form
             onSubmit={handleSave}
@@ -258,6 +341,8 @@ function RagCompoonent() {
                 placeholder="https://example.com/documentation"
                 variant="outlined"
                 sx={{ mb: 1 }}
+                disabled={!!editingKnowledgeBase}
+                required={!file}
               />
               <Divider sx={{ my: 1 }}>OR</Divider>
               <Box
@@ -267,7 +352,13 @@ function RagCompoonent() {
                   borderRadius: "4px",
                   p: 3,
                   textAlign: "center",
-                  cursor: file ? "default" : "pointer",
+                  cursor: editingKnowledgeBase
+                    ? "not-allowed"
+                    : file
+                    ? "default"
+                    : "pointer",
+                  opacity: editingKnowledgeBase ? 0.5 : 1,
+                  pointerEvents: editingKnowledgeBase ? "none" : "auto",
                   "&:hover": {
                     borderColor: file ? "#ccc" : "primary.main",
                     backgroundColor: file
@@ -339,7 +430,13 @@ function RagCompoonent() {
                 configuration?.hideConfig === "true" ||
                 configuration?.hideConfig === true
               ) && (
-                <Box sx={{ mt: 3 }}>
+                <Box
+                  sx={{
+                    mt: 3,
+                    opacity: editingKnowledgeBase ? 0.5 : 1,
+                    pointerEvents: editingKnowledgeBase ? "none" : "auto",
+                  }}
+                >
                   <Box
                     sx={{
                       display: "grid",
@@ -533,6 +630,15 @@ function RagCompoonent() {
                           </Box>
                           <Box>
                             <Button
+                              color="primary"
+                              size="small"
+                              variant="outlined"
+                              onClick={() => handleEdit(kb)}
+                              sx={{ mr: 1 }}
+                            >
+                              Edit
+                            </Button>
+                            <Button
                               color="error"
                               size="small"
                               variant="outlined"
@@ -563,7 +669,11 @@ function RagCompoonent() {
                 Cancel
               </Button>
               <Button type="submit" variant="contained" disabled={isLoading}>
-                {isLoading ? "Creating..." : "Create"}
+                {isLoading
+                  ? "Saving..."
+                  : editingKnowledgeBase
+                  ? "Update"
+                  : "Create"}
               </Button>
             </DialogActions>
           </form>

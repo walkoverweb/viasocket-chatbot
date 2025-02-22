@@ -395,7 +395,7 @@ function ChatbotTextField({
                   position: "absolute",
                   bottom: theme.spacing(1),
                   left: theme.spacing(1),
-                  backgroundColor: theme.palette.primary.main,
+                  backgroundColor: theme.palette.secondary.main,
                   padding: theme.spacing(1),
                 }}
                 disableRipple
