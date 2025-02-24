@@ -363,13 +363,17 @@ function RagCompoonent() {
                 <TextField
                   name="description"
                   fullWidth
-                  // multiline
-                  minRows={3}
                   id="outlined-multiline-flexible"
-                  maxRows={4}
                   required
                   placeholder="Enter document description / purpose"
                   variant="outlined"
+                  InputProps={{
+                    rows: 3,
+                    minRows: 3,
+                    maxRows: 4,
+                    multiline: true,
+                    inputComponent: "textarea",
+                  }}
                 />
               </div>
               <div style={{ display: editingKnowledgeBase ? "none" : "block" }}>
