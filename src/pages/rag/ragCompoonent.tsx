@@ -122,7 +122,6 @@ function RagCompoonent() {
           id: editingKnowledgeBase._id,
           data: payload,
         });
-        console.log(response.data, 34);
         if (response?.success) {
           setAlert({
             show: true,
