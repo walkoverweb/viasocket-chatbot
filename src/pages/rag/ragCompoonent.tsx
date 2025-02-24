@@ -122,7 +122,6 @@ function RagCompoonent() {
           id: editingKnowledgeBase._id,
           data: payload,
         });
-        console.log(response.data, 34);
         if (response?.success) {
           setAlert({
             show: true,
@@ -164,7 +163,7 @@ function RagCompoonent() {
       } else {
         const url = formData.get("url");
         if (url) {
-          payloadFormData.append("doc_url", url.toString());
+          payloadFormData.append("url", url.toString());
         }
       }
 
