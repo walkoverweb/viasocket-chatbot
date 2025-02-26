@@ -5,21 +5,9 @@ interface InterfaceTextProps {
 }
 
 function InterfaceText({ props }: InterfaceTextProps) {
-  // const dispatch = useDispatch();
-  // const responseJson = useContext(GridContext);
-  // useEffect(() => {
-  //   dispatch(
-  //     addInterfaceContext({
-  //       gridId: responseJson?.responseId + responseJson?.msgId,
-  //       componentId: componentId,
-  //       value: responseJson?.[componentId]?.props?.children,
-  //     })
-  //   );
-  // }, [responseJson, responseJson?.msgId]);
-
   return (
     <Typography key={props?.key} {...props}>
-      {props?.children || `I'm a text component.`}
+      {props?.children || props?.data || `I'm a text component.`}
     </Typography>
   );
 }

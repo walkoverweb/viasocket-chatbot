@@ -3,7 +3,6 @@ import React from "react";
 import { ParamsEnums } from "../../../../enums";
 import addUrlDataHoc from "../../../../hoc/addUrlDataHoc.tsx";
 import { perFormAction } from "../../utils/InterfaceUtils.ts";
-// import { GridContext } from "../Grid/Grid.tsx";
 
 interface InterfaceButtonProps {
   props: ButtonProps | any;

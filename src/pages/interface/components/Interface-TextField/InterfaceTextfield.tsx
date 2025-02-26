@@ -16,7 +16,7 @@ function InterfaceTextfield({
   gridId,
   componentId,
 }: InterfaceTextFieldProps) {
-  const responseJson = useContext(GridContext);
+  const { gridContextValue: responseJson } = useContext(GridContext);
   useEffect(() => {
     dispatch(
       addInterfaceContext({

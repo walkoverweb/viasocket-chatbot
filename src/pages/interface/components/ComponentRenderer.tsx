@@ -66,15 +66,19 @@ function ComponentRenderer({
   inpreview = false,
   index,
 }: ComponentRendererProps) {
-  const responseTypeJson: any = useContext(GridContext);
-  // const { type, props, key, action } = componentData;
+  const { gridContextValue: responseTypeJson, componentJson }: any =
+    useContext(GridContext);
   const type = (
     responseTypeJson?.components?.[index]?.type ||
     responseTypeJson?.[index]?.type
   )?.toLowerCase();
+  const propsPath = componentJson?.components?.[index]?.props;
   const props =
     responseTypeJson?.components?.[index]?.props ||
     responseTypeJson?.[index]?.props;
+  const meta =
+    responseTypeJson?.components?.[index]?.meta ||
+    responseTypeJson?.[index]?.meta;
   const action =
     responseTypeJson?.components?.[index]?.action ||
     responseTypeJson?.[index]?.action;
@@ -87,6 +91,8 @@ function ComponentRenderer({
       componentId,
       inpreview,
       action,
+      meta,
+      propsPath,
     });
   }
 
@@ -97,6 +103,8 @@ function ComponentRenderer({
         inpreview,
         dragRef,
         action,
+        meta,
+        propsPath,
       })
     : null;
 }

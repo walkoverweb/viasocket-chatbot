@@ -6,10 +6,9 @@ import ComponentRenderer from "../ComponentRenderer.tsx";
 import { GridContext } from "./Grid.tsx";
 
 function Viewonlygrid({ dragRef }) {
-  const responseTypeJson: any = useContext(GridContext);
+  const { gridContextValue: responseTypeJson }: any = useContext(GridContext);
   const components = responseTypeJson?.components || responseTypeJson;
 
-  console.log(components, "components");
   return (
     <Box className="column grid_parent">
       {(components || {}).map((component: { type: string }, index) => {
