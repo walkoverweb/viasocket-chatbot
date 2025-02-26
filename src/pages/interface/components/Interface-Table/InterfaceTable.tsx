@@ -1,7 +1,6 @@
 import { DataGrid, GridPaginationMeta, useGridApiRef } from "@mui/x-data-grid";
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { GridContext } from "../Grid/Grid";
+import React, { useEffect, useState } from "react";
 
 function generateColumns(data) {
   // Check if data is an object and not null
@@ -51,16 +50,18 @@ function InterfaceTable({ props, meta, propsPath }: InterfaceTableProps) {
     currentPageInputVariable,
     currentPageOutputPaginationVariables,
     apiCallId,
+    outputDataKey,
   } = meta || {};
   const columns = generateColumns(props?.data?.[0]);
   const [rows, setRows] = useState(generateRows(props?.data));
   const apiRef = useGridApiRef();
-  const dataPath = propsPath?.data?.replace(/^variables\./, "");
+  // const dataPath = propsPath?.data?.replace(/^variables\./, "");
+  const dataPath = outputDataKey || "data";
 
   const [paginationModel, setPaginationModel] = React.useState<PaginationModel>(
     {
       page: 0,
-      pageSize: 5,
+      pageSize: currentPageInputVariable?.limit || 5,
     }
   );
 
@@ -99,7 +100,7 @@ function InterfaceTable({ props, meta, propsPath }: InterfaceTableProps) {
         `https://flow.sokt.io/func/${apiCallId}`,
         variables
       );
-      setRows(response.data?.[dataPath]); // todo: how to detect keys
+      setRows(generateRows(response.data?.[dataPath]));
       setPaginationVariables(response.data);
       setInputVariables(variables);
       setHasNextPage(
@@ -132,19 +133,18 @@ function InterfaceTable({ props, meta, propsPath }: InterfaceTableProps) {
     }
     return paginationMetaRef.current;
   }, [hasNextPage]);
-
   return (
     <DataGrid
       apiRef={apiRef}
       rows={rows || []}
-      // columns={columns || []}
-      columns={[{ field: "id", headerName: "ID" }]}
+      columns={columns || []}
+      // columns={[{ field: "id", headerName: "ID" }]}
       initialState={{
         pagination: { rowCount: paginationVariables?.total || -1 },
       }}
       paginationMeta={paginationMeta}
       loading={isLoading}
-      pageSizeOptions={[currentPageInputVariable?.limit || 5]}
+      pageSizeOptions={[currentPageInputVariable?.limit || 5, 10, 20]}
       paginationModel={paginationModel}
       paginationMode="server"
       onPaginationModelChange={(model, details) => {
