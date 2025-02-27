@@ -59,12 +59,9 @@ function RagCompoonent() {
   const [KnowledgeBases, setKnowledgeBases] = React.useState<
     KnowledgeBaseType[]
   >([]);
-  const [selectedSectionType, setSelectedSectionType] = React.useState<
-    "default" | "custom"
-  >("default");
   const [chunkingType, setChunkingType] = React.useState<
     keyof typeof KNOWLEDGE_BASE_CUSTOM_SECTION | ""
-  >(configuration?.chunkingType || "");
+  >(configuration?.chunkingType || "auto");
   const [open] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
   const [file, setFile] = React.useState<File | null>(null); // State to hold the uploaded file
@@ -511,84 +508,48 @@ function RagCompoonent() {
                   <Box
                     sx={{
                       mt: 1,
+                      display: "flex",
+                      flexDirection: { xs: "column", md: "row" },
+                      gap: 2,
                       opacity: editingKnowledgeBase ? 0.5 : 1,
                       pointerEvents: editingKnowledgeBase ? "none" : "auto",
                     }}
                   >
                     <Box
                       sx={{
-                        display: "grid",
-                        gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-                        gap: 2,
+                        flex:
+                          chunkingType === "semantic" || chunkingType === "auto"
+                            ? 0.35
+                            : 1,
                       }}
                     >
-                      <Box>
-                        <Typography variant="body2" sx={{ mb: 1 }}>
-                          Processing Method{" "}
-                          {selectedSectionType === "default" &&
-                            "(Recursive Chunking)"}
-                        </Typography>
-                        <TextField
-                          name="processing_method"
-                          select
-                          fullWidth
-                          size="small"
-                          defaultValue="default"
-                          disabled={isLoading}
-                          onChange={(e) => {
-                            setSelectedSectionType(e.target.value);
-                            if (e.target.value === "default") {
-                              setChunkingType("");
-                            }
-                          }}
-                          required
-                        >
-                          {KNOWLEDGE_BASE_SECTION_TYPES?.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      </Box>
-
-                      {selectedSectionType === "custom" && (
-                        <Box>
-                          <Typography variant="body2" sx={{ mb: 1 }}>
-                            Chunking Type
-                          </Typography>
-                          <TextField
-                            name="chunking_type"
-                            select
-                            fullWidth
-                            size="small"
-                            required
-                            disabled={isLoading}
-                            defaultValue={chunkingType || ""}
-                            onChange={(e) => setChunkingType(e.target.value)}
-                          >
-                            <MenuItem value="" disabled>
-                              Select strategy
-                            </MenuItem>
-                            {KNOWLEDGE_BASE_CUSTOM_SECTION?.map((option) => (
-                              <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                        </Box>
-                      )}
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        Chunking Type
+                      </Typography>
+                      <TextField
+                        name="chunking_type"
+                        select
+                        size="small"
+                        fullWidth
+                        required
+                        disabled={isLoading}
+                        defaultValue={chunkingType || ""}
+                        onChange={(e) => setChunkingType(e.target.value)}
+                      >
+                        <MenuItem value="" disabled>
+                          Select strategy
+                        </MenuItem>
+                        {KNOWLEDGE_BASE_CUSTOM_SECTION?.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </TextField>
                     </Box>
 
-                    {(chunkingType ? chunkingType !== "semantic" : true) && (
-                      <Box
-                        sx={{
-                          display: "grid",
-                          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-                          gap: 2,
-                          mt: 2,
-                        }}
-                      >
-                        <Box>
+                    {chunkingType !== "semantic" && chunkingType !== "auto" && (
+                      <>
+                        <Box sx={{ flex: 1 }}>
                           <Typography variant="body2" sx={{ mb: 1 }}>
                             Chunk Size
                           </Typography>
@@ -597,13 +558,13 @@ function RagCompoonent() {
                             type="number"
                             fullWidth
                             size="small"
-                            defaultValue={1000}
+                            defaultValue={512}
                             inputProps={{ min: "100" }}
                             disabled={isLoading}
                           />
                         </Box>
 
-                        <Box>
+                        <Box sx={{ flex: 1 }}>
                           <Typography variant="body2" sx={{ mb: 1 }}>
                             Chunk Overlap
                           </Typography>
@@ -612,12 +573,12 @@ function RagCompoonent() {
                             type="number"
                             fullWidth
                             size="small"
-                            defaultValue={100}
+                            defaultValue={50}
                             inputProps={{ min: "0" }}
                             disabled={isLoading}
                           />
                         </Box>
-                      </Box>
+                      </>
                     )}
                   </Box>
                 )}
