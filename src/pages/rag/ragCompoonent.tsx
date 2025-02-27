@@ -33,10 +33,7 @@ import {
   updateKnowBaseData,
 } from "../../api/InterfaceApis/InterfaceApis.ts";
 import { CsvLogo, DocLogo, PdfLogo } from "../../assests/assestsIndex.ts";
-import {
-  KNOWLEDGE_BASE_CUSTOM_SECTION,
-  KNOWLEDGE_BASE_SECTION_TYPES,
-} from "../../enums";
+import { KNOWLEDGE_BASE_CUSTOM_SECTION } from "../../enums";
 import { SetSessionStorage } from "../interface/utils/InterfaceUtils.ts";
 
 interface KnowledgeBaseType {
