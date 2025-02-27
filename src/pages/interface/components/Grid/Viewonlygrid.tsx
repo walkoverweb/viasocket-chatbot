@@ -10,10 +10,10 @@ function Viewonlygrid({ dragRef }) {
   const components = responseTypeJson?.components || responseTypeJson;
 
   return (
-    <Box className="column grid_parent">
+    <Box className="w-100">
       {(components || {}).map((component: { type: string }, index) => {
         return (
-          <div key={component?.type} className="grid-item column not_drag">
+          <div key={component?.type}>
             <ComponentRenderer
               componentId={component}
               dragRef={dragRef}

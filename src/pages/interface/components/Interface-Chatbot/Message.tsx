@@ -202,7 +202,8 @@ const AssistantMessageCard = React.memo(
                 boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
                 wordBreak: "break-word",
                 overflowWrap: "break-word",
-                maxWidth: "100%",
+                // maxWidth: "100%",
+                width: "-webkit-fill-available",
                 color: "black",
                 whiteSpace: "pre-wrap",
               }}
@@ -244,7 +245,7 @@ const AssistantMessageCard = React.memo(
                   </div>
                 </Box>
               ) : (
-                <Box className="assistant-message-slide">
+                <Box className="assistant-message-slide w-100">
                   {(() => {
                     const parsedContent = isJSONString(
                       isError
