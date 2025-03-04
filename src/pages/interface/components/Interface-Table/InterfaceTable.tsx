@@ -90,10 +90,7 @@ function InterfaceTable({ props, meta, propsPath }: InterfaceTableProps) {
       setIsLoading(true);
 
       // If going to previous page and we have the data, use cached data
-      if (
-        paginationModel.eventType === "previous" &&
-        pagesData[paginationModel.page]
-      ) {
+      if (pagesData[paginationModel.page]) {
         setRows(generateRows(pagesData[paginationModel.page]));
         setIsLoading(false);
         return;
@@ -151,6 +148,7 @@ function InterfaceTable({ props, meta, propsPath }: InterfaceTableProps) {
     }
     return paginationMetaRef.current;
   }, [hasNextPage]);
+
   return (
     <DataGrid
       apiRef={apiRef}
